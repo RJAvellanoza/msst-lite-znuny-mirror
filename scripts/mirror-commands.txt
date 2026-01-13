@@ -1,0 +1,20 @@
+MSST Lite Znuny Mirror - Robocopy Commands
+===========================================
+
+Copy and paste these commands into Command Prompt or PowerShell.
+
+
+PULL (original -> mirror):
+--------------------------
+robocopy "%USERPROFILE%\PRJ\MSSTLITE\msst-lite-znuny" "%USERPROFILE%\PRJ\MSSTLITE\msst-lite-znuny-mirror" /MIR /XD .git
+
+
+PUSH (mirror -> original):
+--------------------------
+robocopy "%USERPROFILE%\PRJ\MSSTLITE\msst-lite-znuny-mirror" "%USERPROFILE%\PRJ\MSSTLITE\msst-lite-znuny" /MIR /XD .git scripts
+
+
+FLAGS:
+------
+/MIR = Mirror mode (syncs and deletes extra files in destination)
+/XD  = Exclude directories
