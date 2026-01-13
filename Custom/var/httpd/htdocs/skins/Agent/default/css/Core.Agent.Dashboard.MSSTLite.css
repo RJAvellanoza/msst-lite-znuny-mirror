@@ -1,0 +1,53 @@
+/**
+ * @project     MSSTLite for Znuny
+ * @copyright   Copyright (C) 2024 Athena Technologies LLC, https://athena.us
+ * @license     GNU General Public License, version 3
+ */
+
+/* Hide ALL filter tabs for incident dashboard widgets */
+#Dashboard0150-MyIncidents .DashboardActions,
+#Dashboard0151-UnassignedIncidents .DashboardActions,
+#Dashboard0152-OpenIncidents .DashboardActions,
+#Dashboard0152-AssignedIncidents .DashboardActions,
+#Dashboard0153-IncidentsInQueues .DashboardActions {
+    display: none !important;
+}
+
+/* Alternative more specific selectors */
+#Dashboard0150-MyIncidents .Tab.Actions,
+#Dashboard0151-UnassignedIncidents .Tab.Actions,
+#Dashboard0152-OpenIncidents .Tab.Actions,
+#Dashboard0152-AssignedIncidents .Tab.Actions,
+#Dashboard0153-IncidentsInQueues .Tab.Actions {
+    display: none !important;
+}
+
+/* Hide the entire filter tab container */
+.WidgetSimple .DashboardActions {
+    display: none !important;
+}
+
+/* Settings cog icon for incident widgets - now visible */
+/* Commented out to restore gear icons
+#Dashboard0150-MyIncidents-box .WidgetAction.Settings,
+#Dashboard0151-UnassignedIncidents-box .WidgetAction.Settings,
+#Dashboard0152-OpenIncidents-box .WidgetAction.Settings,
+#Dashboard0152-AssignedIncidents-box .WidgetAction.Settings,
+#Dashboard0153-IncidentsInQueues-box .WidgetAction.Settings {
+    display: none !important;
+}
+*/
+
+/* Hide New Article column (unread articles star) for incident widgets */
+#Dashboard0150-MyIncidents th[data-column="New Article"],
+#Dashboard0150-MyIncidents td.Flags:has(.UnreadArticles),
+#Dashboard0151-UnassignedIncidents th[data-column="New Article"],
+#Dashboard0151-UnassignedIncidents td.Flags:has(.UnreadArticles),
+#Dashboard0152-OpenIncidents th[data-column="New Article"],
+#Dashboard0152-OpenIncidents td.Flags:has(.UnreadArticles),
+#Dashboard0152-AssignedIncidents th[data-column="New Article"],
+#Dashboard0152-AssignedIncidents td.Flags:has(.UnreadArticles),
+#Dashboard0153-IncidentsInQueues th[data-column="New Article"],
+#Dashboard0153-IncidentsInQueues td.Flags:has(.UnreadArticles) {
+    display: none !important;
+}

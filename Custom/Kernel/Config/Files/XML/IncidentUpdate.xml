@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Framework">
+    <Setting Name="Frontend::Module###AgentIncidentNote" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for the agent interface.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>MSI D&amp;Ts Support</Item>
+                            <Item>MSI Field Support</Item>
+                            <Item>NOC User</Item>
+                            <Item>Customer Administrator</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Description" Translatable="1">Update an incident</Item>
+                    <Item Key="Title" Translatable="1">Incident Update</Item>
+                    <Item Key="NavBarName">Ticket</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+</otrs_config>

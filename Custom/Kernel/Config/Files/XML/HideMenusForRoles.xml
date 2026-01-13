@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Application">
+    <!-- Disable Calendar navigation for all users -->
+    <Setting Name="Frontend::Navigation###AgentAppointmentCalendarOverview###002-Calendar" Required="0" Valid="0">
+        <Description Translatable="1">Calendar navigation - disabled for all users</Description>
+        <Navigation>Frontend::Agent::View::CustomerInformationCenter</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Block">ItemArea</Item>
+                <Item Key="Name" Translatable="1">Calendar</Item>
+                <Item Key="Link">Action=AgentAppointmentCalendarOverview</Item>
+                <Item Key="LinkOption"></Item>
+                <Item Key="NavBar">Calendar</Item>
+                <Item Key="Type">Menu</Item>
+                <Item Key="Description" Translatable="1">Calendar</Item>
+                <Item Key="Prio">75</Item>
+                <Item Key="AccessKey"></Item>
+                <Item Key="CssClass"></Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Disable Customers navigation for all users -->
+    <Setting Name="Frontend::Navigation###AgentCustomerInformationCenter###001-Framework" Required="0" Valid="0">
+        <Description Translatable="1">Customers navigation - disabled for all users</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::MainMenu</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Description" Translatable="1">Customers</Item>
+                <Item Key="Name" Translatable="1">Customers</Item>
+                <Item Key="Link">Action=AgentCustomerInformationCenter</Item>
+                <Item Key="LinkOption"></Item>
+                <Item Key="NavBar">Customers</Item>
+                <Item Key="Type">Menu</Item>
+                <Item Key="Block">ItemArea</Item>
+                <Item Key="AccessKey">c</Item>
+                <Item Key="Prio">60</Item>
+            </Hash>
+        </Value>
+    </Setting>
+</otrs_config>

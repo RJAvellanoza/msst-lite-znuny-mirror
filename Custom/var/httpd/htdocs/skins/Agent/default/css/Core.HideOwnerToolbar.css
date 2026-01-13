@@ -1,0 +1,45 @@
+/* Hide the Owner toolbar item completely */
+#ToolBar li.Owner,
+#ToolBar li.TicketOwner,
+#ToolBar li[class*="Owner"] {
+    display: none !important;
+}
+
+/* Hide the Locked tickets toolbar item */
+#ToolBar li.Locked,
+#ToolBar li.TicketLocked,
+#ToolBar li[class*="Locked"] {
+    display: none !important;
+}
+
+/* Also hide the owner icon in the toolbar */
+#ToolBar .fa-user,
+#ToolBar .Owner {
+    display: none !important;
+}
+
+/* Also hide the lock icon in the toolbar */
+#ToolBar .fa-lock,
+#ToolBar .Locked {
+    display: none !important;
+}
+
+/* Hide Salutation/Title field in user forms */
+.Row_UserTitle,
+.Row_UserSalutation,
+#UserTitle,
+#UserSalutation,
+label[for="UserTitle"],
+label[for="UserSalutation"],
+.Field > #UserTitle,
+.Field > #UserSalutation {
+    display: none !important;
+}
+
+/* Also hide the entire row containing Title/Salutation */
+.Row:has(#UserTitle),
+.Row:has(#UserSalutation),
+.FieldRow:has(#UserTitle),
+.FieldRow:has(#UserSalutation) {
+    display: none !important;
+}

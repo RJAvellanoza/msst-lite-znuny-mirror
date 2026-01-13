@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_package version="1.1">
+  <Name>Znuny-UserSetup</Name>
+  <Version>0.2.0</Version>
+  <Framework>6.5.x</Framework>
+  <Vendor>MSI</Vendor>
+  <URL>https://motorola.com</URL>
+  <Description Text="en">Creates predefined users and groups.</Description>
+  <License>GPL-3.0-or-later</License>
+  <BuildDate>2025-05-20</BuildDate>
+  <PackageIsRemovable>1</PackageIsRemovable>
+  <File Permission="644" Location="Custom/Kernel/Config/Files/XML/UserPermissionsConfig.xml"/>
+
+  <CodeInstall><![CDATA[
+use strict;
+use warnings;
+
+my $Kernel = $Kernel::OM;
+
+my $QueueObject         = $Kernel->Get('Kernel::System::Queue');
+my $Success = $QueueObject->QueueUpdate(
+    QueueID             => 2,
+    Name                => 'Support Group',
+    ValidID             => 1,
+    GroupID             => 1,
+    SystemAddressID     => 1,
+    SalutationID        => 1,
+    SignatureID         => 1,
+    UserID              => 1,
+    FollowUpID          => 1,
+);
+
+my $GroupObject         = $Kernel->Get('Kernel::System::Group');
+my $UserObject          = $Kernel->Get('Kernel::System::User');
+
+# Ensure groups exist (returns GroupID)
+my %WantedGroups = map { $_ => undef } qw(admin users MSIAdmin NOCAdmin NOCUser stats);
+
+for my $Group (keys %WantedGroups) {
+    my $ID = $GroupObject->GroupLookup( Group => $Group );
+    if (!$ID) {
+        $ID = $GroupObject->GroupAdd(
+            Name     => $Group,
+            ValidID  => 1,
+            Comment => 'Created by Znuny-UserSetup package',
+            UserID   => 1,
+        );
+    }
+    $WantedGroups{$Group} = $ID;
+}
+
+# Helper to grant RW permission
+sub _AddUserToGroup {
+    my (%Param) = @_;
+    my $UID = $Param{UserID} or return;
+    my $GID = $Param{GroupID} or return;
+
+    # Grant read/write
+    $GroupObject->PermissionGroupUserAdd(
+        GID => $GID,
+        UID  => $UID,
+        Permission => {
+            rw        => 1,
+        },
+        UserID  => 1,
+    );
+}
+
+# List of users to create
+my @UserDefs = (
+    { Login => 'msicmso',   Groups => [qw(admin stats users)] },
+    { Login => 'msifield',  Groups => [qw(MSIAdmin stats users)]   },
+    { Login => 'lsmpappuser',  Groups => [qw(admin stats users)]   },
+    { Login => 'nocadmin1', Groups => [qw(NOCAdmin stats users)] },
+    { Login => 'nocadmin2', Groups => [qw(NOCAdmin stats users)] },
+    { Login => 'nocuser1',  Groups => [qw(NOCUser stats users)] },
+    { Login => 'nocuser2',  Groups => [qw(NOCUser stats users)] },
+    { Login => 'nocuser3',  Groups => [qw(NOCUser stats users)] },
+    { Login => 'nocuser4',  Groups => [qw(NOCUser stats users)] },
+    { Login => 'nocuser5',  Groups => [qw(NOCUser stats users)] },
+    { Login => 'nocuser6',  Groups => [qw(NOCUser stats users)] },
+    { Login => 'nocuser7',  Groups => [qw(NOCUser stats users)] },
+    { Login => 'nocuser8',  Groups => [qw(NOCUser stats users)] },
+);
+
+for my $User (@UserDefs) {
+    # Check if the user already exists
+    my $UserID = $UserObject->UserLookup( UserLogin => $User->{Login} );
+
+    if (!$UserID) {
+        $UserID = $UserObject->UserAdd(
+            UserFirstname   => $User->{Login},
+            UserLastname    => 'Auto',
+            UserLogin       => $User->{Login},
+            UserPw    => 'tmp12345',
+            ChangePassword  => 1,
+            UserEmail       => $User->{Login} . '@gmail.com',
+            ValidID         => 1,
+            ChangeUserID    => 1,
+        );
+    }
+
+    next if !$UserID;
+
+    for my $GroupName ( @{ $User->{Groups} } ) {
+        my $GID = $WantedGroups{$GroupName};
+        next if !$GID;
+        _AddUserToGroup( UserID => $UserID, GroupID => $GID );
+    }
+    
+    # Safety mechanism: Remove msifield from admin group if it somehow got added
+    if ($User->{Login} eq 'msifield') {
+        _RemoveMsifieldFromAdminGroup($UserID);
+    }
+}
+
+# Helper function to add user to group
+sub _AddUserToGroup {
+    my %Param = @_;
+    
+    my $GroupObject = $Kernel::OM->Get('Kernel::System::Group');
+    
+    my $Success = $GroupObject->GroupMemberAdd(
+        GID        => $Param{GroupID},
+        UID        => $Param{UserID},
+        Permission => {
+            ro          => 1,
+            rw          => 1,
+            move_into   => 1,
+            create      => 1,
+            note        => 1,
+            owner       => 1,
+            priority    => 1,
+            responsible => 1,
+        },
+        UserID     => 1,
+    );
+    
+    return $Success;
+}
+
+# Safety function to remove msifield from admin group
+sub _RemoveMsifieldFromAdminGroup {
+    my ($UserID) = @_;
+    
+    my $GroupObject = $Kernel::OM->Get('Kernel::System::Group');
+    my $LogObject   = $Kernel::OM->Get('Kernel::System::Log');
+    
+    return if !$UserID;
+    
+    # Check if user is in admin group
+    my $AdminGroupID = $GroupObject->GroupLookup(
+        Group => 'admin',
+    );
+    
+    return if !$AdminGroupID;
+    
+    # Check if user is member of admin group
+    my %UserGroups = $GroupObject->PermissionUserGet(
+        UserID => $UserID,
+        Type   => 'rw',
+    );
+    
+    if (exists $UserGroups{$AdminGroupID}) {
+        $LogObject->Log(
+            Priority => 'notice',
+            Message  => "Znuny-UserSetup Safety: msifield found in admin group, removing...",
+        );
+        
+        # Remove from admin group
+        my $RemoveSuccess = $GroupObject->GroupMemberAdd(
+            GID        => $AdminGroupID,
+            UID        => $UserID,
+            Permission => {
+                ro          => 0,
+                rw          => 0,
+                move_into   => 0,
+                create      => 0,
+                note        => 0,
+                owner       => 0,
+                priority    => 0,
+                responsible => 0,
+            },
+            UserID     => 1,
+        );
+        
+        if ($RemoveSuccess) {
+            $LogObject->Log(
+                Priority => 'notice',
+                Message  => "Znuny-UserSetup Safety: Successfully removed msifield from admin group",
+            );
+        } else {
+            $LogObject->Log(
+                Priority => 'error',
+                Message  => "Znuny-UserSetup Safety: Failed to remove msifield from admin group",
+            );
+        }
+    }
+    
+    return 1;
+}
+
+1;
+  ]]></CodeInstall>
+
+</otrs_package>

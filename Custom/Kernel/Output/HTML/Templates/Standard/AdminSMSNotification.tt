@@ -1,0 +1,294 @@
+# --
+# Copyright (C) 2025 MSST, https://msst.com/
+# --
+# This software comes with ABSOLUTELY NO WARRANTY. For details, see
+# the enclosed file COPYING for license information (GPL). If you
+# did not receive this file, see https://www.gnu.org/licenses/gpl-3.0.txt.
+# --
+
+[% RenderBlockStart("Overview") %]
+<div class="MainBox ARIARoleMain LayoutFixedSidebar SidebarFirst ActionsSideBar">
+    <div class="SidebarColumn ActionsSideBarComp">
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Actions") | html %]</h2>
+            </div>
+            <div class="Content">
+                <ul class="ActionList">
+                    <li>
+                        <a href="[% Env("Baselink") %]Action=AdminSystemConfiguration;Subaction=View;Setting=SMSNotification%3A%3APriority%3A%3A%2A" class="CallForAction Fullsize Center">
+                            <span><i class="fa fa-cog"></i>[% Translate("System Configuration") | html %]</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Note") | html %]</h2>
+            </div>
+            <div class="Content">
+                <p class="FieldExplanation">
+                    [% Translate("Configure Twilio SMS notification settings for incident tickets.") | html %]
+                </p>
+                <p class="FieldExplanation">
+                    [% Translate("SMS notifications will be sent based on ticket priority and configured events.") | html %]
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="ContentColumn">
+        <h1>[% Translate("SMS Notification Configuration") | html %]</h1>
+        
+        [% IF Data.Saved %]
+        <div class="MessageBox Notice">
+            <p>[% Translate("Configuration saved successfully.") | html %]</p>
+        </div>
+        [% END %]
+        
+        [% IF Data.SaveError %]
+        <div class="MessageBox Error">
+            <p>[% Translate("An error occurred while saving the configuration.") | html %]</p>
+        </div>
+        [% END %]
+        
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Twilio Configuration") | html %]</h2>
+            </div>
+            <div class="Content">
+                <form action="[% Env("CGIHandle") %]" method="post" id="AdminSMSNotificationForm" class="Validate PreventMultipleSubmits">
+                    <input type="hidden" name="Action" value="[% Env("Action") %]"/>
+                    <input type="hidden" name="Subaction" value="Save"/>
+                    <input type="hidden" name="[% Env("SessionName") %]" value="[% Env("SessionID") %]"/>
+                    
+                    <fieldset class="TableLike">
+                        <label class="Mandatory" for="TwilioAccountSID">
+                            <span class="Marker">*</span>
+                            [% Translate("Account SID") | html %]:
+                        </label>
+                        <div class="Field">
+                            <input type="text" name="TwilioAccountSID" id="TwilioAccountSID" value="[% Data.TwilioAccountSID | html %]" 
+                                   class="W50pc Validate_Required [% Data.TwilioAccountSIDInvalid | html %]" 
+                                   maxlength="34" pattern="^AC[a-fA-F0-9]{32}$"
+                                   title="[% Translate("Must start with 'AC' followed by 32 hexadecimal characters") | html %]"/>
+                            <div id="TwilioAccountSIDError" class="TooltipErrorMessage">
+                                <p>[% Translate("This field is required and must start with 'AC' followed by 32 hex characters.") | html %]</p>
+                            </div>
+                            <div id="TwilioAccountSIDServerError" class="TooltipErrorMessage">
+                                <p>[% Translate("Invalid Account SID format.") | html %]</p>
+                            </div>
+                            <p class="FieldExplanation">[% Translate("Your Twilio Account SID (starts with AC)") | html %]</p>
+                        </div>
+                        <div class="Clear"></div>
+                        
+                        <label class="Mandatory" for="TwilioAuthToken">
+                            <span class="Marker">*</span>
+                            [% Translate("Auth Token") | html %]:
+                        </label>
+                        <div class="Field">
+                            <input type="password" name="TwilioAuthToken" id="TwilioAuthToken" value="[% Data.TwilioAuthToken | html %]" 
+                                   class="W50pc Validate_Required [% Data.TwilioAuthTokenInvalid | html %]" 
+                                   maxlength="32" pattern="^[a-fA-F0-9]{32}$"
+                                   title="[% Translate("Must be exactly 32 characters") | html %]" autocomplete="new-password"/>
+                            <div id="TwilioAuthTokenError" class="TooltipErrorMessage">
+                                <p>[% Translate("This field is required and must be exactly 32 characters.") | html %]</p>
+                            </div>
+                            <div id="TwilioAuthTokenServerError" class="TooltipErrorMessage">
+                                <p>[% Translate("Invalid Auth Token format.") | html %]</p>
+                            </div>
+                            <p class="FieldExplanation">[% Translate("Your Twilio Auth Token (32 characters, stored encrypted)") | html %]</p>
+                        </div>
+                        <div class="Clear"></div>
+                        
+                        <label class="Mandatory" for="TwilioFromNumber">
+                            <span class="Marker">*</span>
+                            [% Translate("From Phone Number") | html %]:
+                        </label>
+                        <div class="Field">
+                            <input type="text" name="TwilioFromNumber" id="TwilioFromNumber" value="[% Data.TwilioFromNumber | html %]" 
+                                   class="W50pc Validate_Required [% Data.TwilioFromNumberInvalid | html %]" 
+                                   maxlength="16" pattern="^\+[1-9]\d{1,14}$"
+                                   title="[% Translate("Must be in E.164 format (e.g., +12345678900)") | html %]"/>
+                            <div id="TwilioFromNumberError" class="TooltipErrorMessage">
+                                <p>[% Translate("This field is required and must be in E.164 format.") | html %]</p>
+                            </div>
+                            <div id="TwilioFromNumberServerError" class="TooltipErrorMessage">
+                                <p>[% Translate("Invalid phone number format.") | html %]</p>
+                            </div>
+                            <p class="FieldExplanation">[% Translate("Twilio phone number in E.164 format (e.g., +12345678900)") | html %]</p>
+                        </div>
+                        <div class="Clear"></div>
+                        
+                        <label for="DefaultRecipients">
+                            [% Translate("Default SMS Recipients") | html %]:
+                        </label>
+                        <div class="Field">
+                            <textarea name="DefaultRecipients" id="DefaultRecipients" rows="4" cols="60" 
+                                      class="W50pc [% Data.DefaultRecipientsInvalid | html %]">[% Data.DefaultRecipients | html %]</textarea>
+                            <div id="DefaultRecipientsError" class="TooltipErrorMessage">
+                                <p>[% Translate("Invalid phone number format. Use E.164 format (e.g., +12345678900).") | html %]</p>
+                            </div>
+                            <div id="DefaultRecipientsServerError" class="TooltipErrorMessage">
+                                <p>[% Translate("Invalid phone number format. All numbers must be in E.164 format.") | html %]</p>
+                            </div>
+                            <p class="FieldExplanation">
+                                [% Translate("Default phone numbers to receive SMS notifications (comma-separated).") | html %]<br/>
+                                [% Translate("Format: +countrycode<areacode><phonenumber> (e.g., +11231234567, +60123456789)") | html %]<br/>
+                                [% Translate("These recipients will receive SMS notifications in addition to the assigned ticket owner.") | html %]
+                            </p>
+                        </div>
+                        <div class="Clear"></div>
+                        
+                        <div class="Field SpacingTop">
+                            <button type="button" id="TestConnection" class="CallForAction">
+                                <span><i class="fa fa-mobile"></i> [% Translate("Send Test SMS") | html %]</span>
+                            </button>
+                            <span id="TestConnectionResult" class="Hidden"></span>
+                            <p class="FieldExplanation">
+                                [% Translate("Sends a test SMS to all Default SMS Recipients to verify configuration.") | html %]
+                            </p>
+                        </div>
+                        <div class="Clear"></div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+        
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Priority Configuration") | html %]</h2>
+            </div>
+            <div class="Content">
+                <p class="FieldExplanation">
+                    [% Translate("Select which ticket priorities should trigger SMS notifications.") | html %]
+                </p>
+                <table class="DataTable">
+                    <thead>
+                        <tr>
+                            <th>[% Translate("Priority") | html %]</th>
+                            <th class="Center">[% Translate("SMS Enabled") | html %]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+[% RenderBlockStart("PriorityRow") %]
+                        <tr>
+                            <td>[% Data.Name | html %]</td>
+                            <td class="Center">
+                                <input type="checkbox" name="Priority[% Data.ID | html %]Enabled" id="Priority[% Data.ID | html %]Enabled" 
+                                       value="1" [% Data.Checked %] form="AdminSMSNotificationForm"/>
+                            </td>
+                        </tr>
+[% RenderBlockEnd("PriorityRow") %]
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Save Configuration") | html %]</h2>
+            </div>
+            <div class="Content">
+                <fieldset class="TableLike">
+                    <div class="Field SpacingTop">
+                        <button class="Primary CallForAction" type="submit" form="AdminSMSNotificationForm" value="[% Translate("Save") | html %]">
+                            <span>[% Translate("Save") | html %]</span>
+                        </button>
+                        [% Translate("or") | html %]
+                        <a href="[% Env("Baselink") %]Action=Admin">[% Translate("Cancel") | html %]</a>
+                    </div>
+                    <div class="Clear"></div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+</div>
+
+[% WRAPPER JSOnDocumentComplete %]
+<script type="text/javascript">//<![CDATA[
+    // Test connection functionality
+    $('#TestConnection').on('click', function() {
+        var $Button = $(this);
+        var $Result = $('#TestConnectionResult');
+        
+        // Disable button
+        $Button.prop('disabled', true);
+        $Result.removeClass('Hidden Error Success').html('<i class="fa fa-spinner fa-spin"></i> ' + Core.Language.Translate('Sending test SMS...'));
+        
+        // Get form values
+        var Data = {
+            Action: '[% Env("Action") %]',
+            Subaction: 'TestConnection',
+            AccountSID: $('#TwilioAccountSID').val(),
+            AuthToken: $('#TwilioAuthToken').val(),
+            FromNumber: $('#TwilioFromNumber').val(),
+            DefaultRecipients: $('#DefaultRecipients').val(),
+            [% Env("SessionName") | html %]: '[% Env("SessionID") | html %]'
+        };
+        
+        // Make AJAX request
+        Core.AJAX.FunctionCall(
+            Core.Config.Get('CGIHandle'),
+            Data,
+            function(Response) {
+                $Button.prop('disabled', false);
+                
+                if (Response.Success) {
+                    $Result.removeClass('Error').addClass('Success').html(
+                        '<i class="fa fa-check"></i> ' + Core.Language.Translate(Response.Message)
+                    );
+                } else {
+                    $Result.removeClass('Success').addClass('Error').html(
+                        '<i class="fa fa-times"></i> ' + Core.Language.Translate(Response.Message)
+                    );
+                }
+            },
+            'json'
+        );
+    });
+    
+    // Add client-side validation
+    Core.Form.Validate.AddMethod("TwilioAccountSID", function(Value) {
+        return /^AC[a-fA-F0-9]{32}$/.test(Value);
+    });
+    
+    Core.Form.Validate.AddMethod("TwilioAuthToken", function(Value) {
+        return Value.length === 32;
+    });
+    
+    Core.Form.Validate.AddMethod("TwilioFromNumber", function(Value) {
+        return /^\+[1-9]\d{1,14}$/.test(Value);
+    });
+    
+    Core.Form.Validate.AddMethod("DefaultRecipients", function(Value) {
+        if (!Value) return true; // Optional field
+        
+        // Remove whitespace and split by comma
+        var CleanValue = Value.replace(/\s+/g, '');
+        var Recipients = CleanValue.split(',');
+        
+        for (var i = 0; i < Recipients.length; i++) {
+            if (Recipients[i] && !/^\+[1-9]\d{1,14}$/.test(Recipients[i])) {
+                return false;
+            }
+        }
+        return true;
+    });
+//]]></script>
+[% END %]
+
+<style type="text/css">
+#TestConnectionResult {
+    margin-left: 10px;
+    font-weight: bold;
+}
+#TestConnectionResult.Success {
+    color: #008000;
+}
+#TestConnectionResult.Error {
+    color: #ff0000;
+}
+</style>
+[% RenderBlockEnd("Overview") %]

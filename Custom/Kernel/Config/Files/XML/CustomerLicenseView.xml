@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<otrs_config version="2.0" init="Framework">
+    <Setting Name="Frontend::NavigationModule###CustomerLicenseView" Required="0" Valid="1">
+        <Description Translatable="1">Main menu navigation for customer license view in the agent interface.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::MainMenu</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Group">
+                    <Array>
+                        <Item>users</Item>
+                        <Item>MSIAdmin</Item>
+                        <Item>NOCAdmin</Item>
+                        <Item>NOCUser</Item>
+                    </Array>
+                </Item>
+                <Item Key="GroupRo">
+                    <Array>
+                        <Item>users</Item>
+                        <Item>MSIAdmin</Item>
+                        <Item>NOCAdmin</Item>
+                        <Item>NOCUser</Item>
+                    </Array>
+                </Item>
+                <Item Key="Module">Kernel::Output::HTML::NavBar::ModuleAdmin</Item>
+                <Item Key="Name" Translatable="1">License Information</Item>
+                <Item Key="Block">Miscellaneous</Item>
+                <Item Key="Description" Translatable="1">View License Information</Item>
+                <Item Key="IconBig">fa-id-card</Item>
+                <Item Key="IconSmall">fa-id-card</Item>
+                <Item Key="Prio">500</Item>
+            </Hash>
+        </Value>
+    </Setting>
+    <Setting Name="Frontend::Module###CustomerLicenseView" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for customer license view.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="GroupRo">
+                        <Array>
+                            <Item>users</Item>
+                            <Item>NOCAdmin</Item>
+                            <Item>NOCUser</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>users</Item>
+                            <Item>NOCAdmin</Item>
+                            <Item>NOCUser</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Description" Translatable="1">View License Information.</Item>
+                    <Item Key="Title" Translatable="1">License Information</Item>
+                    <Item Key="NavBarName">Miscellaneous</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+</otrs_config>

@@ -1,0 +1,60 @@
+---
+- ChangeBy: 1
+  ChangeTime: 2025-06-26 13:05:00
+  Comment: 'Notification when ticket is reopened'
+  CreateBy: 1
+  CreateTime: 2025-06-26 13:05:00
+  Data:
+    AgentEnabledByDefault:
+    - Email
+    ArticleAttachmentInclude:
+    - '0'
+    Events:
+    - TicketStateUpdate
+    LanguageID:
+    - en
+    Recipients:
+    - Customer
+    - AgentOwner
+    SendOnOutOfOffice:
+    - '1'
+    TransportEmailTemplate:
+    - Default
+    Transports:
+    - Email
+    VisibleForAgent:
+    - '1'
+    VisibleForAgentTooltip:
+    - You will receive a notification when a ticket is reopened.
+  ID: 100
+  Message:
+    en:
+      Body: |-
+        Dear <OTRS_NOTIFICATION_RECIPIENT_UserFirstname>,<br />
+        <br />
+        Your support ticket has been reopened:<br />
+        <br />
+        Ticket Information:<br />
+        ------------------<br />
+        Ticket Number: <OTRS_CONFIG_Ticket::Hook><OTRS_CONFIG_Ticket::HookDivider><OTRS_TICKET_TicketNumber><br />
+        Title: <OTRS_TICKET_Title><br />
+        Site: <OTRS_TICKET_DynamicField_Site><br />
+        Impacted CI: <OTRS_TICKET_DynamicField_ImpactedCI><br />
+        Priority: <OTRS_TICKET_Priority><br />
+        Status: REOPENED<br />
+        Current State: <OTRS_TICKET_State><br />
+        Queue: <OTRS_TICKET_Queue><br />
+        Originally Created: <OTRS_TICKET_Created><br />
+        Reopened: <OTRS_TICKET_Changed><br />
+        <br />
+        We are investigating the issue and will update you as soon as possible.<br />
+        <br />
+        Ticket URL:<br />
+        <OTRS_CONFIG_HttpType>://<OTRS_CONFIG_FQDN>/<OTRS_CONFIG_ScriptAlias>index.pl?Action=AgentTicketZoom;TicketID=<OTRS_TICKET_TicketID><br />
+        <br />
+        Best regards,<br />
+        <OTRS_CONFIG_NotificationSenderName>
+      ContentType: text/html
+      Subject: '[<OTRS_CONFIG_Ticket::Hook><OTRS_CONFIG_Ticket::HookDivider><OTRS_TICKET_TicketNumber>] REOPENED: <OTRS_TICKET_Title>'
+  Name: Ticket reopened notification
+  ValidID: 1

@@ -1,0 +1,761 @@
+# --
+# Copyright (C) 2025 MSST, https://msst.com/
+# --
+# This software comes with ABSOLUTELY NO WARRANTY.
+# --
+
+<div class="MainBox ARIARoleMain LayoutFixedSidebar SidebarFirst">
+
+    <!-- Side Navigation (Shared) -->
+    [% INCLUDE "AgentOperationalReportsSidebar.tt" ActiveSidebar = 'HistoricalTrends' %]
+
+    <div class="ContentColumn">
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Active Tickets Historical Trends") | html %]</h2>
+                <div class="ActionMenu">
+                    <a href="[% Env("Baselink") %]Action=AgentOperationalReports;Section=ActiveTicketsAssignment" class="AsBlock" style="padding: 6px 12px; background: #f0f0f0; border: 1px solid #ccc; border-radius: 3px; text-decoration: none; color: #333;">
+                        <i class="fa fa-arrow-left"></i> [% Translate("Back to Active Tickets Assignment") | html %]
+                    </a>
+                </div>
+            </div>
+            <div class="Content">
+
+                <!-- Tab Navigation -->
+                <style>
+                    #HistoricalTrendsTabs {
+                        list-style: none;
+                        margin: 0;
+                        padding: 0;
+                        border-bottom: 2px solid #ddd;
+                        display: flex;
+                        gap: 0;
+                    }
+                    #HistoricalTrendsTabs li {
+                        margin: 0;
+                        padding: 0;
+                    }
+                    #HistoricalTrendsTabs li a {
+                        display: block;
+                        padding: 12px 24px;
+                        background: #f5f5f5;
+                        border: 1px solid #ddd;
+                        border-bottom: none;
+                        margin-right: -1px;
+                        color: #333;
+                        text-decoration: none;
+                        font-weight: 500;
+                        transition: all 0.2s;
+                    }
+                    #HistoricalTrendsTabs li a:hover {
+                        background: #e9e9e9;
+                        color: #000;
+                    }
+                    #HistoricalTrendsTabs li.Active a {
+                        background: #fff;
+                        border-bottom: 2px solid #fff;
+                        color: #004085;
+                        font-weight: bold;
+                        position: relative;
+                        z-index: 2;
+                        margin-bottom: -2px;
+                    }
+                </style>
+                <ul id="HistoricalTrendsTabs">
+                    <li class="Active" data-tab="hourly">
+                        <a href="#hourly" onclick="switchTab('hourly'); return false;">
+                            [% Translate("Hourly") | html %]
+                        </a>
+                    </li>
+                    <li data-tab="daily">
+                        <a href="#daily" onclick="switchTab('daily'); return false;">
+                            [% Translate("Daily") | html %]
+                        </a>
+                    </li>
+                    <li data-tab="weekly">
+                        <a href="#weekly" onclick="switchTab('weekly'); return false;">
+                            [% Translate("Weekly") | html %]
+                        </a>
+                    </li>
+                    <li data-tab="monthly">
+                        <a href="#monthly" onclick="switchTab('monthly'); return false;">
+                            [% Translate("Monthly") | html %]
+                        </a>
+                    </li>
+                    <li data-tab="quarterly">
+                        <a href="#quarterly" onclick="switchTab('quarterly'); return false;">
+                            [% Translate("Quarterly") | html %]
+                        </a>
+                    </li>
+                    <li data-tab="yearly">
+                        <a href="#yearly" onclick="switchTab('yearly'); return false;">
+                            [% Translate("Yearly") | html %]
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Filter Container (per-tab filters) -->
+                <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 4px; border: 1px solid #dee2e6;">
+                    <!-- Hourly Filter (Date picker for single day) -->
+                    <div id="hourlyFilter" class="tab-filter" style="display: block;">
+                        <label style="font-weight: bold; margin-right: 10px;">[% Translate("Select Date") | html %]:</label>
+                        <input type="date" id="hourlyDate" class="filter-input" style="padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px;">
+                        <button type="button" onclick="applyFilter()" style="margin-left: 10px; padding: 6px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            [% Translate("Apply") | html %]
+                        </button>
+                    </div>
+
+                    <!-- Daily Filter (Week picker) -->
+                    <div id="dailyFilter" class="tab-filter" style="display: none;">
+                        <label style="font-weight: bold; margin-right: 10px;">[% Translate("Select Week") | html %]:</label>
+                        <select id="dailyWeek" class="filter-input" style="padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px;">
+                            <!-- Will be populated by JS -->
+                        </select>
+                        <button type="button" onclick="applyFilter()" style="margin-left: 10px; padding: 6px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            [% Translate("Apply") | html %]
+                        </button>
+                    </div>
+
+                    <!-- Weekly Filter (Month picker) -->
+                    <div id="weeklyFilter" class="tab-filter" style="display: none;">
+                        <label style="font-weight: bold; margin-right: 10px;">[% Translate("Month") | html %]:</label>
+                        <select id="weeklyMonth" class="filter-input" style="padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; margin-right: 15px;">
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                        <label style="font-weight: bold; margin-right: 10px;">[% Translate("Year") | html %]:</label>
+                        <select id="weeklyYear" class="filter-input" style="padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px;">
+                            <!-- Will be populated by JS -->
+                        </select>
+                        <button type="button" onclick="applyFilter()" style="margin-left: 10px; padding: 6px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            [% Translate("Apply") | html %]
+                        </button>
+                    </div>
+
+                    <!-- Monthly Filter (Start/End Month + Year) -->
+                    <div id="monthlyFilter" class="tab-filter" style="display: none;">
+                        <label style="font-weight: bold; margin-right: 10px;">[% Translate("Start Month") | html %]:</label>
+                        <select id="monthlyStartMonth" class="filter-input" style="padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; margin-right: 15px;">
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                        <label style="font-weight: bold; margin-right: 10px;">[% Translate("End Month") | html %]:</label>
+                        <select id="monthlyEndMonth" class="filter-input" style="padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; margin-right: 15px;">
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12" selected>December</option>
+                        </select>
+                        <label style="font-weight: bold; margin-right: 10px;">[% Translate("Year") | html %]:</label>
+                        <select id="monthlyYear" class="filter-input" style="padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px;">
+                            <!-- Will be populated by JS -->
+                        </select>
+                        <button type="button" onclick="applyFilter()" style="margin-left: 10px; padding: 6px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            [% Translate("Apply") | html %]
+                        </button>
+                    </div>
+
+                    <!-- Quarterly Filter (Year picker) -->
+                    <div id="quarterlyFilter" class="tab-filter" style="display: none;">
+                        <label style="font-weight: bold; margin-right: 10px;">[% Translate("Select Year") | html %]:</label>
+                        <select id="quarterlyYear" class="filter-input" style="padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px;">
+                            <!-- Will be populated by JS -->
+                        </select>
+                        <button type="button" onclick="applyFilter()" style="margin-left: 10px; padding: 6px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            [% Translate("Apply") | html %]
+                        </button>
+                    </div>
+
+                    <!-- Yearly Filter (Date range picker) -->
+                    <div id="yearlyFilter" class="tab-filter" style="display: none;">
+                        <label style="font-weight: bold; margin-right: 10px;">[% Translate("Start Year") | html %]:</label>
+                        <select id="yearlyStartYear" class="filter-input" style="padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; margin-right: 15px;">
+                            <!-- Will be populated by JS -->
+                        </select>
+                        <label style="font-weight: bold; margin-right: 10px;">[% Translate("End Year") | html %]:</label>
+                        <select id="yearlyEndYear" class="filter-input" style="padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px;">
+                            <!-- Will be populated by JS -->
+                        </select>
+                        <button type="button" onclick="applyFilter()" style="margin-left: 10px; padding: 6px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            [% Translate("Apply") | html %]
+                        </button>
+                    </div>
+
+                    <span id="FilterLoadingIndicator" style="margin-left: 10px; display: none;">
+                        <i class="fa fa-spinner fa-spin"></i> [% Translate("Loading...") | html %]
+                    </span>
+                </div>
+
+                <!-- Chart Display Area -->
+                <div id="chartDisplayArea" style="display: flex; gap: 20px;">
+                    <!-- Left: Data Table -->
+                    <div style="flex: 0 0 300px;">
+                        <h3 id="chartTitle" style="background: #004085; color: white; padding: 10px; margin: 0; border-radius: 4px 4px 0 0;">
+                            Active Tickets Dashboard
+                        </h3>
+                        <div id="dataTableContainer" style="overflow-x: auto;">
+                            <!-- Table will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Center: Stacked Bar Chart -->
+                    <div style="flex: 1; border: 1px solid #dee2e6; padding: 20px; border-radius: 4px; background: white;">
+                        <canvas id="activeTicketsChart" style="max-height: 450px;"></canvas>
+                    </div>
+
+                    <!-- Right: Color Code Legend -->
+                    <div style="flex: 0 0 180px;">
+                        <h4 style="margin-top: 0;">[% Translate("Legend") | html %]</h4>
+                        <div style="padding: 10px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px;">
+                            <div style="margin-bottom: 10px;">
+                                <div style="display: inline-block; width: 20px; height: 20px; background: #ff8c00; margin-right: 8px; vertical-align: middle;"></div>
+                                <span>P1</span>
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <div style="display: inline-block; width: 20px; height: 20px; background: #ffeb3b; margin-right: 8px; vertical-align: middle;"></div>
+                                <span>P2</span>
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <div style="display: inline-block; width: 20px; height: 20px; background: #4caf50; margin-right: 8px; vertical-align: middle;"></div>
+                                <span>P3</span>
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <div style="display: inline-block; width: 20px; height: 20px; background: #2196f3; margin-right: 8px; vertical-align: middle;"></div>
+                                <span>P4</span>
+                            </div>
+                            <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #ddd;">
+                                <div style="display: inline-block; width: 20px; height: 3px; background: #666; margin-right: 8px; vertical-align: middle; border: 1px dashed #666;"></div>
+                                <span style="font-weight: bold; color: #666;">Priority Average</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js Library (Local) -->
+<script src="[% Config("Frontend::WebPath") %]js/Chart.min.js"></script>
+
+<script type="text/javascript">
+(function() {
+    'use strict';
+
+    // Global variables
+    let currentTab = 'hourly';
+    let chartInstance = null;
+
+    // Wait for Chart.js to load
+    function waitForChart() {
+        if (typeof Chart !== 'undefined') {
+            init();
+        } else {
+            setTimeout(waitForChart, 100);
+        }
+    }
+
+    // Wait for DOM to be ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', waitForChart);
+    } else {
+        waitForChart();
+    }
+
+    function init() {
+        populateYearDropdowns();
+        populateWeekDropdown();
+        setDefaultDate();
+        loadTabData('hourly');
+    }
+
+    // Export functions to global scope
+    window.switchTab = function(tabName) {
+        const tabs = document.querySelectorAll('#HistoricalTrendsTabs li');
+        tabs.forEach(tab => {
+            if (tab.getAttribute('data-tab') === tabName) {
+                tab.classList.add('Active');
+            } else {
+                tab.classList.remove('Active');
+            }
+        });
+
+        document.querySelectorAll('.tab-filter').forEach(filter => {
+            filter.style.display = 'none';
+        });
+
+        const filterMap = {
+            'hourly': 'hourlyFilter',
+            'daily': 'dailyFilter',
+            'weekly': 'weeklyFilter',
+            'monthly': 'monthlyFilter',
+            'quarterly': 'quarterlyFilter',
+            'yearly': 'yearlyFilter'
+        };
+        const activeFilter = document.getElementById(filterMap[tabName]);
+        if (activeFilter) {
+            activeFilter.style.display = 'block';
+        }
+
+        currentTab = tabName;
+        loadTabData(tabName);
+        return false;
+    };
+
+    window.applyFilter = function() {
+        loadTabData(currentTab);
+    };
+
+    function populateYearDropdowns() {
+        const currentYear = new Date().getFullYear();
+        const years = [];
+        for (let i = 0; i < 3; i++) {
+            years.push(currentYear - i);
+        }
+
+        const yearDropdowns = ['weeklyYear', 'monthlyYear', 'quarterlyYear', 'yearlyStartYear', 'yearlyEndYear'];
+        yearDropdowns.forEach(dropdownId => {
+            const select = document.getElementById(dropdownId);
+            if (select) {
+                select.innerHTML = '';
+                years.forEach(year => {
+                    const option = document.createElement('option');
+                    option.value = year;
+                    option.textContent = year;
+                    if (year === currentYear) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            }
+        });
+    }
+
+    function populateWeekDropdown() {
+        const select = document.getElementById('dailyWeek');
+        if (!select) return;
+
+        const currentDate = new Date();
+        select.innerHTML = '';
+
+        for (let i = 0; i < 12; i++) {
+            const weekStart = new Date(currentDate);
+            weekStart.setDate(currentDate.getDate() - (i * 7));
+
+            const dayOfWeek = weekStart.getDay();
+            const daysToMonday = (dayOfWeek === 0 ? 6 : dayOfWeek - 1);
+            const monday = new Date(weekStart);
+            monday.setDate(weekStart.getDate() - daysToMonday);
+
+            const weekNum = getISOWeek(monday);
+            const year = monday.getFullYear();
+
+            const option = document.createElement('option');
+            option.value = `${year}-W${String(weekNum).padStart(2, '0')}`;
+            option.textContent = `Week ${String(weekNum).padStart(2, '0')} (${formatDate(monday)})`;
+
+            if (i === 0) {
+                option.selected = true;
+            }
+
+            select.appendChild(option);
+        }
+    }
+
+    function getISOWeek(date) {
+        const d = new Date(date);
+        d.setHours(0, 0, 0, 0);
+        d.setDate(d.getDate() + 4 - (d.getDay() || 7));
+        const yearStart = new Date(d.getFullYear(), 0, 1);
+        const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+        return weekNo;
+    }
+
+    function formatDate(date) {
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+    }
+
+    function setDefaultDate() {
+        const dateInput = document.getElementById('hourlyDate');
+        if (dateInput) {
+            const today = new Date();
+            const dateString = today.toISOString().split('T')[0];
+            dateInput.value = dateString;
+        }
+
+        const monthSelect = document.getElementById('weeklyMonth');
+        if (monthSelect) {
+            monthSelect.value = new Date().getMonth() + 1;
+        }
+
+        // Set default for monthly: Jan to current month
+        const startMonthSelect = document.getElementById('monthlyStartMonth');
+        if (startMonthSelect) {
+            startMonthSelect.value = 1; // Default to January
+        }
+        const endMonthSelect = document.getElementById('monthlyEndMonth');
+        if (endMonthSelect) {
+            endMonthSelect.value = new Date().getMonth() + 1; // Default to current month
+        }
+    }
+
+    function loadTabData(tabName) {
+        const loadingIndicator = document.getElementById('FilterLoadingIndicator');
+        if (loadingIndicator) {
+            loadingIndicator.style.display = 'inline';
+        }
+
+        const params = {
+            Action: 'AgentHistoricalTrends',
+            Subaction: 'GetTabData',
+            Tab: tabName
+        };
+
+        switch(tabName) {
+            case 'hourly':
+                params.Date = document.getElementById('hourlyDate').value;
+                break;
+            case 'daily':
+                params.Week = document.getElementById('dailyWeek').value;
+                break;
+            case 'weekly':
+                const month = document.getElementById('weeklyMonth').value;
+                const weeklyYear = document.getElementById('weeklyYear').value;
+                params.Month = weeklyYear + '-' + String(month).padStart(2, '0');
+                break;
+            case 'monthly':
+                params.StartMonth = document.getElementById('monthlyStartMonth').value;
+                params.EndMonth = document.getElementById('monthlyEndMonth').value;
+                params.Year = document.getElementById('monthlyYear').value;
+                break;
+            case 'quarterly':
+                params.Year = document.getElementById('quarterlyYear').value;
+                break;
+            case 'yearly':
+                params.StartYear = document.getElementById('yearlyStartYear').value;
+                params.EndYear = document.getElementById('yearlyEndYear').value;
+                break;
+        }
+
+        console.log('Loading data with params:', params);
+
+        $.ajax({
+            url: '[% Env("Baselink") %]',
+            type: 'POST',
+            data: params,
+            dataType: 'json',
+            success: function(data) {
+                console.log('Received data:', data);
+                if (data.Success) {
+                    renderChartAndTable(data.Data, tabName);
+                } else {
+                    console.error('Backend error:', data.ErrorMessage || 'Unknown error');
+                    alert('Error loading data: ' + (data.ErrorMessage || 'Unknown error'));
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', {
+                    status: status,
+                    error: error,
+                    responseText: xhr.responseText,
+                    statusCode: xhr.status
+                });
+                alert('Error loading data. Please check the console.\n\nStatus: ' + status + '\nError: ' + error);
+            },
+            complete: function() {
+                if (loadingIndicator) {
+                    loadingIndicator.style.display = 'none';
+                }
+            }
+        });
+    }
+
+    function renderChartAndTable(data, tabName) {
+        const titleMap = {
+            'hourly': 'Active Tickets Dashboard [Hourly of A Day]',
+            'daily': 'Active Tickets Dashboard [Daily of A Week]',
+            'weekly': 'Active Tickets Dashboard [Weekly of A Month]',
+            'monthly': 'Active Tickets Dashboard [Monthly of A Quarter]',
+            'quarterly': 'Active Tickets Dashboard [Quarterly of A Year]',
+            'yearly': 'Active Tickets Dashboard [Year-Over-Year]'
+        };
+        document.getElementById('chartTitle').textContent = titleMap[tabName];
+
+        renderDataTable(data, tabName);
+        renderStackedBarChart(data, tabName);
+    }
+
+    function renderDataTable(data, tabName) {
+        const container = document.getElementById('dataTableContainer');
+        if (!container) return;
+
+        const labelMap = {
+            'hourly': 'Open Hours',
+            'daily': 'Open Date',
+            'weekly': 'Open Week',
+            'monthly': 'Open Month',
+            'quarterly': 'Open Quarter',
+            'yearly': 'Open Year'
+        };
+
+        let html = '<table class="DataTable" style="width: 100%; border-collapse: collapse;">';
+        html += '<thead>';
+        html += '<tr style="background: #e3e8f4;">';
+        html += `<th style="padding: 8px; text-align: left; border: 1px solid #dee2e6;">Ticket Count<br>${labelMap[tabName]}</th>`;
+        html += '<th style="padding: 8px; text-align: center; border: 1px solid #dee2e6; background: #ff8c00; color: white;">P1</th>';
+        html += '<th style="padding: 8px; text-align: center; border: 1px solid #dee2e6; background: #ffeb3b;">P2</th>';
+        html += '<th style="padding: 8px; text-align: center; border: 1px solid #dee2e6; background: #4caf50; color: white;">P3</th>';
+        html += '<th style="padding: 8px; text-align: center; border: 1px solid #dee2e6; background: #2196f3; color: white;">P4</th>';
+        html += '</tr>';
+        html += '</thead>';
+        html += '<tbody>';
+
+        if (data.Rows && data.Rows.length > 0) {
+            data.Rows.forEach(row => {
+                html += '<tr>';
+                html += `<td style="padding: 8px; border: 1px solid #dee2e6;">${row.Label}</td>`;
+                html += `<td style="padding: 8px; text-align: center; border: 1px solid #dee2e6;">${row.P1 || 0}</td>`;
+                html += `<td style="padding: 8px; text-align: center; border: 1px solid #dee2e6;">${row.P2 || 0}</td>`;
+                html += `<td style="padding: 8px; text-align: center; border: 1px solid #dee2e6;">${row.P3 || 0}</td>`;
+                html += `<td style="padding: 8px; text-align: center; border: 1px solid #dee2e6;">${row.P4 || 0}</td>`;
+                html += '</tr>';
+            });
+        }
+
+        html += '<tr style="font-weight: bold; background: #d3d3d3;">';
+        html += '<td style="padding: 8px; border: 1px solid #dee2e6;">Grand Total</td>';
+        html += `<td style="padding: 8px; text-align: center; border: 1px solid #dee2e6;">${data.GrandTotal ? data.GrandTotal.P1 : 0}</td>`;
+        html += `<td style="padding: 8px; text-align: center; border: 1px solid #dee2e6;">${data.GrandTotal ? data.GrandTotal.P2 : 0}</td>`;
+        html += `<td style="padding: 8px; text-align: center; border: 1px solid #dee2e6;">${data.GrandTotal ? data.GrandTotal.P3 : 0}</td>`;
+        html += `<td style="padding: 8px; text-align: center; border: 1px solid #dee2e6;">${data.GrandTotal ? data.GrandTotal.P4 : 0}</td>`;
+        html += '</tr>';
+
+        html += '</tbody>';
+        html += '</table>';
+
+        container.innerHTML = html;
+    }
+
+    function renderStackedBarChart(data, tabName) {
+        const canvas = document.getElementById('activeTicketsChart');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+
+        const labels = data.Rows ? data.Rows.map(row => row.Label) : [];
+        const p1Data = data.Rows ? data.Rows.map(row => row.P1 || 0) : [];
+        const p2Data = data.Rows ? data.Rows.map(row => row.P2 || 0) : [];
+        const p3Data = data.Rows ? data.Rows.map(row => row.P3 || 0) : [];
+        const p4Data = data.Rows ? data.Rows.map(row => row.P4 || 0) : [];
+
+        // Calculate totals for each period (for labels on top of bars)
+        const totals = data.Rows ? data.Rows.map(row =>
+            (row.P1 || 0) + (row.P2 || 0) + (row.P3 || 0) + (row.P4 || 0)
+        ) : [];
+
+        // Calculate per-bar average (average of P1, P2, P3, P4 for each time period)
+        const averageData = data.Rows ? data.Rows.map(row =>
+            ((row.P1 || 0) + (row.P2 || 0) + (row.P3 || 0) + (row.P4 || 0)) / 4
+        ) : [];
+
+        // Plugin to display total on top of each bar and average line label
+        const totalLabelPlugin = {
+            id: 'totalLabel',
+            afterDatasetsDraw: function(chart) {
+                const ctx = chart.ctx;
+                chart.data.datasets.forEach((dataset, datasetIndex) => {
+                    const meta = chart.getDatasetMeta(datasetIndex);
+                    if (!meta.hidden) {
+                        // Display total on top of bars
+                        if (dataset.type !== 'line' && dataset.stack === 'tickets') {
+                            meta.data.forEach((bar, index) => {
+                                // Calculate total for this bar (only once, for P1 dataset)
+                                if (dataset.label === 'P1') {
+                                    const total = totals[index];
+                                    if (total > 0) {
+                                        ctx.fillStyle = '#000';
+                                        ctx.font = 'bold 12px Arial';
+                                        ctx.textAlign = 'center';
+                                        ctx.textBaseline = 'bottom';
+                                        ctx.fillText(total, bar.x, bar.y - 5);
+                                    }
+                                }
+                            });
+                        }
+                        // Display average value labels on the line
+                        if (dataset.type === 'line' && dataset.label === 'Average') {
+                            meta.data.forEach((point, index) => {
+                                const avg = averageData[index];
+                                if (avg > 0) {
+                                    ctx.fillStyle = '#666';
+                                    ctx.font = 'bold 11px Arial';
+                                    ctx.textAlign = 'center';
+                                    ctx.textBaseline = 'bottom';
+                                    ctx.fillText(avg.toFixed(1), point.x, point.y - 10);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        };
+
+        chartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'P4',
+                        data: p4Data,
+                        backgroundColor: '#2196f3',
+                        borderColor: '#1976d2',
+                        borderWidth: 1,
+                        stack: 'tickets',
+                        order: 2
+                    },
+                    {
+                        label: 'P3',
+                        data: p3Data,
+                        backgroundColor: '#4caf50',
+                        borderColor: '#388e3c',
+                        borderWidth: 1,
+                        stack: 'tickets',
+                        order: 2
+                    },
+                    {
+                        label: 'P2',
+                        data: p2Data,
+                        backgroundColor: '#ffeb3b',
+                        borderColor: '#fbc02d',
+                        borderWidth: 1,
+                        stack: 'tickets',
+                        order: 2
+                    },
+                    {
+                        label: 'P1',
+                        data: p1Data,
+                        backgroundColor: '#ff8c00',
+                        borderColor: '#e67e00',
+                        borderWidth: 1,
+                        stack: 'tickets',
+                        order: 2
+                    },
+                    {
+                        label: 'Average',
+                        data: averageData,
+                        type: 'line',
+                        borderColor: '#666',
+                        backgroundColor: 'transparent',
+                        borderWidth: 4,
+                        borderDash: [10, 5],
+                        pointRadius: 7,
+                        pointBackgroundColor: '#666',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 3,
+                        pointHoverRadius: 8,
+                        fill: false,
+                        tension: 0,
+                        order: 1,
+                        yAxisID: 'y'
+                    }
+                ]
+            },
+            plugins: [totalLabelPlugin],
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                layout: {
+                    padding: {
+                        top: 30
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            footer: function(tooltipItems) {
+                                let sum = 0;
+                                tooltipItems.forEach(function(tooltipItem) {
+                                    if (tooltipItem.dataset.label !== 'Average') {
+                                        sum += tooltipItem.parsed.y;
+                                    }
+                                });
+                                return 'Total: ' + sum;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                        title: {
+                            display: true,
+                            text: getLabelMap(tabName)
+                        }
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Ticket Count'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function getLabelMap(tabName) {
+        const map = {
+            'hourly': 'Open Hours',
+            'daily': 'Open Date',
+            'weekly': 'Open Week',
+            'monthly': 'Open Month',
+            'quarterly': 'Open Quarter',
+            'yearly': 'Open Year'
+        };
+        return map[tabName] || 'Time Period';
+    }
+
+})();
+</script>

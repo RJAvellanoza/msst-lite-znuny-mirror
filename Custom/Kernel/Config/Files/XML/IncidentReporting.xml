@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Application">
+
+    <!-- Frontend Module Registration -->
+    <Setting Name="Frontend::Module###AgentIncidentReport" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for Incident Report.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="GroupRo">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Module">Kernel::Modules::AgentIncidentReport</Item>
+                    <Item Key="Description" Translatable="1">Incident reporting and analytics dashboard</Item>
+                    <Item Key="Title" Translatable="1">Incident Report</Item>
+                    <Item Key="NavBarName">Reports</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+
+    <!-- Navigation Registration (Submenu under Reports) - DISABLED: Use AgentIncidentReports instead -->
+    <Setting Name="Frontend::Navigation###AgentIncidentReport###001-IncidentReport" Required="0" Valid="0">
+        <Description Translatable="1">Submenu navigation for Incident Report under Reports menu.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::MainMenu</Navigation>
+        <Value>
+            <Array>
+                <DefaultItem ValueType="FrontendNavigation">
+                    <Hash></Hash>
+                </DefaultItem>
+                <Item>
+                    <Hash>
+                        <Item Key="Group">
+                            <Array>
+                                <Item>stats</Item>
+                            </Array>
+                        </Item>
+                        <Item Key="GroupRo">
+                            <Array>
+                                <Item>stats</Item>
+                            </Array>
+                        </Item>
+                        <Item Key="Description" Translatable="1">View incident trends, statistics and MSI handover analysis</Item>
+                        <Item Key="Name" Translatable="1">Incident Report</Item>
+                        <Item Key="Link">Action=AgentIncidentReport</Item>
+                        <Item Key="LinkOption"></Item>
+                        <Item Key="NavBar">Reports</Item>
+                        <Item Key="Type">Submenu</Item>
+                        <Item Key="Block"></Item>
+                        <Item Key="AccessKey"></Item>
+                        <Item Key="Prio">115</Item>
+                    </Hash>
+                </Item>
+            </Array>
+        </Value>
+    </Setting>
+
+    <!-- JavaScript Module Loader Registration -->
+    <Setting Name="Loader::Module::AgentIncidentReport###002-Framework" Required="0" Valid="1">
+        <Description Translatable="1">List of JS files loaded for AgentIncidentReport frontend module.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::Loader</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="JavaScript">
+                    <Array>
+                        <Item>Core.Agent.IncidentReport.js</Item>
+                    </Array>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Cache TTL Setting -->
+    <Setting Name="IncidentReporting::CacheTTL" Required="1" Valid="1">
+        <Description Translatable="1">Cache time-to-live in seconds for trending data (default: 300 seconds = 5 minutes).</Description>
+        <Navigation>Core::IncidentReporting</Navigation>
+        <Value>
+            <Item ValueType="String">300</Item>
+        </Value>
+    </Setting>
+
+    <!-- Default Page Size -->
+    <Setting Name="IncidentReporting::DefaultPageSize" Required="1" Valid="1">
+        <Description Translatable="1">Default number of records per page in tabular report.</Description>
+        <Navigation>Core::IncidentReporting</Navigation>
+        <Value>
+            <Item ValueType="String">100</Item>
+        </Value>
+    </Setting>
+
+    <!-- Enable MSI Handover Analysis -->
+    <Setting Name="IncidentReporting::EnableMSIAnalysis" Required="1" Valid="1">
+        <Description Translatable="1">Enable MSI handover analysis section in reports.</Description>
+        <Navigation>Core::IncidentReporting</Navigation>
+        <Value>
+            <Item ValueType="String">1</Item>
+        </Value>
+    </Setting>
+
+    <!-- Default Time Range -->
+    <Setting Name="IncidentReporting::DefaultTimeRange" Required="1" Valid="1">
+        <Description Translatable="1">Default time range for reports (daily, weekly, monthly, 6months).</Description>
+        <Navigation>Core::IncidentReporting</Navigation>
+        <Value>
+            <Item ValueType="Select" SelectedID="weekly">
+                <Item ValueType="Option" Value="daily" Translatable="1">Daily</Item>
+                <Item ValueType="Option" Value="weekly" Translatable="1">Weekly</Item>
+                <Item ValueType="Option" Value="monthly" Translatable="1">Monthly</Item>
+                <Item ValueType="Option" Value="6months" Translatable="1">Last 6 Months</Item>
+            </Item>
+        </Value>
+    </Setting>
+
+</otrs_config>

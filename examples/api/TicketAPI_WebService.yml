@@ -1,0 +1,115 @@
+---
+Debugger:
+  DebugThreshold: debug
+  TestMode: '0'
+Description: REST API for Ticket Operations - Create, Read, Update, Search tickets via API
+FrameworkVersion: 6.5.15
+ID: 0
+Name: TicketAPI
+NameSpace: http://www.znuny.org/TicketAPI/1.0
+Provider:
+  ErrorHandling: {}
+  ErrorHandlingPriority: []
+  Operation:
+    SessionCreate:
+      Description: Creates a Session
+      IncludeTicketData: '0'
+      MappingInbound: {}
+      MappingOutbound: {}
+      Type: Session::SessionCreate
+    SessionGet:
+      Description: Retrieves a Session data
+      IncludeTicketData: '0'
+      MappingInbound: {}
+      MappingOutbound: {}
+      Type: Session::SessionGet
+    SessionRemove:
+      Description: Removes a Session
+      IncludeTicketData: '0'
+      MappingInbound: {}
+      MappingOutbound: {}
+      Type: Session::SessionRemove
+    TicketCreate:
+      Description: Creates a Ticket
+      IncludeTicketData: '0'
+      MappingInbound: {}
+      MappingOutbound: {}
+      Type: Ticket::TicketCreate
+    TicketGet:
+      Description: Retrieves Ticket data
+      IncludeTicketData: '0'
+      MappingInbound: {}
+      MappingOutbound: {}
+      Type: Ticket::TicketGet
+    TicketSearch:
+      Description: Search for Tickets
+      IncludeTicketData: '0'
+      MappingInbound: {}
+      MappingOutbound: {}
+      Type: Ticket::TicketSearch
+    TicketUpdate:
+      Description: Updates a Ticket
+      IncludeTicketData: '0'
+      MappingInbound: {}
+      MappingOutbound: {}
+      Type: Ticket::TicketUpdate
+    TicketHistoryGet:
+      Description: Get Ticket History
+      IncludeTicketData: '0'
+      MappingInbound: {}
+      MappingOutbound: {}
+      Type: Ticket::TicketHistoryGet
+  Transport:
+    Config:
+      AdditionalHeaders: ~
+      KeepAlive: ''
+      MaxLength: '52428800'
+      RouteOperationMapping:
+        SessionCreate:
+          RequestMethod:
+            - POST
+          Route: /Session
+        SessionGet:
+          RequestMethod:
+            - GET
+            - POST
+          Route: /Session/:SessionID
+        SessionRemove:
+          RequestMethod:
+            - DELETE
+            - POST
+          Route: /Session/:SessionID
+        TicketCreate:
+          RequestMethod:
+            - POST
+          Route: /Ticket
+        TicketGet:
+          RequestMethod:
+            - GET
+            - POST
+          Route: /Ticket/:TicketID
+        TicketSearch:
+          RequestMethod:
+            - GET
+            - POST
+          Route: /TicketSearch
+        TicketUpdate:
+          RequestMethod:
+            - PATCH
+            - POST
+          Route: /Ticket/:TicketID
+        TicketHistoryGet:
+          RequestMethod:
+            - GET
+            - POST
+          Route: /TicketHistory/:TicketID
+    Type: HTTP::REST
+Requester:
+  ErrorHandling: {}
+  ErrorHandlingPriority: []
+  Invoker: {}
+  Transport:
+    Config: {}
+    Type: ''
+RemoteSystem: ''
+Valid: 1

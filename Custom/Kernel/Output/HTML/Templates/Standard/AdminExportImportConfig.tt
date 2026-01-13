@@ -1,0 +1,159 @@
+# --
+# Copyright (C) 2025 MSST
+# --
+# This software comes with ABSOLUTELY NO WARRANTY. For details, see
+# the enclosed file COPYING for license information (GPL). If you
+# did not receive this file, see https://www.gnu.org/licenses/gpl-3.0.txt.
+# --
+
+<div class="MainBox ARIARoleMain LayoutFixedSidebar SidebarFirst">
+    <h1 class="InvisibleText">[% Translate("Export/Import Configuration Management") | html %]</h1>
+
+    [% INCLUDE "Breadcrumb.tt" %]
+
+    <div class="SidebarColumn">
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Actions") | html %]</h2>
+            </div>
+            <div class="Content">
+                <ul class="ActionList">
+                    <li>
+                        <a href="[% Env("Baselink") %]Action=[% Env("Action") %]" class="CallForAction Fullsize Center">
+                            <span><i class="fa fa-caret-left"></i>[% Translate("Go to overview") | html %]</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Information") | html %]</h2>
+            </div>
+            <div class="Content">
+                <p class="FieldExplanation">
+                    [% Translate("Use this screen to export and import system configurations.") | html %]
+                </p>
+                <p class="FieldExplanation">
+                    <strong>[% Translate("Export includes:") | html %]</strong>
+                </p>
+                <ul>
+                    <li>[% Translate("SMS Settings (Twilio)") | html %]</li>
+                    <li>[% Translate("SMTP Settings") | html %]</li>
+                    <li>[% Translate("Zabbix Integration Settings") | html %]</li>
+                    <li>[% Translate("Ticket Prefixes") | html %]</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="ContentColumn">
+
+        [% IF Data.SystemModuleNotAvailable %]
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Export/Import Configuration") | html %]</h2>
+            </div>
+            <div class="Content">
+                <div class="MessageBox Warning">
+                    <p>[% Translate("The ExportImportConfig system module is not available.") | html %]</p>
+                </div>
+            </div>
+        </div>
+        [% ELSE %]
+
+        <!-- Export Configuration Widget -->
+        <div class="WidgetSimple" id="ExportWidget">
+            <div class="Header">
+                <h2>[% Translate("Export Configuration") | html %]</h2>
+            </div>
+            <div class="Content">
+                <form action="[% Env("CGIHandle") %]" method="post" enctype="multipart/form-data" 
+                      class="Validate PreventMultipleSubmits" id="ExportForm">
+                    <input type="hidden" name="Action" value="[% Env("Action") %]" />
+                    <input type="hidden" name="Subaction" value="Export" />
+                    <input type="hidden" name="ChallengeToken" value="[% Env("UserChallengeToken") %]" />
+
+                    <fieldset class="TableLike">
+                        <div class="Field">
+                            <p>[% Data.ExportInfo || Translate("Configuration will be exported with the filename format: Znuny_ConfigurationExport_YYYYMMDD.gzip") | html %]</p>
+                        </div>
+                        <div class="Clear"></div>
+                    </fieldset>
+
+                    <div class="Field SpacingTop">
+                        <button class="Primary CallForAction" type="submit" id="ExportButton">
+                            <span><i class="fa fa-download"></i> [% Translate("Export Configuration") | html %]</span>
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+        <!-- Import Configuration Widget -->
+        <div class="WidgetSimple" id="ImportWidget">
+            <div class="Header">
+                <h2>[% Translate("Import Configuration") | html %]</h2>
+            </div>
+            <div class="Content">
+                <form action="[% Env("CGIHandle") %]" method="post" enctype="multipart/form-data" 
+                      class="Validate PreventMultipleSubmits" id="ImportForm">
+                    <input type="hidden" name="Action" value="[% Env("Action") %]" />
+                    <input type="hidden" name="Subaction" value="Import" />
+                    <input type="hidden" name="ChallengeToken" value="[% Env("UserChallengeToken") %]" />
+
+                    <fieldset class="TableLike">
+                        <label class="Mandatory" for="ImportFile">
+                            <span class="Marker">*</span>
+                            [% Translate("Exported Configuration File") | html %]:
+                        </label>
+                        <div class="Field">
+                            <input type="file" name="ImportFile" id="ImportFile" 
+                                   class="Validate_Required" accept=".gz,.gzip" title="Select exported configuration file (.gz or .gzip)" />
+                            <div id="ImportFileError" class="TooltipErrorMessage" style="display: none;">
+                                <p>[% Translate("Please select an exported configuration file to import.") | html %]</p>
+                            </div>
+                            <p class="FieldExplanation">[% Translate("Select the exported configuration file (.gz or .gzip format) created by the export function") | html %]</p>
+                        </div>
+                        <div class="Clear"></div>
+                    </fieldset>
+
+                    <div class="Field SpacingTop">
+                        <button class="Primary CallForAction" type="submit" id="ImportButton">
+                            <span><i class="fa fa-upload"></i> [% Translate("Import Configuration") | html %]</span>
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+        [% END %]
+    </div>
+
+    <div class="Clear"></div>
+</div>
+
+<!-- Progress Modal for better UX -->
+<div id="ProgressModal" class="Modal" style="display: none;">
+    <div class="ModalContent">
+        <div class="ModalHeader">
+            <h3 id="ProgressModalTitle">[% Translate("Processing...") | html %]</h3>
+        </div>
+        <div class="ModalBody">
+            <div class="ProgressBar">
+                <div class="ProgressBarInner" id="ModalProgressBar"></div>
+                <span class="ProgressPercent" id="ModalProgressPercent">0%</span>
+            </div>
+            <p class="ProgressMessage" id="ModalProgressMessage">[% Translate("Please wait...") | html %]</p>
+            <div class="ProgressActions" style="margin-top: 20px;">
+                <button type="button" class="CallForAction" id="ProgressModalClose" style="display: none;">
+                    <span>[% Translate("Close") | html %]</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+

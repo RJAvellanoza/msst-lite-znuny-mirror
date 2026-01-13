@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Framework">
+    <Setting Name="MSSTLite::Version" Required="1" Valid="1">
+        <Description Translatable="1">LSMP version number in YY.MM.DD format.</Description>
+        <Navigation>Core::MSSTLite</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="">2.0.0</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="Frontend::Output::FilterContent###MSSTLiteVersionFooter" Required="0" Valid="1">
+        <Description Translatable="1">Output filter to display LSMP version in footer.</Description>
+        <Navigation>Frontend::Base::OutputFilter</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Module">Kernel::Output::HTML::FilterContent::MSSTLiteVersionFooter</Item>
+            </Hash>
+        </Value>
+    </Setting>
+</otrs_config>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<otrs_config version="2.0" init="Application">
+    <!-- Disable New Phone Ticket menu item -->
+    <Setting Name="Frontend::Navigation###AgentTicketPhone###002-Ticket" Required="0" Valid="0">
+        <Description Translatable="1">Main menu item registration - DISABLED.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::MainMenu</Navigation>
+        <Value>
+            <Array>
+            </Array>
+        </Value>
+    </Setting>
+    
+    <!-- Disable New Email Ticket menu item -->
+    <Setting Name="Frontend::Navigation###AgentTicketEmail###002-Ticket" Required="0" Valid="0">
+        <Description Translatable="1">Main menu item registration - DISABLED.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::MainMenu</Navigation>
+        <Value>
+            <Array>
+            </Array>
+        </Value>
+    </Setting>
+</otrs_config>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<otrs_config version="2.0" init="Config">
+    <!-- Disable pre-sorting by priority to fix column sorting in queue view -->
+    <Setting Name="Ticket::Frontend::AgentTicketQueue###PreSort::ByPriority" Required="1" Valid="1">
+        <Description Translatable="1">Defines if a pre-sorting by priority should be done in the queue view. Disabled to allow proper column sorting.</Description>
+        <Navigation>Frontend::Agent::View::TicketQueue</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">0</Item>
+        </Value>
+    </Setting>
+</otrs_config>

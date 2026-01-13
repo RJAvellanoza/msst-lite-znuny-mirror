@@ -1,0 +1,526 @@
+# --
+# Copyright (C) 2025 MSST, https://msst.com/
+# --
+# This software comes with ABSOLUTELY NO WARRANTY.
+# --
+
+<div class="MainBox ARIARoleMain LayoutFixedSidebar SidebarFirst">
+    <h1>[% Translate("MTTR Reports - Mean Time to Resolve") | html %]</h1>
+
+    <div class="SidebarColumn">
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Report Views") | html %]</h2>
+            </div>
+            <div class="Content">
+                <ul class="Tabs">
+                    <li class="[% IF Data.View == 'Live' %]Active[% END %]">
+                        <a href="[% Env("Baselink") %]Action=AgentMTTRReport;View=Live">
+                            [% Translate("Live Dashboard") | html %]
+                        </a>
+                    </li>
+                    <li class="[% IF Data.View == 'Daily' %]Active[% END %]">
+                        <a href="[% Env("Baselink") %]Action=AgentMTTRReport;View=Daily">
+                            [% Translate("Daily Report") | html %]
+                        </a>
+                    </li>
+                    <li class="[% IF Data.View == 'Weekly' %]Active[% END %]">
+                        <a href="[% Env("Baselink") %]Action=AgentMTTRReport;View=Weekly">
+                            [% Translate("Weekly Report") | html %]
+                        </a>
+                    </li>
+                    <li class="[% IF Data.View == 'Monthly' %]Active[% END %]">
+                        <a href="[% Env("Baselink") %]Action=AgentMTTRReport;View=Monthly">
+                            [% Translate("Monthly Report") | html %]
+                        </a>
+                    </li>
+                    <li class="[% IF Data.View == 'Quarterly' %]Active[% END %]">
+                        <a href="[% Env("Baselink") %]Action=AgentMTTRReport;View=Quarterly">
+                            [% Translate("Quarterly Report") | html %]
+                        </a>
+                    </li>
+                    <li class="[% IF Data.View == 'Yearly' %]Active[% END %]">
+                        <a href="[% Env("Baselink") %]Action=AgentMTTRReport;View=Yearly">
+                            [% Translate("Yearly Report") | html %]
+                        </a>
+                    </li>
+                    <li class="[% IF Data.View == 'Tabular' %]Active[% END %]">
+                        <a href="[% Env("Baselink") %]Action=AgentMTTRReport;View=Tabular">
+                            [% Translate("Export Data") | html %]
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="ContentColumn">
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>
+                    [% IF Data.View == 'Live' %]
+                        [% Translate("Live Unresolved Tickets Dashboard") | html %]
+                    [% ELSIF Data.View == 'Daily' %]
+                        [% Translate("MTTR Daily Report - Hourly Breakdown") | html %]
+                    [% ELSIF Data.View == 'Weekly' %]
+                        [% Translate("MTTR Weekly Report - Daily Breakdown") | html %]
+                    [% ELSIF Data.View == 'Monthly' %]
+                        [% Translate("MTTR Monthly Report - Weekly Breakdown") | html %]
+                    [% ELSIF Data.View == 'Quarterly' %]
+                        [% Translate("MTTR Quarterly Report - Monthly Breakdown") | html %]
+                    [% ELSIF Data.View == 'Yearly' %]
+                        [% Translate("MTTR Yearly Report - Monthly Breakdown") | html %]
+                    [% ELSIF Data.View == 'Tabular' %]
+                        [% Translate("MTTR Tabular Export") | html %]
+                    [% END %]
+                </h2>
+            </div>
+            <div class="Content">
+
+                [% IF Data.View == 'Live' %]
+                    [% INCLUDE _LiveDashboard %]
+                [% ELSIF Data.View == 'Daily' %]
+                    [% INCLUDE _DailyReport %]
+                [% ELSIF Data.View == 'Weekly' %]
+                    [% INCLUDE _WeeklyReport %]
+                [% ELSIF Data.View == 'Monthly' %]
+                    [% INCLUDE _MonthlyReport %]
+                [% ELSIF Data.View == 'Quarterly' %]
+                    [% INCLUDE _QuarterlyReport %]
+                [% ELSIF Data.View == 'Yearly' %]
+                    [% INCLUDE _YearlyReport %]
+                [% ELSIF Data.View == 'Tabular' %]
+                    [% INCLUDE _TabularReport %]
+                [% END %]
+
+            </div>
+        </div>
+    </div>
+</div>
+
+[% BLOCK _LiveDashboard %]
+    <div class="MTTRLiveDashboard">
+        <h3>[% Translate("Current Unresolved Incidents") | html %]: [% Data.TotalUnassigned | html %]</h3>
+
+        [% IF Data.UnassignedTickets && Data.UnassignedTickets.size > 0 %]
+            <table class="DataTable">
+                <thead>
+                    <tr>
+                        <th>[% Translate("Ticket Number") | html %]</th>
+                        <th>[% Translate("Priority") | html %]</th>
+                        <th>[% Translate("Title") | html %]</th>
+                        <th>[% Translate("Created") | html %]</th>
+                        <th>[% Translate("Age") | html %]</th>
+                        <th>[% Translate("Source") | html %]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    [% FOREACH Ticket IN Data.UnassignedTickets %]
+                    <tr>
+                        <td>
+                            <a href="[% Env("Baselink") %]Action=AgentTicketZoom;TicketID=[% Ticket.TicketID | uri %]">
+                                [% Ticket.TicketNumber | html %]
+                            </a>
+                        </td>
+                        <td>
+                            <span class="Priority[% Ticket.Priority | replace('-', '') %]">
+                                [% Ticket.Priority | html %]
+                            </span>
+                        </td>
+                        <td>[% Ticket.Title | html %]</td>
+                        <td>[% Ticket.CreatedTime | html %]</td>
+                        <td><strong>[% Ticket.Age | html %]</strong></td>
+                        <td>[% Ticket.Source | html %]</td>
+                    </tr>
+                    [% END %]
+                </tbody>
+            </table>
+        [% ELSE %]
+            <p class="Notice">[% Translate("No unresolved incidents found.") | html %]</p>
+        [% END %]
+    </div>
+[% END %]
+
+[% BLOCK _DailyReport %]
+    <form action="[% Env("CGIHandle") %]" method="get">
+        <input type="hidden" name="Action" value="AgentMTTRReport" />
+        <input type="hidden" name="View" value="Daily" />
+
+        <fieldset class="TableLike">
+            <label for="SelectedDate">[% Translate("Select Date") | html %]:</label>
+            <div class="Field">
+                <input type="date" id="SelectedDate" name="SelectedDate" value="[% Data.SelectedDate | html %]" />
+            </div>
+            <div class="Field">
+                <button class="Primary CallForAction" type="submit" value="[% Translate("Generate Report") | html %]">
+                    <span>[% Translate("Generate Report") | html %]</span>
+                </button>
+            </div>
+        </fieldset>
+    </form>
+
+    [% IF Data.HourlyBreakdown %]
+        <h3>[% Translate("Summary for") | html %] [% Data.Date | html %]</h3>
+        <div class="MTTRSummary">
+            <p><strong>[% Translate("Total Resolved") | html %]:</strong> [% Data.Summary.Total | html %]</p>
+            <p><strong>[% Translate("Average MTTR") | html %]:</strong> [% Data.Summary.AverageMTTRFormatted | html %]</p>
+            <p><strong>[% Translate("Priority Breakdown") | html %]:</strong> P1:[% Data.Summary.P1 | html %], P2:[% Data.Summary.P2 | html %], P3:[% Data.Summary.P3 | html %], P4:[% Data.Summary.P4 | html %]</p>
+        </div>
+
+        <h3>[% Translate("Hourly Breakdown") | html %]</h3>
+        <table class="DataTable">
+            <thead>
+                <tr>
+                    <th>[% Translate("Hour") | html %]</th>
+                    <th>[% Translate("Total") | html %]</th>
+                    <th>[% Translate("Avg MTTR") | html %]</th>
+                    <th>[% Translate("P1") | html %]</th>
+                    <th>[% Translate("P2") | html %]</th>
+                    <th>[% Translate("P3") | html %]</th>
+                    <th>[% Translate("P4") | html %]</th>
+                </tr>
+            </thead>
+            <tbody>
+                [% FOREACH Hour IN Data.HourlyBreakdown %]
+                <tr>
+                    <td>[% Hour.Hour | html %]:00</td>
+                    <td>[% Hour.Total | html %]</td>
+                    <td>[% Hour.AverageMTTRFormatted | html %]</td>
+                    <td>[% Hour.P1 | html %]</td>
+                    <td>[% Hour.P2 | html %]</td>
+                    <td>[% Hour.P3 | html %]</td>
+                    <td>[% Hour.P4 | html %]</td>
+                </tr>
+                [% END %]
+            </tbody>
+        </table>
+    [% END %]
+[% END %]
+
+[% BLOCK _WeeklyReport %]
+    <form action="[% Env("CGIHandle") %]" method="get">
+        <input type="hidden" name="Action" value="AgentMTTRReport" />
+        <input type="hidden" name="View" value="Weekly" />
+
+        <fieldset class="TableLike">
+            <label for="StartDate">[% Translate("Week Start Date") | html %]:</label>
+            <div class="Field">
+                <input type="date" id="StartDate" name="StartDate" value="[% Data.StartDate | html %]" />
+            </div>
+            <label for="EndDate">[% Translate("Week End Date") | html %]:</label>
+            <div class="Field">
+                <input type="date" id="EndDate" name="EndDate" value="[% Data.EndDate | html %]" />
+            </div>
+            <div class="Field">
+                <button class="Primary CallForAction" type="submit" value="[% Translate("Generate Report") | html %]">
+                    <span>[% Translate("Generate Report") | html %]</span>
+                </button>
+            </div>
+        </fieldset>
+    </form>
+
+    [% IF Data.DailyBreakdown %]
+        <h3>[% Translate("Summary") | html %]</h3>
+        <div class="MTTRSummary">
+            <p><strong>[% Translate("Total Resolved") | html %]:</strong> [% Data.Summary.Total | html %]</p>
+            <p><strong>[% Translate("Average MTTR") | html %]:</strong> [% Data.Summary.AverageMTTRFormatted | html %]</p>
+            <p><strong>[% Translate("Priority Breakdown") | html %]:</strong> P1:[% Data.Summary.P1 | html %], P2:[% Data.Summary.P2 | html %], P3:[% Data.Summary.P3 | html %], P4:[% Data.Summary.P4 | html %]</p>
+        </div>
+
+        <h3>[% Translate("Daily Breakdown") | html %]</h3>
+        <table class="DataTable">
+            <thead>
+                <tr>
+                    <th>[% Translate("Day") | html %]</th>
+                    <th>[% Translate("Date") | html %]</th>
+                    <th>[% Translate("Total") | html %]</th>
+                    <th>[% Translate("Avg MTTR") | html %]</th>
+                    <th>[% Translate("P1") | html %]</th>
+                    <th>[% Translate("P2") | html %]</th>
+                    <th>[% Translate("P3") | html %]</th>
+                    <th>[% Translate("P4") | html %]</th>
+                </tr>
+            </thead>
+            <tbody>
+                [% FOREACH Day IN Data.DailyBreakdown %]
+                <tr>
+                    <td>[% Day.Weekday | html %]</td>
+                    <td>[% Day.Date | html %]</td>
+                    <td>[% Day.Total | html %]</td>
+                    <td><strong>[% Day.AverageMTTRFormatted | html %]</strong></td>
+                    <td>[% Day.P1 | html %]</td>
+                    <td>[% Day.P2 | html %]</td>
+                    <td>[% Day.P3 | html %]</td>
+                    <td>[% Day.P4 | html %]</td>
+                </tr>
+                [% END %]
+            </tbody>
+        </table>
+    [% END %]
+[% END %]
+
+[% BLOCK _MonthlyReport %]
+    <form action="[% Env("CGIHandle") %]" method="get">
+        <input type="hidden" name="Action" value="AgentMTTRReport" />
+        <input type="hidden" name="View" value="Monthly" />
+
+        <fieldset class="TableLike">
+            <label for="Year">[% Translate("Year") | html %]:</label>
+            <div class="Field">
+                <input type="number" id="Year" name="Year" value="[% Data.Year || '2025' | html %]" min="2020" max="2030" />
+            </div>
+            <label for="Month">[% Translate("Month") | html %]:</label>
+            <div class="Field">
+                <select id="Month" name="Month">
+                    <option value="1" [% IF Data.Month == 1 %]selected[% END %]>January</option>
+                    <option value="2" [% IF Data.Month == 2 %]selected[% END %]>February</option>
+                    <option value="3" [% IF Data.Month == 3 %]selected[% END %]>March</option>
+                    <option value="4" [% IF Data.Month == 4 %]selected[% END %]>April</option>
+                    <option value="5" [% IF Data.Month == 5 %]selected[% END %]>May</option>
+                    <option value="6" [% IF Data.Month == 6 %]selected[% END %]>June</option>
+                    <option value="7" [% IF Data.Month == 7 %]selected[% END %]>July</option>
+                    <option value="8" [% IF Data.Month == 8 %]selected[% END %]>August</option>
+                    <option value="9" [% IF Data.Month == 9 %]selected[% END %]>September</option>
+                    <option value="10" [% IF Data.Month == 10 %]selected[% END %]>October</option>
+                    <option value="11" [% IF Data.Month == 11 %]selected[% END %]>November</option>
+                    <option value="12" [% IF Data.Month == 12 %]selected[% END %]>December</option>
+                </select>
+            </div>
+            <div class="Field">
+                <button class="Primary CallForAction" type="submit" value="[% Translate("Generate Report") | html %]">
+                    <span>[% Translate("Generate Report") | html %]</span>
+                </button>
+            </div>
+        </fieldset>
+    </form>
+
+    [% IF Data.WeeklyBreakdown %]
+        <h3>[% Translate("Summary") | html %]</h3>
+        <div class="MTTRSummary">
+            <p><strong>[% Translate("Year") | html %]:</strong> [% Data.Year | html %]</p>
+            <p><strong>[% Translate("Month") | html %]:</strong> [% Data.Month | html %]</p>
+            <p><strong>[% Translate("Total Resolved") | html %]:</strong> [% Data.Summary.Total | html %]</p>
+            <p><strong>[% Translate("Average MTTR") | html %]:</strong> [% Data.Summary.AverageMTTRFormatted | html %]</p>
+            <p><strong>[% Translate("Priority Breakdown") | html %]:</strong> P1:[% Data.Summary.P1 | html %], P2:[% Data.Summary.P2 | html %], P3:[% Data.Summary.P3 | html %], P4:[% Data.Summary.P4 | html %]</p>
+        </div>
+
+        <h3>[% Translate("Weekly Breakdown") | html %]</h3>
+        <table class="DataTable">
+            <thead>
+                <tr>
+                    <th>[% Translate("Week") | html %]</th>
+                    <th>[% Translate("Week Start") | html %]</th>
+                    <th>[% Translate("Total") | html %]</th>
+                    <th>[% Translate("Avg MTTR") | html %]</th>
+                    <th>[% Translate("P1") | html %]</th>
+                    <th>[% Translate("P2") | html %]</th>
+                    <th>[% Translate("P3") | html %]</th>
+                    <th>[% Translate("P4") | html %]</th>
+                </tr>
+            </thead>
+            <tbody>
+                [% FOREACH Week IN Data.WeeklyBreakdown %]
+                <tr>
+                    <td>Week [% Week.WeekNumber | html %]</td>
+                    <td>[% Week.WeekStart | html %]</td>
+                    <td>[% Week.Total | html %]</td>
+                    <td><strong>[% Week.AverageMTTRFormatted | html %]</strong></td>
+                    <td>[% Week.P1 | html %]</td>
+                    <td>[% Week.P2 | html %]</td>
+                    <td>[% Week.P3 | html %]</td>
+                    <td>[% Week.P4 | html %]</td>
+                </tr>
+                [% END %]
+            </tbody>
+        </table>
+    [% END %]
+[% END %]
+
+[% BLOCK _QuarterlyReport %]
+    <form action="[% Env("CGIHandle") %]" method="get">
+        <input type="hidden" name="Action" value="AgentMTTRReport" />
+        <input type="hidden" name="View" value="Quarterly" />
+
+        <fieldset class="TableLike">
+            <label for="Year">[% Translate("Year") | html %]:</label>
+            <div class="Field">
+                <input type="number" id="Year" name="Year" value="[% Data.Year || '2025' | html %]" min="2020" max="2030" />
+            </div>
+            <label for="Quarter">[% Translate("Quarter") | html %]:</label>
+            <div class="Field">
+                <select id="Quarter" name="Quarter">
+                    <option value="1" [% IF Data.Quarter == 1 %]selected[% END %]>Q1 (Jan-Mar)</option>
+                    <option value="2" [% IF Data.Quarter == 2 %]selected[% END %]>Q2 (Apr-Jun)</option>
+                    <option value="3" [% IF Data.Quarter == 3 %]selected[% END %]>Q3 (Jul-Sep)</option>
+                    <option value="4" [% IF Data.Quarter == 4 %]selected[% END %]>Q4 (Oct-Dec)</option>
+                </select>
+            </div>
+            <div class="Field">
+                <button class="Primary CallForAction" type="submit" value="[% Translate("Generate Report") | html %]">
+                    <span>[% Translate("Generate Report") | html %]</span>
+                </button>
+            </div>
+        </fieldset>
+    </form>
+
+    [% IF Data.MonthlyBreakdown %]
+        <h3>[% Translate("Summary") | html %]</h3>
+        <div class="MTTRSummary">
+            <p><strong>[% Translate("Year") | html %]:</strong> [% Data.Year | html %]</p>
+            <p><strong>[% Translate("Quarter") | html %]:</strong> Q[% Data.Quarter | html %]</p>
+            <p><strong>[% Translate("Total Resolved") | html %]:</strong> [% Data.Summary.Total | html %]</p>
+            <p><strong>[% Translate("Average MTTR") | html %]:</strong> [% Data.Summary.AverageMTTRFormatted | html %]</p>
+            <p><strong>[% Translate("Priority Breakdown") | html %]:</strong> P1:[% Data.Summary.P1 | html %], P2:[% Data.Summary.P2 | html %], P3:[% Data.Summary.P3 | html %], P4:[% Data.Summary.P4 | html %]</p>
+        </div>
+
+        <h3>[% Translate("Monthly Breakdown") | html %]</h3>
+        <table class="DataTable">
+            <thead>
+                <tr>
+                    <th>[% Translate("Month") | html %]</th>
+                    <th>[% Translate("Total") | html %]</th>
+                    <th>[% Translate("Avg MTTR") | html %]</th>
+                    <th>[% Translate("P1") | html %]</th>
+                    <th>[% Translate("P2") | html %]</th>
+                    <th>[% Translate("P3") | html %]</th>
+                    <th>[% Translate("P4") | html %]</th>
+                </tr>
+            </thead>
+            <tbody>
+                [% FOREACH Month IN Data.MonthlyBreakdown %]
+                <tr>
+                    <td>[% Month.MonthName | html %]</td>
+                    <td>[% Month.Total | html %]</td>
+                    <td><strong>[% Month.AverageMTTRFormatted | html %]</strong></td>
+                    <td>[% Month.P1 | html %]</td>
+                    <td>[% Month.P2 | html %]</td>
+                    <td>[% Month.P3 | html %]</td>
+                    <td>[% Month.P4 | html %]</td>
+                </tr>
+                [% END %]
+            </tbody>
+        </table>
+    [% END %]
+[% END %]
+
+[% BLOCK _YearlyReport %]
+    <form action="[% Env("CGIHandle") %]" method="get">
+        <input type="hidden" name="Action" value="AgentMTTRReport" />
+        <input type="hidden" name="View" value="Yearly" />
+
+        <fieldset class="TableLike">
+            <label for="Year">[% Translate("Year") | html %]:</label>
+            <div class="Field">
+                <input type="number" id="Year" name="Year" value="[% Data.Year || '2025' | html %]" min="2020" max="2030" />
+            </div>
+            <div class="Field">
+                <button class="Primary CallForAction" type="submit" value="[% Translate("Generate Report") | html %]">
+                    <span>[% Translate("Generate Report") | html %]</span>
+                </button>
+            </div>
+        </fieldset>
+    </form>
+
+    [% IF Data.MonthlyBreakdown %]
+        <h3>[% Translate("Summary for Year") | html %] [% Data.Year | html %]</h3>
+        <div class="MTTRSummary">
+            <p><strong>[% Translate("Total Resolved") | html %]:</strong> [% Data.Summary.Total | html %]</p>
+            <p><strong>[% Translate("Average MTTR") | html %]:</strong> [% Data.Summary.AverageMTTRFormatted | html %]</p>
+            <p><strong>[% Translate("Priority Breakdown") | html %]:</strong> P1:[% Data.Summary.P1 | html %], P2:[% Data.Summary.P2 | html %], P3:[% Data.Summary.P3 | html %], P4:[% Data.Summary.P4 | html %]</p>
+        </div>
+
+        <h3>[% Translate("Monthly Breakdown") | html %]</h3>
+        <table class="DataTable">
+            <thead>
+                <tr>
+                    <th>[% Translate("Month") | html %]</th>
+                    <th>[% Translate("Total") | html %]</th>
+                    <th>[% Translate("Avg MTTR") | html %]</th>
+                    <th>[% Translate("P1") | html %]</th>
+                    <th>[% Translate("P2") | html %]</th>
+                    <th>[% Translate("P3") | html %]</th>
+                    <th>[% Translate("P4") | html %]</th>
+                </tr>
+            </thead>
+            <tbody>
+                [% FOREACH Month IN Data.MonthlyBreakdown %]
+                <tr>
+                    <td>[% Month.MonthName | html %]</td>
+                    <td>[% Month.Total | html %]</td>
+                    <td><strong>[% Month.AverageMTTRFormatted | html %]</strong></td>
+                    <td>[% Month.P1 | html %]</td>
+                    <td>[% Month.P2 | html %]</td>
+                    <td>[% Month.P3 | html %]</td>
+                    <td>[% Month.P4 | html %]</td>
+                </tr>
+                [% END %]
+            </tbody>
+        </table>
+    [% END %]
+[% END %]
+
+[% BLOCK _TabularReport %]
+    <form action="[% Env("CGIHandle") %]" method="get">
+        <input type="hidden" name="Action" value="AgentMTTRReport" />
+        <input type="hidden" name="View" value="Tabular" />
+
+        <fieldset class="TableLike">
+            <label for="StartDate">[% Translate("Start Date") | html %]:</label>
+            <div class="Field">
+                <input type="date" id="StartDate" name="StartDate" value="[% Data.StartDate | html %]" />
+            </div>
+            <label for="EndDate">[% Translate("End Date") | html %]:</label>
+            <div class="Field">
+                <input type="date" id="EndDate" name="EndDate" value="[% Data.EndDate | html %]" />
+            </div>
+            <div class="Field">
+                <button class="Primary CallForAction" type="submit" value="[% Translate("Generate Report") | html %]">
+                    <span>[% Translate("View Data") | html %]</span>
+                </button>
+            </div>
+        </fieldset>
+    </form>
+
+    [% IF Data.TabularData %]
+        <h3>[% Translate("Total Records") | html %]: [% Data.TotalRecords | html %]</h3>
+
+        <div class="MTTRActions">
+            <a href="[% Env("Baselink") %]Action=AgentMTTRReport;View=Tabular;Action=ExportCSV;StartDate=[% Data.StartDate | uri %];EndDate=[% Data.EndDate | uri %]" class="CallForAction">
+                <span>[% Translate("Download CSV") | html %]</span>
+            </a>
+        </div>
+
+        <table class="DataTable">
+            <thead>
+                <tr>
+                    <th>[% Translate("Incident Number") | html %]</th>
+                    <th>[% Translate("Summary") | html %]</th>
+                    <th>[% Translate("Start Date") | html %]</th>
+                    <th>[% Translate("MTTR") | html %]</th>
+                    <th>[% Translate("Priority") | html %]</th>
+                    <th>[% Translate("Status") | html %]</th>
+                    <th>[% Translate("Assigned To") | html %]</th>
+                    <th>[% Translate("Source") | html %]</th>
+                </tr>
+            </thead>
+            <tbody>
+                [% FOREACH Record IN Data.TabularData %]
+                <tr>
+                    <td>
+                        <a href="[% Env("Baselink") %]Action=AgentTicketZoom;TicketNumber=[% Record.TicketNumber | uri %]">
+                            [% Record.TicketNumber | html %]
+                        </a>
+                    </td>
+                    <td>[% Record.Title | html | truncate(50) %]</td>
+                    <td>[% Record.StartDate | html %]</td>
+                    <td><strong>[% Record.MTTRFormatted | html %]</strong></td>
+                    <td>[% Record.Priority | html %]</td>
+                    <td>[% Record.Status | html %]</td>
+                    <td>[% Record.AssignedTo | html %]</td>
+                    <td>[% Record.Source | html %]</td>
+                </tr>
+                [% END %]
+            </tbody>
+        </table>
+    [% END %]
+[% END %]

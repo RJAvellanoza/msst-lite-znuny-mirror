@@ -1,0 +1,231 @@
+Op Cat - T1,Op Cat - T2,Op Cat - T3
+Alerts & Monitoring,Environmental Conditions,Smoke detected alert
+Alerts & Monitoring,Environmental Conditions,Temperature out of range
+Alerts & Monitoring,Environmental Conditions,Humidity alert
+Alerts & Monitoring,Infrastructure Security,Server cabinet alert
+Alerts & Monitoring,Notification Failures,Alerts not sent
+Alerts & Monitoring,Notification Failures,False alarms
+Alerts & Monitoring,Notification Failures,Hot list alerting
+Alerts & Monitoring,Notification Failures,Auth list alerting
+Alerts & Monitoring,Notification Failures,Location alerting issues
+Alerts & Monitoring,Notification Failures,Email alerting issues
+Alerts & Monitoring,Power Alerts,Power outage alert
+Alerts & Monitoring,Power Alerts,Low power warning
+Alerts & Monitoring,Power Alerts,Overvoltage warning
+Alerts & Monitoring,Power Alerts,Generator failure alert
+Alerts & Monitoring,System Status Alerts,Application failure alert
+Alerts & Monitoring,System Status Alerts,Battery alarm triggered
+Alerts & Monitoring,System Status Alerts,Link/Backhaul failure alert
+Billing & Licensing,License Management,License activation issues
+Billing & Licensing,License Management,License expiration alerts
+Billing & Licensing,License Management,License allocation issues
+Billing & Licensing,Payment Processing,Payment failure
+Billing & Licensing,Payment Processing,Invoice discrepancies
+Billing & Licensing,Payment Processing,Refund requests
+Billing & Licensing,Subscription Issues,Subscription renewal errors
+Billing & Licensing,Subscription Issues,Plan upgrade/downgrade requests
+Billing & Licensing,Subscription Issues,Subscription status inquiries
+Configuration & Updates,Configuration Management,Adjust threshold values
+Configuration & Updates,Configuration Management,Change default behaviors
+Configuration & Updates,Configuration Management,Modify system variables
+Configuration & Updates,Configuration Management,Update configuration files
+Configuration & Updates,Configuration Management,Update system parameters
+Configuration & Updates,Incorrect Settings,Wrong settings
+Configuration & Updates,Incorrect Settings,Default conflicts
+Configuration & Updates,Incorrect Settings,Integration configuration
+Configuration & Updates,New Software Requests,Request new software installation
+Configuration & Updates,New Software Requests,Evaluate software for purchase
+Configuration & Updates,New Software Requests,Request software demo
+Configuration & Updates,New Software Requests,Feature request
+Configuration & Updates,Software Updates,Software patch
+Configuration & Updates,Software Updates,Schedule system upgrade
+Configuration & Updates,Software Updates,Rollback to previous version
+Configuration & Updates,Update Failures,Partial updates
+Configuration & Updates,Update Failures,Rollback errors
+Configuration & Updates,Version Conflicts,Software/firmware mismatch
+Configuration & Updates,Version Conflicts,API mismatches
+Connectivity & Network,Configuration Changes,Modify network routing/firewall
+Connectivity & Network,Configuration Changes,Configure network interfaces
+Connectivity & Network,Configuration Changes,Add new user permissions
+Connectivity & Network,Connection Failures,Timeouts
+Connectivity & Network,Connection Failures,Dropped links
+Connectivity & Network,Connection Failures,Login rejections
+Connectivity & Network,Connection Failures,VM/Client portal connection
+Connectivity & Network,Connection Failures,No communication
+Connectivity & Network,Data Transmission Issues,Packet loss
+Connectivity & Network,Data Transmission Issues,Data corruption
+Connectivity & Network,Data Transmission Issues,Checksum errors
+Connectivity & Network,Data Transmission Issues,Scan/hit delays
+Connectivity & Network,Infrastructure Requests,Request new hardware
+Connectivity & Network,Infrastructure Requests,Upgrade existing equipment
+Connectivity & Network,Infrastructure Requests,Expand network capacity
+Connectivity & Network,Radio Frequency (RF) Issues,Interference
+Connectivity & Network,Radio Frequency (RF) Issues,Limited range
+Connectivity & Network,Radio Frequency (RF) Issues,Frequency conflicts
+Connectivity & Network,Signal/Protocol Issues,Weak signal
+Connectivity & Network,Signal/Protocol Issues,Protocol incompatibility
+Connectivity & Network,Signal/Protocol Issues,Token issue
+Data & Storage,Capacity Issues,Quota exceeded
+Data & Storage,Capacity Issues,Database size limits
+Data & Storage,Corruption/Loss,File/database damage
+Data & Storage,Corruption/Loss,Partial data loss
+Data & Storage,Data Analysis,Locate analysis
+Data & Storage,Data Analysis,Convoy analysis
+Data & Storage,Data Analysis,Associate analysis
+Data & Storage,Data Analysis,Statistics counts incorrect
+Data & Storage,Data Management,Request data backup
+Data & Storage,Data Management,Restore data from backup
+Data & Storage,Data Management,Request data migration
+Data & Storage,Import/Export Failures,Format conversion errors
+Data & Storage,Import/Export Failures,Mapping issues
+Data & Storage,Storage Requests,Request additional storage
+Data & Storage,Storage Requests,Optimize storage usage
+Data & Storage,Storage Requests,Request data archiving
+Documentation,Documentation Requests,Request user manual
+Documentation,Documentation Requests,Update existing documentation
+Documentation,Documentation Requests,Create new documentation
+Documentation,Errors/Findability,Outdated instructions
+Documentation,Errors/Findability,Missing information
+Documentation,Errors/Findability,Hard to find info
+Documentation,Information Requests,Request product information
+Documentation,Information Requests,Request service details
+Documentation,Information Requests,Request technical specifications
+Functionality Issues,Communication Functionality,Voice issues
+Functionality Issues,Communication Functionality,Data issues
+Functionality Issues,Communication Functionality,Push-to-talk issues
+Functionality Issues,Partial Feature Failure,One function broken
+Functionality Issues,Partial Feature Failure,Reduced capabilities
+Functionality Issues,Partial Feature Failure,Part not working
+Functionality Issues,Startup/Boot Issues,Boot failure
+Functionality Issues,Startup/Boot Issues,Start-up errors
+Functionality Issues,Startup/Boot Issues,Long boot time
+Functionality Issues,User Support,Software installation help
+Functionality Issues,User Support,Troubleshooting guidance
+Functionality Issues,User Support,Device setup
+Hardware Issues,Component Failure,Battery wear
+Hardware Issues,Component Failure,Display/screen failure
+Hardware Issues,Component Failure,Hardware component malfunction
+Hardware Issues,Component Failure,Port/connector failure
+Hardware Issues,Component Failure,Sensor malfunction
+Hardware Issues,Component Failure,GPS issue
+Hardware Issues,Component Failure,Display/LCD issue
+Hardware Issues,Component Failure,Camera image problem
+Hardware Issues,Component Failure,Audio issue
+Hardware Issues,Component Failure,Battery/charge issue
+Hardware Issues,Component Failure,USB issue
+Hardware Issues,Maintenance Issues,Preventative hardware service
+Hardware Issues,Operational Behavior,Records unexpectedly
+Hardware Issues,Operational Behavior,Will not record
+Hardware Issues,Operational Behavior,Unit unresponsive
+Hardware Issues,Operational Behavior,Randomly reboots
+Hardware Issues,Physical Damage,Broken parts
+Hardware Issues,Physical Damage,Corrosion damage
+Hardware Issues,Physical Damage,Damaged casing/ports
+Hardware Issues,Physical Damage,Environmental expoosure
+Hardware Issues,Physical Damage,Liquid damage
+Hardware Issues,Physical Damage,Mount/bracket issue
+Hardware Issues,Physical Damage,Cable/port issue
+Hardware Issues,Resource Limits,CPU throttling
+Hardware Issues,Resource Limits,Cooling system failure
+Hardware Issues,Resource Limits,Overheating
+Hardware Issues,Resource Limits,Storage full
+Hardware Issues,Resource Limits,Out of memory
+Integration Issues,Custom Integration,Custom connector issues
+Integration Issues,Custom Integration,Integration development requests
+Integration Issues,Custom Integration,Integration testing support
+Integration Issues,Third-Party Connections,API integration failure
+Integration Issues,Third-Party Connections,Authentication to external systems
+Integration Issues,Third-Party Connections,Data synchronization issues
+Integration Issues,Workflow Integration,Automation failure
+Integration Issues,Workflow Integration,Process flow errors
+Integration Issues,Workflow Integration,Integration timeout issues
+Other,Uncategorized Issue,Requires Classification
+Performance Metrics,Analytics Issues,Analytics processing errors
+Performance Metrics,Analytics Issues,Visualization failures
+Performance Metrics,Analytics Issues,Data interpretation assistance
+Performance Metrics,Dashboard Issues,Dashboard loading issues
+Performance Metrics,Dashboard Issues,Widget failures
+Performance Metrics,Dashboard Issues,Real-time data display issues
+Performance Metrics,Reporting Issues,Report generation failure
+Performance Metrics,Reporting Issues,Missing data in reports
+Performance Metrics,Reporting Issues,Report scheduling issues
+Security & Access,Authentication Failures,Login issues
+Security & Access,Authentication Failures,Account lockouts
+Security & Access,Authentication Failures,Multi-factor authentication
+Security & Access,Compliance Requests,Request compliance report
+Security & Access,Compliance Requests,Implement compliance controls
+Security & Access,Compliance Requests,Update compliance documentation
+Security & Access,Encryption Issues,Key management issues
+Security & Access,Encryption Issues,Decryption errors
+Security & Access,Encryption Issues,Secure communication issues
+Security & Access,Permission Errors,Wrong access levels
+Security & Access,Permission Errors,Role assignment issues
+Security & Access,Permission Errors,User permissions
+Security & Access,Permission Errors,Agency manager roles
+Security & Access,Permission Errors,O/S permissions
+Security & Access,Security Enhancements,Request security audit
+Security & Access,Security Enhancements,Implement new security measures
+Security & Access,Security Enhancements,Update security policies
+Security & Access,Vulnerability Management,Malware detection
+Security & Access,Vulnerability Management,Unauthorized access detection
+Security & Access,Vulnerability Management,Data breach incidents
+System Performance,Degraded Performance,Slow response
+System Performance,Degraded Performance,High delay
+System Performance,Degraded Performance,Freezing/crashing
+System Performance,Intermittent Issues,Random disconnections
+System Performance,Intermittent Issues,Cyclical failures
+System Performance,Intermittent Issues,Crashes when busy
+System Performance,Preventative Maintenance,System health check
+System Performance,Scheduled Maintenance,Planned system outage
+System Performance,Scheduled Maintenance,Maintenance window activities
+System Performance,Scheduled Maintenance,Service upgrade downtime
+System Performance,Total Failure,Complete system outage
+System Performance,Total Failure,Service stopped
+System Performance,Total Failure,Process stopped
+User Interface (UI),Accessibility Issues,Screen reader compatibility
+User Interface (UI),Accessibility Issues,Contrast/visibility issues
+User Interface (UI),Accessibility Issues,Input assistance features
+User Interface (UI),Display/Input Issues,Misaligned elements
+User Interface (UI),Display/Input Issues,Touch/keyboard not working
+User Interface (UI),Display/Input Issues,Dashboard display issues
+User Interface (UI),Media & Playback,Audio/Video issues
+User Interface (UI),Media & Playback,Distortion
+User Interface (UI),Media & Playback,Sync issues
+User Interface (UI),Media & Playback,Playback errors
+User Interface (UI),Media & Playback,Gallery issues
+User Interface (UI),Media & Playback,Video tool issues
+User Interface (UI),Navigation Issues,Broken links
+User Interface (UI),Navigation Issues,Page transition errors
+User Support,Account Management,Create new account
+User Support,Account Management,Reset password
+User Support,Account Management,Update user profile
+User Support,Account Management,Disable account
+User Support,Service Onboarding,Connectivity Addition
+User Support,Service Onboarding,Connectivity Removal
+User Support,Service Onboarding,Contract Assessment
+User Support,Service Onboarding,Contract Enablement
+User Support,Service Onboarding,Contract Maintenance
+User Support,Service Onboarding,Contract Renewal
+User Support,Service Onboarding,Contract Site Addition
+User Support,Service Onboarding,Contract System Upgrade Agreement
+User Support,Service Onboarding,Contract Termination
+User Support,Service Onboarding,Equipment Management
+User Support,Service Onboarding,Network Monitoring Data Management
+User Support,Service Onboarding,Network Monitoring Enablement
+User Support,Service Onboarding,Network Monitoring Notifications
+User Support,Service Transition,Knowledge transfer
+User Support,Service Transition,Operational readiness assessment
+User Support,Service Transition,Service acceptance
+User Support,Service Transition,Production validation
+User Support,Service Transition,Early life support
+User Support,Service Transition,Transition documentation
+User Support,Training & Education,Request training session
+User Support,Training & Education,Access training materials
+User Support,Training & Education,Schedule refresher training
+User Support,User Administration,New user creation
+User Support,User Administration,Profile creation/modification
+User Support,User Administration,User reactivation
+User Support,User Administration,Self-registration
+User Support,User Administration,Bulk user creation
+Problem Management,Permanent Fix,Permanent Fix Development
+Problem Management,Root Cause Analysis,Request Investigation

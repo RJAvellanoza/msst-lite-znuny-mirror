@@ -1,0 +1,222 @@
+
+[% RenderBlockStart("Overview") %]
+<div class="MainBox ARIARoleMain LayoutFixedSidebar SidebarFirst">
+    <h1 class="InvisibleText">[% Translate("Priority Management") | html %]</h1>
+
+    [% BreadcrumbPath = [
+            {
+                Name => Translate('Ticket Number Prefix Management'),
+                Link => Env("Action"),
+            },
+        ]
+    %]
+
+    [% SWITCH Data.Action %]
+        [% CASE 'Add' %]
+            [% BreadcrumbPath.push({ Name => Translate('Add Ticket Number Prefix'),}) %]
+        [% CASE 'Change' %]
+            [% USE EditTitle = String(Translate("Edit Ticket Number Prefix")) %]
+            [% BreadcrumbPath.push({ Name => EditTitle.append( ': ', Data.Name ) }) %]
+    [% END %]
+
+    [% INCLUDE "Breadcrumb.tt" Path = BreadcrumbPath %]
+
+    <div class="Clear"></div>
+    <div class="SidebarColumn">
+        <div class="WidgetSimple">
+
+[% RenderBlockStart("ActionList") %]
+            <div class="Header">
+                <h2>[% Translate("Actions") | html %]</h2>
+            </div>
+            <div class="Content">
+                <ul class="ActionList">
+[% RenderBlockStart("ActionOverview") %]
+                    <li>
+                        <a href="[% Env("Baselink") %]Action=[% Env("Action") %]" class="CallForAction Fullsize Center"><span><i class="fa fa-caret-left"></i>[% Translate("Go to overview") | html %]</span></a>
+                    </li>
+[% RenderBlockEnd("ActionOverview") %]
+
+[% RenderBlockStart("ActionAdd") %]
+                    <li>
+                        <a href="[% Env("Baselink") %]Action=[% Env("Action") %];Subaction=Add" class="CallForAction Fullsize Center">
+                            <span><i class="fa fa-plus-square"></i>[% Translate("Configure Ticket Number Prefix") | html %]</span>
+                        </a>
+                    </li>
+[% RenderBlockEnd("ActionAdd") %]
+                </ul>
+            </div>
+[% RenderBlockEnd("ActionList") %]
+        </div>
+[% RenderBlockStart("Filter") %]
+        <div class="WidgetSimple">
+           <!--  <div class="Header">
+                <h2><label for="FilterPriorities">[% Translate("Filter for Prefix") | html %]</label></h2>
+            </div>
+            <div class="Content">
+                <input type="text" id="FilterPriorities" class="FilterBox" placeholder="[% Translate("Just start typing to filter...") | html %]" name="FilterPriorities" value="" title="[% Translate("Filter for priorities") | html %]">
+            </div> -->
+
+            <div class="Header">
+                <form id="InitialCounter" action="[% Env("CGIHandle") %]" method="post" class="Validate PreventMultipleSubmits">
+                    <input type="hidden" name="Action" value="[% Env("Action") %]" />
+                    <input type="hidden" name="Subaction" value="InitialCounter" />
+                <div class="Header">
+                    <h2><label for="FilterPriorities">[% Translate("Initial Counter") | html %]</label></h2>
+                </div>
+                <div class="Content WidgetSimple">
+                     <input type="text" id="InitialCounter" class="FilterBox"  name="InitialCounter" value="[% Data.InitialCounter | html %]" >
+                </div>
+                <div class="Clear"></div>
+                <div style="">                    
+                <button style="margin: 0 37%" class="CallForAction Primary" id="SubmitAndContinue" type="submit" value="[% Translate("Save") | html %]"><span>[% Translate("Save") | html %]</span></button>
+                </div>
+                <div class="Clear"></div>   
+             </form>
+            </div>
+
+            
+        </div>
+[% RenderBlockEnd("Filter") %]
+        
+    </div>
+
+    <div class="ContentColumn">
+        <div class="WidgetSimple">
+
+[% RenderBlockStart("OverviewResult") %]
+            <div class="Header">
+                <h2>[% Translate("List") | html %]</h2>
+            </div>
+            <div class="Content">
+
+                <table class="DataTable" id="Priorities">
+                    <thead>
+                        <tr>
+                            <th>[% Translate("Prefix") | html %]</th>
+                            <th>[% Translate("Type") | html %]</th>
+                            <th>[% Translate("Validity") | html %]</th>
+                            <th>[% Translate("Created") | html %]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+[% RenderBlockStart("NoDataFoundMsg") %]
+                        <tr>
+                            <td colspan="4">
+                                [% Translate("No data found.") | html %]
+                            </td>
+                        </tr>
+[% RenderBlockEnd("NoDataFoundMsg") %]
+[% RenderBlockStart("OverviewResultRow") %]
+                        <tr [% IF Data.ValidID != 1%]class="Invalid"[% END %]>                            
+                            <td>
+                                <a class="AsBlock" href="[% Env("Baselink") %]Action=[% Env("Action") %];Subaction=Change;PrefixID=[% Data.PrefixID | uri %]">
+                                    [% Data.Prefix | html %]
+                                </a>
+                            </td>
+                            <td>
+                                [% Data.Type | html %]
+                            </td>
+                            <td>
+                                [% Translate(Data.Valid) | html %]
+                            </td>
+                            <td>[% Data.CreateTime | Localize("TimeShort") %]</td>
+                        </tr>
+[% RenderBlockEnd("OverviewResultRow") %]
+                        <tr class="FilterMessage Hidden">
+                            <td colspan="4">[% Translate("No matches found.") | html %]</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+[% RenderBlockEnd("OverviewResult") %]
+
+[% RenderBlockStart("OverviewUpdate") %]
+            <div class="Header">
+                [% IF Data.Action == 'Add' %]
+                    <h2>[% Translate("Add Ticket Number Prefix") | html %]</h2>
+                [% ELSE %]
+                    <h2>[% Translate("Edit Ticket Number Prefix") | html %]</h2>
+                [% END %]
+            </div>
+            <div class="Content">
+
+                <form id="EntityUpdate" action="[% Env("CGIHandle") %]" method="post" class="Validate PreventMultipleSubmits">
+                    <input type="hidden" name="Action" value="[% Env("Action") %]" />
+                    <input type="hidden" name="Subaction" value="[% Data.Action | uri %]Action" />
+                    <input type="hidden" name="PrefixID" value="[% Data.PrefixID | html %]" />
+                    [% IF Data.Action == 'Change' %]
+                        <input type="hidden" name="ContinueAfterSave" id="ContinueAfterSave" value=""/>
+                    [% END %]
+                    <fieldset class="TableLike">
+                        [% IF Data.Action == 'Change' %]
+                            <style type="text/css">
+                                .TypeOption{
+                                        pointer-events:none;
+                                 } 
+                                #TypeID_Search{
+                                        pointer-events:none;
+                                        background-color: #DDD;
+                                 }                    
+                            </style>
+                        [% END %]
+
+                        <label class="Mandatory" for="ValidID"><span class="Marker">*</span> [% Translate("Type") | html %]:</label>
+                        <div class="Field TypeOption">
+                            [% Data.TypeOptionStrg %]
+                            <div id="ValidIDError" class="TooltipErrorMessage">
+                                <p>[% Translate("This field is required.") | html %]</p>
+                            </div>
+                            <div id="ValidIDServerError" class="TooltipErrorMessage">
+                                <p>
+[% RenderBlockStart("RequiredValidOptionServerError") %]
+                                    [% Translate("This field is required.") | html %]
+[% RenderBlockEnd("RequiredValidOptionServerError") %]
+[% RenderBlockStart("InSettingValidOptionServerError") %]
+                                    [% Translate("Is not possible to invalidate this entry, all config settings have to be changed beforehand.") | html %]
+[% RenderBlockEnd("InSettingValidOptionServerError") %]
+                                </p>
+                            </div>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label class="Mandatory" for="Name"><span class="Marker">*</span> [% Translate("Prefix") | html %]:</label>
+                        <div class="Field">
+                            <input type="text" name="Prefix" id="Prefix" value="[% Data.Prefix | html %]" class="W50pc Validate_Required [% Data.NameInvalid | html %]" maxlength="200"/>
+                            <div id="NameError" class="TooltipErrorMessage">
+                                <p>[% Translate("This field is required.") | html %]</p>
+                            </div>
+                           
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label class="Mandatory" for="ValidID"><span class="Marker">*</span> [% Translate("Validity") | html %]:</label>
+                        <div class="Field">
+                            [% Data.ValidOptionStrg %]
+                            <div id="ValidIDError" class="TooltipErrorMessage">
+                                <p>[% Translate("This field is required.") | html %]</p>
+                            </div>
+                            <div id="ValidIDServerError" class="TooltipErrorMessage">
+                                <p>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <div class="Field SpacingTop">
+                            
+                        <button class="CallForAction Primary" id="SubmitAndContinue" type="submit" value="[% Translate("Save") | html %]"><span>[% Translate("Save") | html %]</span></button>
+                                [% Translate("or") | html %]                                
+                               
+                            <a href="[% Env("Baselink") %]Action=[% Env("Action") %]">[% Translate("Cancel") | html %]</a>
+                        </div>
+                        <div class="Clear"></div>
+                    </fieldset>
+                </form>
+            </div>
+[% RenderBlockEnd("OverviewUpdate") %]
+        </div>
+    </div>
+    <div class="Clear"></div>
+</div>
+[% RenderBlockEnd("Overview") %]

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Application">
+    <Setting Name="Loader::Agent::CommonCSS###600-MSSTLite-OverviewCustomizations" Required="1" Valid="1">
+        <Description Translatable="1">CSS customizations for ticket overview screens.</Description>
+        <Navigation>Frontend::Base::Loader</Navigation>
+        <Value>
+            <Array>
+                <Item>MSSTLite.OverviewCustomizations.css</Item>
+            </Array>
+        </Value>
+    </Setting>
+</otrs_config>

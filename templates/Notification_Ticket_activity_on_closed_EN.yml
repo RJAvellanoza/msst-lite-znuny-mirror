@@ -1,0 +1,63 @@
+---
+- ChangeBy: 1
+  ChangeTime: 2025-06-26 13:05:00
+  Comment: 'Notification when someone adds a message to a closed ticket'
+  CreateBy: 1
+  CreateTime: 2025-06-26 13:05:00
+  Data:
+    AgentEnabledByDefault:
+    - Email
+    ArticleAttachmentInclude:
+    - '0'
+    Events:
+    - ArticleCreate
+    LanguageID:
+    - en
+    Recipients:
+    - AgentOwner
+    SendOnOutOfOffice:
+    - '1'
+    TransportEmailTemplate:
+    - Default
+    Transports:
+    - Email
+    VisibleForAgent:
+    - '1'
+    VisibleForAgentTooltip:
+    - You will receive a notification when someone adds a message to a closed ticket.
+  ID: 101
+  Message:
+    en:
+      Body: |-
+        Dear <OTRS_NOTIFICATION_RECIPIENT_UserFirstname>,<br />
+        <br />
+        A closed ticket has received a new message and may need to be reopened:<br />
+        <br />
+        Ticket Information:<br />
+        ------------------<br />
+        Ticket Number: <OTRS_CONFIG_Ticket::Hook><OTRS_CONFIG_Ticket::HookDivider><OTRS_TICKET_TicketNumber><br />
+        Title: <OTRS_TICKET_Title><br />
+        Site: <OTRS_TICKET_DynamicField_Site><br />
+        Impacted CI: <OTRS_TICKET_DynamicField_ImpactedCI><br />
+        Priority: <OTRS_TICKET_Priority><br />
+        Current State: <OTRS_TICKET_State><br />
+        Queue: <OTRS_TICKET_Queue><br />
+        Created: <OTRS_TICKET_Created><br />
+        <br />
+        New Message From: <OTRS_CUSTOMER_REALNAME> (<OTRS_CUSTOMER_UserEmail>)<br />
+        <br />
+        Message Preview:<br />
+        ---------------<br />
+        <OTRS_CUSTOMER_BODY[50]><br />
+        <br />
+        Action Required: Please review this ticket and reopen if necessary.<br />
+        <br />
+        Ticket URL:<br />
+        <OTRS_CONFIG_HttpType>://<OTRS_CONFIG_FQDN>/<OTRS_CONFIG_ScriptAlias>index.pl?Action=AgentTicketZoom;TicketID=<OTRS_TICKET_TicketID><br />
+        <br />
+        Best regards,<br />
+        <OTRS_CONFIG_NotificationSenderName>
+      ContentType: text/html
+      Subject: '[<OTRS_CONFIG_Ticket::Hook><OTRS_CONFIG_Ticket::HookDivider><OTRS_TICKET_TicketNumber>] Activity on Closed Ticket: <OTRS_TICKET_Title>'
+  Name: Ticket activity on closed notification
+  ValidID: 1

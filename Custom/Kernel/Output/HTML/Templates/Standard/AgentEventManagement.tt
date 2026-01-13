@@ -1,0 +1,522 @@
+# --
+# Copyright (C) 2024 MSST
+# --
+# This software comes with ABSOLUTELY NO WARRANTY. For details, see
+# the enclosed file COPYING for license information (GPL). If you
+# did not receive this file, see https://www.gnu.org/licenses/gpl-3.0.txt.
+# --
+
+<div class="MainBox ARIARoleMain LayoutFixedSidebar SidebarFirst">
+    <h1 class="InvisibleText">[% Translate("Event Management") | html %]</h1>
+
+    <div class="SidebarColumn">
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Actions") | html %]</h2>
+            </div>
+            <div class="Content">
+                <ul class="ActionList">
+                    <li>
+                        <label for="EventLimit" style="font-size: 11px; display: block; margin-bottom: 4px;">[% Translate("Per page") | html %]:</label>
+                        <select id="EventLimit" style="width: 100%; margin-bottom: 10px; padding: 4px;">
+                            <option value="50">50</option>
+                            <option value="100" selected>100</option>
+                            <option value="250">250</option>
+                            <option value="500">500</option>
+                        </select>
+                    </li>
+                    <li>
+                        <div id="PaginationControls" style="margin-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                <button type="button" id="PrevPage" class="CallForAction" style="padding: 4px 8px;">
+                                    <span><i class="fa fa-chevron-left"></i></span>
+                                </button>
+                                <span id="PageInfo" style="font-size: 11px;">Page 1</span>
+                                <button type="button" id="NextPage" class="CallForAction" style="padding: 4px 8px;">
+                                    <span><i class="fa fa-chevron-right"></i></span>
+                                </button>
+                            </div>
+                            <div style="text-align: center; font-size: 10px; color: #666;">
+                                <span id="TotalInfo">Total: -</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <button type="button" id="RefreshEvents" class="CallForAction Fullsize Center">
+                            <span><i class="fa fa-refresh"></i> [% Translate("Refresh") | html %]</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Statistics") | html %]</h2>
+            </div>
+            <div class="Content">
+                <table style="width: 100%; font-size: 12px;">
+                    <tr>
+                        <td style="padding: 4px 0;"><strong>[% Translate("Total Events") | html %]:</strong></td>
+                        <td style="padding: 4px 0; text-align: right;" id="statTotalEvents">-</td>
+                    </tr>
+                    <tr style="color: #2e7d32;">
+                        <td style="padding: 4px 0;"><strong>[% Translate("With Incident") | html %]:</strong></td>
+                        <td style="padding: 4px 0; text-align: right;" id="statWithIncident">-</td>
+                    </tr>
+                    <tr style="color: #c62828;">
+                        <td style="padding: 4px 0;"><strong>[% Translate("Without Incident") | html %]:</strong></td>
+                        <td style="padding: 4px 0; text-align: right;" id="statWithoutIncident">-</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Info") | html %]</h2>
+            </div>
+            <div class="Content">
+                <p class="FieldExplanation" style="font-size: 11px;">
+                    [% Translate("This page shows Zabbix problem events matching LSMP report format.") | html %]
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="ContentColumn">
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Zabbix Events") | html %] <span id="EventCount" style="font-weight: normal !important; color: #aaa !important;"></span></h2>
+            </div>
+            <div class="Content">
+                <!-- Error Message -->
+                <div id="ErrorMessage" style="display: none; padding: 15px; background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; border-radius: 4px; margin-bottom: 15px;">
+                    <i class="fa fa-exclamation-triangle"></i> <span id="ErrorText"></span>
+                </div>
+
+                <!-- Loading Spinner -->
+                <div id="LoadingSpinner" style="display: none; text-align: center; padding: 40px;">
+                    <i class="fa fa-spinner fa-spin fa-3x"></i>
+                    <p style="margin-top: 15px;">[% Translate("Loading events...") | html %]</p>
+                </div>
+
+                <!-- Events Table -->
+                <!-- LSMP Columns + Extra Zabbix Columns -->
+                <!-- Green = Available from Zabbix, Red = Not available from Zabbix -->
+                <div id="EventsTableContainer" style="overflow-x: auto;">
+                    <table class="DataTable" id="EventsTable" style="width: 100%; font-size: 11px;">
+                        <thead>
+                            <tr>
+                                <!-- LSMP Columns (14) -->
+                                <th class="col-green" style="min-width: 80px;">[% Translate("AlarmId") | html %]</th>
+                                <th class="col-green" style="min-width: 140px;">[% Translate("Node") | html %]</th>
+                                <th class="col-red" style="min-width: 80px;">[% Translate("Location") | html %]</th>
+                                <th class="col-green" style="min-width: 80px;">[% Translate("Event Id") | html %]</th>
+                                <th class="col-green" style="min-width: 100px;">[% Translate("System") | html %]</th>
+                                <th class="col-red" style="min-width: 100px;">[% Translate("Specific Location") | html %]</th>
+                                <th class="col-green" style="min-width: 100px;">[% Translate("Alias") | html %]</th>
+                                <th class="col-green" style="min-width: 100px;">[% Translate("MSI Alias") | html %]</th>
+                                <th class="col-green" style="min-width: 280px;">[% Translate("Summary") | html %]</th>
+                                <th class="col-green" style="min-width: 140px;">[% Translate("First Occurrence") | html %]</th>
+                                <th class="col-green" style="min-width: 140px;">[% Translate("Last Occurrence") | html %]</th>
+                                <th class="col-red" style="min-width: 50px; text-align: center;">[% Translate("Count") | html %]</th>
+                                <th class="col-red" style="min-width: 130px;">[% Translate("Last Incident Number") | html %]</th>
+                                <th class="col-green" style="min-width: 130px;">[% Translate("Incident Number") | html %]</th>
+                                <!-- Extra Zabbix Columns -->
+                                <th class="col-green" style="min-width: 50px; text-align: center;">[% Translate("Severity") | html %]</th>
+                                <th class="col-green" style="min-width: 50px; text-align: center;">[% Translate("Ack") | html %]</th>
+                                <th class="col-green" style="min-width: 100px;">[% Translate("IP Address") | html %]</th>
+                                <th class="col-green" style="min-width: 100px;">[% Translate("Device Name") | html %]</th>
+                                <th class="col-green" style="min-width: 80px;">[% Translate("Device Type") | html %]</th>
+                                <th class="col-green" style="min-width: 80px;">[% Translate("Model") | html %]</th>
+                                <th class="col-green" style="min-width: 80px;">[% Translate("Vendor") | html %]</th>
+                                <th class="col-green" style="min-width: 150px;">[% Translate("Tags") | html %]</th>
+                            </tr>
+                        </thead>
+                        <tbody id="EventsTableBody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- No Events Message -->
+                <div id="NoEventsMessage" style="display: none; text-align: center; padding: 40px; color: #666;">
+                    <i class="fa fa-check-circle fa-3x" style="color: #28a745;"></i>
+                    <p style="margin-top: 15px; font-size: 16px;">[% Translate("No events found") | html %]</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+#EventsTable th {
+    padding: 8px 6px;
+    text-align: left;
+    font-weight: bold;
+    border-bottom: 2px solid #ddd;
+    white-space: nowrap;
+}
+#EventsTable td {
+    padding: 6px;
+    border-bottom: 1px solid #eee;
+    vertical-align: top;
+}
+#EventsTable tr:hover {
+    background-color: #f5f5f5;
+}
+/* Column header colors - Green = Available, Red = Not available (very subtle) */
+.col-green {
+    border-bottom: 2px solid #c8e6c9 !important;
+}
+.col-red {
+    border-bottom: 2px solid #ffcdd2 !important;
+}
+.severity-badge {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: bold;
+    min-width: 20px;
+    text-align: center;
+}
+.tags-cell {
+    font-size: 10px;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+</style>
+
+<script type="text/javascript">
+(function() {
+    'use strict';
+
+    // Initial data from server
+    var initialEvents = [% Data.EventsJSON %];
+    var initialSuccess = [% Data.Success %];
+    var initialError = '[% Data.ErrorMessage | html %]';
+    var initialTotalCount = [% Data.TotalCount || 0 %];
+
+    // Pagination state
+    var totalCount = initialTotalCount;
+    var pageSize = 100;
+    var currentPageIndex = 0;
+    // lastEventIdBeforePage[n] = the LastEventID to pass to API to load page n
+    // lastEventIdBeforePage[0] = 0 means page 1 starts from beginning (no LastEventID filter)
+    // lastEventIdBeforePage[1] = last event ID from page 0, etc.
+    var lastEventIdBeforePage = [0];
+    var lastEventIdOnCurrentPage = 0;
+
+    function formatTimestamp(unixTimestamp) {
+        if (!unixTimestamp || unixTimestamp === '0') return '-';
+        var date = new Date(unixTimestamp * 1000);
+        var year = date.getFullYear();
+        var month = String(date.getMonth() + 1).padStart(2, '0');
+        var day = String(date.getDate()).padStart(2, '0');
+        var hours = String(date.getHours()).padStart(2, '0');
+        var minutes = String(date.getMinutes()).padStart(2, '0');
+        var seconds = String(date.getSeconds()).padStart(2, '0');
+        return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        var div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function getTagValue(tags, tagName) {
+        if (!tags || !Array.isArray(tags)) return '';
+        for (var i = 0; i < tags.length; i++) {
+            if (tags[i].tag === tagName) {
+                return tags[i].value || '';
+            }
+        }
+        return '';
+    }
+
+    function updateStatistics(events) {
+        var total = events ? events.length : 0;
+        var withIncident = 0;
+        var withoutIncident = 0;
+
+        if (events && events.length > 0) {
+            events.forEach(function(event) {
+                var incidentNumber = getTagValue(event.tags, 'znuny_ticket_nr');
+                if (incidentNumber) {
+                    withIncident++;
+                } else {
+                    withoutIncident++;
+                }
+            });
+        }
+
+        document.getElementById('statTotalEvents').textContent = total;
+        document.getElementById('statWithIncident').textContent = withIncident;
+        document.getElementById('statWithoutIncident').textContent = withoutIncident;
+    }
+
+    function renderEvents(events) {
+        var tbody = document.getElementById('EventsTableBody');
+        var tableContainer = document.getElementById('EventsTableContainer');
+        var noEventsMsg = document.getElementById('NoEventsMessage');
+        var countSpan = document.getElementById('EventCount');
+
+        // Update statistics
+        updateStatistics(events);
+
+        if (!events || events.length === 0) {
+            tableContainer.style.display = 'none';
+            noEventsMsg.style.display = 'block';
+            countSpan.textContent = '(0)';
+            return;
+        }
+
+        tableContainer.style.display = 'block';
+        noEventsMsg.style.display = 'none';
+        countSpan.textContent = '(' + events.length + ')';
+
+        var html = '';
+        events.forEach(function(event) {
+            // Extract host info from hosts array
+            var node = '';       // 2. Node - host display name
+            var alias = '';      // 7. Alias - from inventory or host.host
+            var msiAlias = '';   // 8. MSI Alias - same as Node
+            if (event.hosts && event.hosts.length > 0) {
+                node = event.hosts[0].name || event.hosts[0].host || '';
+                alias = event.hosts[0].host || '';
+                msiAlias = node;
+            }
+
+            // 3. Location - from host inventory or tags
+            var location = '';
+            if (event.host_inventory) {
+                location = event.host_inventory.location || event.host_inventory.site_city || event.host_inventory.site_address_a || '';
+            }
+            if (!location) {
+                location = getTagValue(event.tags, 'location') || '';
+            }
+
+            // 5. System - from host groups or tags
+            var system = '';
+            if (event.host_groups && event.host_groups.length > 0) {
+                system = event.host_groups.map(function(g) { return g.name; }).join(', ');
+            }
+            if (!system) {
+                system = getTagValue(event.tags, 'system') || getTagValue(event.tags, 'customer') || '';
+            }
+
+            // 6. Specific Location - from tags or inventory
+            var specificLocation = getTagValue(event.tags, 'specific_location') || '';
+            if (!specificLocation && event.host_inventory) {
+                specificLocation = event.host_inventory.site_address_a || '';
+            }
+
+            // 7. Alias - prefer main IP, then inventory alias, then host.host
+            if (event.host_main_ip) {
+                alias = event.host_main_ip;
+            } else if (event.host_inventory && event.host_inventory.alias) {
+                alias = event.host_inventory.alias;
+            }
+
+            // 11. Last Occurrence - use r_clock (recovery event time) if available
+            var lastOccurrence = event.r_clock || event.clock;
+
+            // 14. Incident Number - from tags (13. Last Incident Number NOT available in Zabbix)
+            var incidentNumber = getTagValue(event.tags, 'znuny_ticket_nr') || '';
+
+            // Extra Zabbix fields
+            var severity = event.severity || '0';
+            var severityColors = {
+                '5': { bg: '#ffcdd2', text: '#b71c1c' },  // Disaster - red
+                '4': { bg: '#ffe0b2', text: '#e65100' },  // High - orange
+                '3': { bg: '#fff9c4', text: '#f57f17' },  // Average - yellow
+                '2': { bg: '#b3e5fc', text: '#01579b' },  // Warning - blue
+                '1': { bg: '#c8e6c9', text: '#1b5e20' },  // Info - green
+                '0': { bg: '#eeeeee', text: '#424242' }   // Not classified - gray
+            };
+            var sevStyle = severityColors[severity] || severityColors['0'];
+
+            var ackStatus = event.acknowledged === '1' ? 'Yes' : 'No';
+            var suppressed = event.suppressed === '1' ? 'Yes' : 'No';
+
+            // Format tags (excluding znuny_ tags)
+            var tagsStr = '';
+            if (event.tags && event.tags.length > 0) {
+                var tagParts = [];
+                event.tags.forEach(function(t) {
+                    if (t.tag && !t.tag.startsWith('znuny_')) {
+                        tagParts.push(t.tag + (t.value ? '=' + t.value : ''));
+                    }
+                });
+                tagsStr = tagParts.join(', ');
+            }
+
+            // Extra inventory fields
+            var ipAddress = event.host_main_ip || '';
+            var deviceName = (event.host_inventory && event.host_inventory.name) || '';
+            var deviceType = (event.host_inventory && event.host_inventory.type) || '';
+            var model = (event.host_inventory && event.host_inventory.model) || '';
+            var vendor = (event.host_inventory && event.host_inventory.vendor) || '';
+
+            // LSMP CSV Columns (14) + Extra Zabbix Columns (8)
+            html += '<tr>';
+            // LSMP Columns
+            html += '<td>' + escapeHtml(event.eventid) + '</td>';                              // 1. AlarmId
+            html += '<td title="' + escapeHtml(node) + '">' + escapeHtml(node) + '</td>';      // 2. Node
+            html += '<td>' + escapeHtml(location) + '</td>';                                   // 3. Location
+            html += '<td>' + escapeHtml(event.objectid || '') + '</td>';                       // 4. Event Id
+            html += '<td>' + escapeHtml(system) + '</td>';                                     // 5. System
+            html += '<td>' + escapeHtml(specificLocation) + '</td>';                           // 6. Specific Location
+            html += '<td>' + escapeHtml(alias) + '</td>';                                      // 7. Alias
+            html += '<td>' + escapeHtml(msiAlias) + '</td>';                                   // 8. MSI Alias
+            html += '<td title="' + escapeHtml(event.name) + '">' + escapeHtml(event.name) + '</td>';  // 9. Summary
+            html += '<td>' + formatTimestamp(event.clock) + '</td>';                           // 10. First Occurrence
+            html += '<td>' + formatTimestamp(lastOccurrence) + '</td>';                        // 11. Last Occurrence
+            html += '<td class="cell-red" style="text-align: center;">-</td>';                 // 12. Count (NOT AVAILABLE)
+            html += '<td class="cell-red" style="text-align: center;">-</td>';                 // 13. Last Incident Number (NOT AVAILABLE)
+            html += '<td>' + escapeHtml(incidentNumber) + '</td>';                             // 14. Incident Number
+            // Extra Zabbix Columns
+            html += '<td style="text-align: center;"><span class="severity-badge" style="background:' + sevStyle.bg + ';color:' + sevStyle.text + ';">' + severity + '</span></td>';  // Severity
+            html += '<td style="text-align: center;">' + ackStatus + '</td>';                  // Ack
+            html += '<td>' + escapeHtml(ipAddress) + '</td>';                                  // IP Address
+            html += '<td>' + escapeHtml(deviceName) + '</td>';                                 // Device Name
+            html += '<td>' + escapeHtml(deviceType) + '</td>';                                 // Device Type
+            html += '<td>' + escapeHtml(model) + '</td>';                                      // Model
+            html += '<td>' + escapeHtml(vendor) + '</td>';                                     // Vendor
+            html += '<td class="tags-cell" title="' + escapeHtml(tagsStr) + '">' + escapeHtml(tagsStr) + '</td>';  // Tags
+            html += '</tr>';
+        });
+
+        tbody.innerHTML = html;
+    }
+
+    function showError(message) {
+        var errorDiv = document.getElementById('ErrorMessage');
+        var errorText = document.getElementById('ErrorText');
+        var tableContainer = document.getElementById('EventsTableContainer');
+        var noEventsMsg = document.getElementById('NoEventsMessage');
+
+        errorText.textContent = message;
+        errorDiv.style.display = 'block';
+        tableContainer.style.display = 'none';
+        noEventsMsg.style.display = 'none';
+    }
+
+    function hideError() {
+        document.getElementById('ErrorMessage').style.display = 'none';
+    }
+
+    function showLoading() {
+        document.getElementById('LoadingSpinner').style.display = 'block';
+        document.getElementById('EventsTableContainer').style.display = 'none';
+        document.getElementById('NoEventsMessage').style.display = 'none';
+        hideError();
+    }
+
+    function hideLoading() {
+        document.getElementById('LoadingSpinner').style.display = 'none';
+    }
+
+    function updatePaginationUI() {
+        var currentPage = currentPageIndex + 1;
+        var totalPages = Math.ceil(totalCount / pageSize) || 1;
+        document.getElementById('PageInfo').textContent = 'Page ' + currentPage + ' / ' + totalPages;
+        document.getElementById('TotalInfo').textContent = 'Total: ' + totalCount + ' events';
+
+        // Enable/disable buttons
+        document.getElementById('PrevPage').disabled = (currentPageIndex <= 0);
+        document.getElementById('NextPage').disabled = (currentPage >= totalPages);
+    }
+
+    function loadPage(startFromEventID) {
+        showLoading();
+
+        pageSize = parseInt(document.getElementById('EventLimit').value) || 100;
+
+        var url = Core.Config.Get('Baselink') + 'Action=AgentEventManagement;Subaction=GetEvents;Limit=' + pageSize;
+        if (startFromEventID > 0) {
+            url += ';LastEventID=' + startFromEventID;
+        }
+
+        Core.AJAX.FunctionCall(url, {}, function(response) {
+            hideLoading();
+
+            if (response.Success) {
+                hideError();
+                totalCount = response.TotalCount || 0;
+
+                // Track last event ID for next page navigation
+                if (response.Events && response.Events.length > 0) {
+                    lastEventIdOnCurrentPage = parseInt(response.Events[response.Events.length - 1].eventid);
+                } else {
+                    lastEventIdOnCurrentPage = 0;
+                }
+
+                renderEvents(response.Events);
+                updatePaginationUI();
+            } else {
+                showError(response.ErrorMessage || 'Failed to load events');
+            }
+        }, 'json');
+    }
+
+    function refreshEvents() {
+        currentPageIndex = 0;
+        lastEventIdBeforePage = [0];
+        lastEventIdOnCurrentPage = 0;
+        loadPage(0);
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        // Render initial data
+        if (initialSuccess) {
+            totalCount = initialTotalCount;
+            renderEvents(initialEvents);
+            // Track last event ID from initial data
+            if (initialEvents && initialEvents.length > 0) {
+                lastEventIdOnCurrentPage = parseInt(initialEvents[initialEvents.length - 1].eventid);
+            }
+            updatePaginationUI();
+        } else if (initialError) {
+            showError(initialError);
+        }
+
+        // Bind pagination buttons
+        document.getElementById('PrevPage').addEventListener('click', function() {
+            if (currentPageIndex > 0) {
+                currentPageIndex--;
+                loadPage(lastEventIdBeforePage[currentPageIndex]);
+            }
+        });
+
+        document.getElementById('NextPage').addEventListener('click', function() {
+            var totalPages = Math.ceil(totalCount / pageSize) || 1;
+            if (currentPageIndex + 1 < totalPages && lastEventIdOnCurrentPage > 0) {
+                // Save current last event ID as the "before" ID for next page
+                if (lastEventIdBeforePage.length <= currentPageIndex + 1) {
+                    lastEventIdBeforePage.push(lastEventIdOnCurrentPage);
+                }
+                currentPageIndex++;
+                loadPage(lastEventIdOnCurrentPage);
+            }
+        });
+
+        // Bind refresh button
+        document.getElementById('RefreshEvents').addEventListener('click', function() {
+            refreshEvents();
+        });
+
+        // Bind page size change
+        document.getElementById('EventLimit').addEventListener('change', function() {
+            refreshEvents();
+        });
+    });
+
+})();
+</script>

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Framework">
+    
+    <!-- Enable/Disable SMTP Notification System -->
+    <Setting Name="SMTPNotification::Enabled" Required="1" Valid="1">
+        <Description Translatable="1">Enable or disable the SMTP notification system (1 = Yes, 0 = No).</Description>
+        <Navigation>Core::MSSTLite::SMTPNotification</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="^[01]$">1</Item>
+        </Value>
+    </Setting>
+    
+    <!-- SMTP Server Configuration -->
+    <Setting Name="SMTPNotification::Host" Required="1" Valid="1">
+        <Description Translatable="1">SMTP server hostname or IP address.</Description>
+        <Navigation>Core::MSSTLite::SMTPNotification::Server</Navigation>
+        <Value>
+            <Item ValueType="String">localhost</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="SMTPNotification::Port" Required="1" Valid="1">
+        <Description Translatable="1">SMTP server port (25, 465, 587).</Description>
+        <Navigation>Core::MSSTLite::SMTPNotification::Server</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="^\d+$">25</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="SMTPNotification::AuthUser" Required="0" Valid="1">
+        <Description Translatable="1">SMTP authentication username.</Description>
+        <Navigation>Core::MSSTLite::SMTPNotification::Server</Navigation>
+        <Value>
+            <Item ValueType="String"></Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="SMTPNotification::AuthPassword" Required="0" Valid="1">
+        <Description Translatable="1">SMTP authentication password.</Description>
+        <Navigation>Core::MSSTLite::SMTPNotification::Server</Navigation>
+        <Value>
+            <Item ValueType="String"></Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="SMTPNotification::Encryption" Required="1" Valid="1">
+        <Description Translatable="1">SMTP encryption type (none, ssl, starttls).</Description>
+        <Navigation>Core::MSSTLite::SMTPNotification::Server</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="^(none|ssl|starttls)$">none</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="SMTPNotification::Module" Required="1" Valid="1">
+        <Description Translatable="1">SMTP module to use (auto = automatic based on encryption, or specify module).</Description>
+        <Navigation>Core::MSSTLite::SMTPNotification::Server</Navigation>
+        <Value>
+            <Item ValueType="String">auto</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="SMTPNotification::From" Required="1" Valid="1">
+        <Description Translatable="1">From email address for notifications.</Description>
+        <Navigation>Core::MSSTLite::SMTPNotification::Server</Navigation>
+        <Value>
+            <Item ValueType="String"></Item>
+        </Value>
+    </Setting>
+    
+    <!-- Priority-based Notification Settings -->
+    <Setting Name="SMTPNotification::Priority::1" Required="1" Valid="1">
+        <Description Translatable="1">Enable notifications for P1-Critical priority tickets.</Description>
+        <Navigation>Core::MSSTLite::SMTPNotification::Priority</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="^[01]$">1</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="SMTPNotification::Priority::2" Required="1" Valid="1">
+        <Description Translatable="1">Enable notifications for P2-High priority tickets.</Description>
+        <Navigation>Core::MSSTLite::SMTPNotification::Priority</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="^[01]$">1</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="SMTPNotification::Priority::3" Required="1" Valid="1">
+        <Description Translatable="1">Enable notifications for P3-Medium priority tickets.</Description>
+        <Navigation>Core::MSSTLite::SMTPNotification::Priority</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="^[01]$">1</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="SMTPNotification::Priority::4" Required="1" Valid="1">
+        <Description Translatable="1">Enable notifications for P4-Low priority tickets.</Description>
+        <Navigation>Core::MSSTLite::SMTPNotification::Priority</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="^[01]$">1</Item>
+        </Value>
+    </Setting>
+    
+    <!-- Note: Priority 5 is no longer used with the new P1-P4 priority system -->
+    <Setting Name="SMTPNotification::Priority::5" Required="1" Valid="0">
+        <Description Translatable="1">DEPRECATED: Priority 5 - Not used with P1-P4 priority system.</Description>
+        <Navigation>Core::MSSTLite::SMTPNotification::Priority</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="^[01]$">1</Item>
+        </Value>
+    </Setting>
+    
+    <!-- Notification Recipients -->
+    <Setting Name="SMTPNotification::Recipients" Required="1" Valid="1">
+        <Description Translatable="1">Default email recipients for notifications (comma-separated).</Description>
+        <Navigation>Core::MSSTLite::SMTPNotification::Recipients</Navigation>
+        <Value>
+            <Item ValueType="String"></Item>
+        </Value>
+    </Setting>
+    
+    <!-- Admin Groups for SMTP Configuration -->
+    <Setting Name="SMTPNotification::AdminGroups" Required="1" Valid="1">
+        <Description Translatable="1">Groups that can manage SMTP notifications.</Description>
+        <Navigation>Core::MSSTLite::SMTPNotification</Navigation>
+        <Value>
+            <Array>
+                <Item>admin</Item>
+                <Item>MSIAdmin</Item>
+                <Item>NOCAdmin</Item>
+            </Array>
+        </Value>
+    </Setting>
+    
+    <!-- Navigation Module Registration -->
+    <Setting Name="Frontend::NavigationModule###AdminSMTPNotification" Required="0" Valid="1">
+        <Description Translatable="1">Admin area navigation for the SMTP notification interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration::AdminOverview</Navigation>
+        <Value>
+            <Hash>
+                <!-- Group permissions managed in ZZZZZNOCAdminNavigation.pm -->
+                <Item Key="Module">Kernel::Output::HTML::NavBar::ModuleAdmin</Item>
+                <Item Key="Name" Translatable="1">SMTP Notification</Item>
+                <Item Key="Block">MSSTLite</Item>
+                <Item Key="Description" Translatable="1">Configure SMTP notification settings.</Item>
+                <Item Key="IconBig">fa-envelope</Item>
+                <Item Key="IconSmall">fa-envelope</Item>
+                <Item Key="Prio">920</Item>
+            </Hash>
+        </Value>
+    </Setting>
+    
+    <!-- Frontend Module Registration -->
+    <Setting Name="Frontend::Module###AdminSMTPNotification" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for SMTP notification configuration.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <!-- Group permissions managed in ZZZZZNOCAdminNavigation.pm -->
+                    <Item Key="Description" Translatable="1">Configure SMTP notification settings and priority rules.</Item>
+                    <Item Key="Title" Translatable="1">SMTP Notification</Item>
+                    <Item Key="NavBarName">Admin</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+    
+    <!-- Register Ticket Event Module -->
+    <Setting Name="Ticket::EventModulePost###SMTPNotification" Required="0" Valid="1">
+        <Description Translatable="1">Send SMTP notifications on ticket events.</Description>
+        <Navigation>Core::Event::Ticket</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Module">Kernel::System::Ticket::Event::SMTPNotification</Item>
+                <Item Key="Event">(TicketCreate|TicketStateUpdate)</Item>
+                <Item Key="Transaction">1</Item>
+            </Hash>
+        </Value>
+    </Setting>
+    
+</otrs_config>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<otrs_config version="2.0" init="Application">
+    
+    <\!-- Motorola Solutions Logo Configuration -->
+    <Setting Name="AgentLogoCustom###motorola" Required="0" Valid="1">
+        <Description Translatable="1">Motorola Solutions logo configuration for custom skin.</Description>
+        <Navigation>Frontend::Agent</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="URL">skins/Agent/motorola/img/logo.png</Item>
+                <Item Key="StyleTop">7px</Item>
+                <Item Key="StyleRight">38px</Item>
+                <Item Key="StyleHeight">67px</Item>
+                <Item Key="StyleWidth">270px</Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <\!-- Motorola Solutions Skin Registration -->
+    <Setting Name="Loader::Agent::Skin###006-motorola" Required="0" Valid="1">
+        <Description Translatable="1">Motorola Solutions brand skin with corporate colors, typography, and styling guidelines.</Description>
+        <Navigation>Frontend::Base::Loader</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="InternalName">motorola</Item>
+                <Item Key="VisibleName" Translatable="1">Motorola Solutions</Item>
+                <Item Key="Description" Translatable="1">Official Motorola Solutions brand skin following corporate design guidelines</Item>
+                <Item Key="HomePage">https://www.motorolasolutions.com/</Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <\!-- Optional: Set Motorola skin as default (uncomment if desired) -->
+    <\!--
+    <Setting Name="Loader::Agent::DefaultSelectedSkin" Required="1" Valid="1">
+        <Description Translatable="1">Default skin for the agent interface.</Description>
+        <Navigation>Frontend::Base::Loader</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="">motorola</Item>
+        </Value>
+    </Setting>
+    -->
+
+</otrs_config>

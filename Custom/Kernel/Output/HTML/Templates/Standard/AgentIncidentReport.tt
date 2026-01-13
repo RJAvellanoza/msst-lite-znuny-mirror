@@ -1,0 +1,398 @@
+# --
+# Copyright (C) 2025 MSST Lite
+# --
+# This software comes with ABSOLUTELY NO WARRANTY.
+# --
+
+[% RenderBlockStart("IncidentReport") %]
+<div class="MainBox ARIARoleMain">
+    <h1 class="InvisibleText">[% Translate("Incident Report") | html %]</h1>
+
+    <div class="ContentColumn">
+
+        <!-- Time Range Selector -->
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Time Range Selection") | html %]</h2>
+            </div>
+            <div class="Content">
+                <fieldset class="TableLike">
+                    <label for="TimeRange">[% Translate("Select Time Period") | html %]:</label>
+                    <div class="Field">
+                        <select id="TimeRange" name="TimeRange" class="Modernize">
+                            <option value="daily"[% IF Data.DefaultTimeRange == 'daily' %] selected[% END %]>[% Translate("Daily (Today)") | html %]</option>
+                            <option value="weekly"[% IF Data.DefaultTimeRange == 'weekly' %] selected[% END %]>[% Translate("Weekly (Last 7 Days)") | html %]</option>
+                            <option value="monthly"[% IF Data.DefaultTimeRange == 'monthly' %] selected[% END %]>[% Translate("Monthly (This Month)") | html %]</option>
+                            <option value="6months"[% IF Data.DefaultTimeRange == '6months' %] selected[% END %]>[% Translate("Last 6 Months") | html %]</option>
+                        </select>
+                    </div>
+                    <div class="Clear"></div>
+                </fieldset>
+            </div>
+        </div>
+
+        <!-- Trending Dashboard -->
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Trending Dashboard") | html %]</h2>
+            </div>
+            <div class="Content">
+
+                <!-- Summary Statistics -->
+                <div class="LayoutGrid">
+                    <div class="Size1of4">
+                        <div class="StatBox">
+                            <h3>[% Translate("Total Incidents") | html %]</h3>
+                            <p class="StatValue" id="TotalIncidents">-</p>
+                        </div>
+                    </div>
+                    <div class="Size1of4">
+                        <div class="StatBox">
+                            <h3>[% Translate("LSMP Created") | html %]</h3>
+                            <p class="StatValue" id="LSMPCount">-</p>
+                        </div>
+                    </div>
+                    <div class="Size1of4">
+                        <div class="StatBox">
+                            <h3>[% Translate("Manually Created") | html %]</h3>
+                            <p class="StatValue" id="ManualCount">-</p>
+                        </div>
+                    </div>
+                    <div class="Size1of4">
+                        <div class="StatBox">
+                            <h3>[% Translate("Handed to MSI") | html %]</h3>
+                            <p class="StatValue" id="MSIHandoverCount">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Incident Volume Trend Chart -->
+                <div class="SpacingTop">
+                    <h3>[% Translate("Incident Volume Trends") | html %]</h3>
+                    <div id="TrendChartContainer" style="width: 100%; height: 400px; margin-bottom: 20px;">
+                        <svg id="TrendChart" style="width: 100%; height: 100%;"></svg>
+                    </div>
+                </div>
+
+                <!-- Trending Breakdown -->
+                <div class="SpacingTop">
+                    <h3>[% Translate("Trend Breakdown") | html %]</h3>
+                    <table class="DataTable">
+                        <thead>
+                            <tr>
+                                <th>[% Translate("Period") | html %]</th>
+                                <th>[% Translate("Count") | html %]</th>
+                                <th>[% Translate("Percentage") | html %]</th>
+                            </tr>
+                        </thead>
+                        <tbody id="TrendingBreakdownTable">
+                            <tr>
+                                <td colspan="3" class="Center">[% Translate("Loading...") | html %]</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Severity Breakdown -->
+                <div class="SpacingTop">
+                    <h3>[% Translate("Breakdown by Severity") | html %]</h3>
+                    <table class="DataTable">
+                        <thead>
+                            <tr>
+                                <th>[% Translate("Priority") | html %]</th>
+                                <th>[% Translate("Count") | html %]</th>
+                            </tr>
+                        </thead>
+                        <tbody id="SeverityBreakdownTable">
+                            <tr>
+                                <td colspan="2" class="Center">[% Translate("Loading...") | html %]</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Tabular Report -->
+        <div class="WidgetSimple">
+            <div class="Header">
+                <div class="ActionMenu">
+                    <div class="WidgetAction Toggle">
+                        <a href="#" title="[% Translate("Show or hide the content") | html %]"></a>
+                    </div>
+                </div>
+                <h2>[% Translate("Detailed Incident Report") | html %]</h2>
+                <div class="AdditionalInformation">
+                    <button type="button" id="ExportCSV" class="CallForAction">
+                        <span><i class="fa fa-download"></i> [% Translate("Export CSV") | html %]</span>
+                    </button>
+                </div>
+            </div>
+            <div class="Content">
+
+                <div class="OverflowVisible">
+                    <table class="DataTable" id="IncidentTable">
+                        <thead>
+                            <tr>
+                                <th>[% Translate("Ticket #") | html %]</th>
+                                <th>[% Translate("Title") | html %]</th>
+                                <th>[% Translate("Priority") | html %]</th>
+                                <th>[% Translate("Created") | html %]</th>
+                                <th>[% Translate("Source") | html %]</th>
+                                <th>[% Translate("Device") | html %]</th>
+                                <th>[% Translate("Prod Cat") | html %]</th>
+                                <th>[% Translate("Ops Cat") | html %]</th>
+                                <th>[% Translate("Res Cat") | html %]</th>
+                                <th>[% Translate("MSI Ticket") | html %]</th>
+                            </tr>
+                        </thead>
+                        <tbody id="IncidentTableBody">
+                            <tr>
+                                <td colspan="10" class="Center">[% Translate("Loading data...") | html %]</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="Pagination" id="Pagination">
+                    <span class="PaginationInfo" id="PaginationInfo"></span>
+                    <div class="PaginationControls">
+                        <button type="button" id="PrevPage" class="CallForAction" disabled>
+                            <span>[% Translate("Previous") | html %]</span>
+                        </button>
+                        <span id="PageInfo"></span>
+                        <button type="button" id="NextPage" class="CallForAction" disabled>
+                            <span>[% Translate("Next") | html %]</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- MSI Handover Analysis -->
+[% IF Data.EnableMSIAnalysis %]
+        <div class="WidgetSimple">
+            <div class="Header">
+                <div class="ActionMenu">
+                    <div class="WidgetAction Toggle">
+                        <a href="#" title="[% Translate("Show or hide the content") | html %]"></a>
+                    </div>
+                </div>
+                <h2>[% Translate("MSI Handover Analysis") | html %]</h2>
+            </div>
+            <div class="Content">
+
+                <!-- MSI Summary Stats -->
+                <div class="LayoutGrid">
+                    <div class="Size1of3">
+                        <div class="StatBox">
+                            <h3>[% Translate("Total Handovers") | html %]</h3>
+                            <p class="StatValue" id="MSITotalHandovers">-</p>
+                        </div>
+                    </div>
+                    <div class="Size1of3">
+                        <div class="StatBox">
+                            <h3>[% Translate("% of Total") | html %]</h3>
+                            <p class="StatValue" id="MSIPercentage">-</p>
+                        </div>
+                    </div>
+                    <div class="Size1of3">
+                        <div class="StatBox">
+                            <h3>[% Translate("Avg Time with MSI") | html %]</h3>
+                            <p class="StatValue" id="MSIAvgTime">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MSI Handover Details Table -->
+                <div class="SpacingTop">
+                    <h3>[% Translate("Handover Details") | html %]</h3>
+                    <div class="OverflowVisible">
+                        <table class="DataTable">
+                            <thead>
+                                <tr>
+                                    <th>[% Translate("Ticket #") | html %]</th>
+                                    <th>[% Translate("Priority") | html %]</th>
+                                    <th>[% Translate("Prod Cat") | html %]</th>
+                                    <th>[% Translate("Ops Cat") | html %]</th>
+                                    <th>[% Translate("Escalation Date") | html %]</th>
+                                    <th>[% Translate("Time with MSI") | html %]</th>
+                                    <th>[% Translate("MSI Ticket #") | html %]</th>
+                                </tr>
+                            </thead>
+                            <tbody id="HandoverTableBody">
+                                <tr>
+                                    <td colspan="7" class="Center">[% Translate("Loading data...") | html %]</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+[% END %]
+
+        <!-- Two Column Chart Layout -->
+        <div class="LayoutGrid ColumnsWithSpacing">
+            <!-- Left Column -->
+            <div class="Size1of2">
+                <!-- Source Distribution Chart -->
+                <div class="WidgetSimple">
+                    <div class="Header">
+                        <h2>[% Translate("Source Distribution") | html %]</h2>
+                    </div>
+                    <div class="Content">
+                        <div id="SourceChartContainer" style="width: 100%; height: 350px;">
+                            <svg id="SourceChart" style="width: 100%; height: 100%;"></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Problem Devices Chart -->
+                <div class="WidgetSimple">
+                    <div class="Header">
+                        <h2>[% Translate("Top Problem Devices") | html %]</h2>
+                    </div>
+                    <div class="Content">
+                        <div id="TopDevicesChartContainer" style="width: 100%; height: 350px;">
+                            <svg id="TopDevicesChart" style="width: 100%; height: 100%;"></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="Size1of2">
+                <!-- State Distribution Chart -->
+                <div class="WidgetSimple">
+                    <div class="Header">
+                        <h2>[% Translate("Incident State Progress") | html %]</h2>
+                    </div>
+                    <div class="Content">
+                        <div id="StateChartContainer" style="width: 100%; height: 350px;">
+                            <svg id="StateChart" style="width: 100%; height: 100%;"></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resolution Time Distribution Chart -->
+                <div class="WidgetSimple">
+                    <div class="Header">
+                        <h2>[% Translate("Resolution Time Distribution") | html %]</h2>
+                    </div>
+                    <div class="Content">
+                        <div id="ResolutionTimeChartContainer" style="width: 100%; height: 350px;">
+                            <svg id="ResolutionTimeChart" style="width: 100%; height: 100%;"></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+/* Ensure chart labels are not clipped */
+#TrendChartContainer svg,
+#SourceChartContainer svg,
+#TopDevicesChartContainer svg,
+#StateChartContainer svg,
+#ResolutionTimeChartContainer svg {
+    overflow: visible;
+}
+#TrendChartContainer,
+#SourceChartContainer,
+#TopDevicesChartContainer,
+#StateChartContainer,
+#ResolutionTimeChartContainer {
+    padding: 15px 10px;
+}
+.StatBox {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+.StatBox h3 {
+    font-size: 12px;
+    color: #666;
+    margin: 0 0 10px 0;
+    text-transform: uppercase;
+}
+.StatBox .StatValue {
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+.Pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+}
+.PaginationControls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.LayoutGrid {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.Size1of2 {
+    flex: 0 0 calc(50% - 5px);
+}
+.Size1of3 {
+    flex: 0 0 calc(33.333% - 7px);
+}
+.Size1of4 {
+    flex: 0 0 calc(25% - 8px);
+}
+.ColumnsWithSpacing {
+    align-items: flex-start;
+}
+.ColumnsWithSpacing .WidgetSimple {
+    margin-bottom: 20px;
+}
+</style>
+
+<!-- Include D3.js and NVD3 libraries -->
+<link rel="stylesheet" href="[% Config("Frontend::WebPath") %]js/thirdparty/nvd3-1.7.1/nv.d3.css">
+<script src="[% Config("Frontend::WebPath") %]js/thirdparty/d3-3.5.7/d3.min.js"></script>
+<script src="[% Config("Frontend::WebPath") %]js/thirdparty/nvd3-1.7.1/nvd3.min.js"></script>
+
+<!-- Include chart implementation JavaScript -->
+<script src="[% Config("Frontend::WebPath") %]js/Core.Agent.IncidentReportCharts.js"></script>
+
+<!-- Initialize charts when Core framework is ready -->
+<script type="text/javascript">
+// Wait for Core framework to be ready - exact pattern from Operational Reports
+if (typeof Core !== 'undefined' && Core.App && Core.App.Ready) {
+    Core.App.Ready(function() {
+        if (typeof Core.Agent.IncidentReportCharts !== 'undefined') {
+            Core.Agent.IncidentReportCharts.Init();
+        }
+    });
+} else {
+    // Fallback if Core.App.Ready doesn't exist
+    window.addEventListener('load', function() {
+        if (typeof Core !== 'undefined' &&
+            typeof Core.Agent !== 'undefined' &&
+            typeof Core.Agent.IncidentReportCharts !== 'undefined') {
+            Core.Agent.IncidentReportCharts.Init();
+        }
+    });
+}
+</script>
+
+[% RenderBlockEnd("IncidentReport") %]

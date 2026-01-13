@@ -1,0 +1,166 @@
+/**
+ * Motorola Solutions Skin - Core Default Styles
+ * Main brand colors, typography, and base styling overrides
+ */
+
+/* Import Google Fonts - Roboto (Motorola brand font) */
+@import url("../fonts/roboto.css");
+
+/* Motorola Brand Color Variables */
+:root {
+    /* Core Motorola Colors */
+    --motorola-dark-blue: #005FBE;
+    --motorola-light-blue: #00A5E5;
+    --motorola-orange: #FF8200;
+    --motorola-red: #CB333B;
+    --motorola-dark-green: #6B711E;
+    --motorola-light-green: #B6BF00;
+    --motorola-midnight-blue: #37207D;
+    --motorola-brown: #734C45;
+    
+    /* Tints and shades */
+    --motorola-dark-blue-tint-30: #4D8FD1;
+    --motorola-dark-blue-tint-70: #99C2E7;
+    --motorola-dark-blue-shade-30: #004085;
+    
+    /* Typography */
+    --motorola-font-family: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --motorola-font-light: 300;
+    --motorola-font-regular: 400;
+    --motorola-font-medium: 500;
+}
+
+/* Base Typography Override */
+body,
+html {
+    font-family: var(--motorola-font-family) !important;
+    font-weight: var(--motorola-font-regular);
+    color: #333;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--motorola-font-family) !important;
+    font-weight: var(--motorola-font-medium);
+    color: var(--motorola-dark-blue);
+}
+
+/* Links */
+a {
+    color: var(--motorola-dark-blue) !important;
+}
+
+a:hover {
+    color: var(--motorola-light-blue) !important;
+}
+
+.MessageBox.Error p, .MessageBox.Error a, .MessageBox.Confirmation p, .MessageBox.Confirmation a {
+    color: rgba(255,255,255,.8) !important;
+}
+
+.MessageBox a {
+    color: var(--color-grey1) !important;
+}
+
+/* Buttons - Primary actions */
+button.Primary,
+input[type="submit"].Primary,
+.CallForAction {
+    font-weight: var(--motorola-font-medium) !important;
+    font-family: var(--motorola-font-family) !important;
+}
+
+/* Secondary buttons */
+button,
+input[type="submit"],
+input[type="button"],
+.Cancel {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    border: 2px solid #dee2e6 !important;
+    color: var(--motorola-dark-blue) !important;
+    font-weight: var(--motorola-font-medium) !important;
+    font-family: var(--motorola-font-family) !important;
+}
+
+button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover,
+.Cancel:hover {
+    border-color: var(--motorola-light-blue) !important;
+    color: var(--motorola-dark-blue) !important;
+}
+
+/* Form elements */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+textarea,
+select {
+    border: 2px solid #e0e0e0 !important;
+    font-family: var(--motorola-font-family) !important;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--motorola-light-blue) !important;
+    box-shadow: 0 0 0 2px rgba(0, 165, 229, 0.2) !important;
+}
+
+/* Error states */
+.Error,
+.ServerError {
+    color: var(--motorola-red) !important;
+    border-color: var(--motorola-red) !important;
+}
+
+/* Success states */
+.Success,
+.Notice {
+    color: var(--motorola-dark-green) !important;
+    border-color: var(--motorola-dark-green) !important;
+}
+
+/* Warning states */
+.Warning {
+    color: var(--motorola-orange) !important;
+    border-color: var(--motorola-orange) !important;
+}
+
+/* Remove all text shadows for clean Motorola look */
+* {
+    text-shadow: none !important;
+}
+
+/* Specific text shadow removals */
+h1, h2, h3, h4, h5, h6 {
+    text-shadow: none !important;
+}
+
+a, a:hover, a:visited, a:active {
+    text-shadow: none !important;
+}
+
+button, input[type="submit"], input[type="button"] {
+    text-shadow: none !important;
+}
+
+label, span, div, p, td, th {
+    text-shadow: none !important;
+}
+
+/* Navigation and header text */
+#Navigation li a,
+#ToolBar li a,
+#UserInfo a {
+    text-shadow: none !important;
+}
+
+/* Widget headers */
+.WidgetSimple > .Header,
+.WidgetSimple > .Header h2,
+.DashboardWidget .Header {
+    text-shadow: none !important;
+}

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Framework">
+    <Setting Name="Ticket::EventModulePost###4000-IncidentLockManager" Required="0" Valid="1">
+        <Description Translatable="1">Automatically manage incident lock states based on ticket state</Description>
+        <Navigation>Core::Event::Ticket</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Module">Kernel::System::Ticket::Event::IncidentLockManager</Item>
+                <Item Key="Event">(TicketStateUpdate)</Item>
+            </Hash>
+        </Value>
+    </Setting>
+</otrs_config>

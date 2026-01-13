@@ -1,0 +1,179 @@
+# --
+# Copyright (C) 2025 MSST, https://msst.com/
+# --
+# This software comes with ABSOLUTELY NO WARRANTY. For details, see
+# the enclosed file COPYING for license information (GPL). If you
+# did not receive this file, see https://www.gnu.org/licenses/gpl-3.0.txt.
+# --
+
+<div class="MainBox ARIARoleMain LayoutFixedSidebar SidebarFirst ActionsSideBar">
+    <div class="SidebarColumn ActionsSideBarComp">
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Actions") | html %]</h2>
+            </div>
+            <div class="Content">
+                <ul class="ActionList">
+                    <li>
+                        <a href="[% Env("Baselink") %]Action=Admin" class="CallForAction Fullsize Center">
+                            <span><i class="fa fa-caret-left"></i>[% Translate("Go to overview") | html %]</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Note") | html %]</h2>
+            </div>
+            <div class="Content">
+                <p class="FieldExplanation">
+                    [% Translate("Configure SSH connection to Syslog server for log retrieval.") | html %]
+                </p>
+                <p class="FieldExplanation">
+                    [% Translate("MSI Service Providers can use this interface to export application logs as a ZIP file.") | html %]
+                </p>
+                <p class="FieldExplanation">
+                    [% Translate("Use the test connection button to verify SSH connectivity and key authentication.") | html %]
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="ContentColumn">
+        <h1>[% Translate("Application Logs Configuration") | html %]</h1>
+
+        [% IF Data.ConfigMissing %]
+        <div class="MessageBox Warning">
+            <p><strong>[% Translate("Warning: Syslog SSH credentials are not configured!") | html %]</strong></p>
+            <p>[% Translate("The following configuration settings are missing in Config.pm:") | html %] <code>[% Data.MissingFields | html %]</code></p>
+            <p>[% Translate("Please contact your system administrator to configure the Syslog SSH credentials in /opt/znuny-6.5.15/Kernel/Config.pm") | html %]</p>
+            <p>[% Translate("Example configuration:") | html %]</p>
+            <pre style="background: #f5f5f5; padding: 10px; border-radius: 3px; margin: 10px 0;">
+    # Application Logs Configuration
+    $Self->{'ApplicationLogs::SyslogSSHHost'}    = '10.23.1.74';
+    $Self->{'ApplicationLogs::SyslogSSHUser'}    = 'root';
+    $Self->{'ApplicationLogs::SyslogSSHKeyPath'} = '/home/znuny/.ssh/syslog_server.key';
+
+    # Optional settings:
+    $Self->{'ApplicationLogs::SyslogLogPaths'}   = '/var/log/syslog';  # Default
+    $Self->{'ApplicationLogs::StartDate'}        = '2025-01-01';       # Optional date filter
+    $Self->{'ApplicationLogs::EndDate'}          = '2025-12-31';       # Optional date filter</pre>
+        </div>
+        [% END %]
+
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Syslog SSH Configuration") | html %]</h2>
+            </div>
+            <div class="Content">
+                <form action="[% Env("CGIHandle") %]" method="post" enctype="multipart/form-data" name="SyslogForm">
+                    <input type="hidden" name="Action" value="[% Env("Action") %]"/>
+                    <input type="hidden" name="[% Env("SessionName") %]" value="[% Env("SessionID") %]"/>
+                    <!-- Hidden fields for SSH configuration -->
+                    <input type="hidden" name="SyslogSSHHost" id="SyslogSSHHost" value="[% Data.SyslogSSHHost | html %]"/>
+                    <input type="hidden" name="SyslogSSHPort" id="SyslogSSHPort" value="[% Data.SyslogSSHPort | html %]"/>
+                    <input type="hidden" name="SyslogSSHUser" id="SyslogSSHUser" value="[% Data.SyslogSSHUser | html %]"/>
+                    <input type="hidden" name="SyslogSSHKeyPath" id="SyslogSSHKeyPath" value="[% Data.SyslogSSHKeyPath | html %]"/>
+
+                    <fieldset class="TableLike">
+                        <label>[% Translate("SSH Configuration") | html %]:</label>
+                        <div class="Field">
+                            [% IF Data.ConfigMissing %]
+                                <p class="FieldExplanation" style="color: #ff6600;">
+                                    <i class="fa fa-warning"></i> <strong>[% Translate("Not Configured") | html %]</strong> - [% Translate("SSH credentials must be set in Config.pm") | html %]
+                                </p>
+                            [% ELSE %]
+                                <p class="FieldExplanation" style="color: #009900;">
+                                    <i class="fa fa-check-circle"></i> <strong>[% Translate("Configured") | html %]</strong> - [% Translate("SSH credentials are loaded from Config.pm") | html %]
+                                </p>
+                                <p class="FieldExplanation">
+                                    <strong>[% Translate("SSH Host") | html %]:</strong> [% IF Data.SyslogSSHHost && Data.SyslogSSHHost != 'NOT CONFIGURED' %][% Data.SyslogSSHHost | html %][% ELSE %]<span style="color: #ff6600;">[% Translate("Not set") | html %]</span>[% END %]<br>
+                                    <strong>[% Translate("SSH User") | html %]:</strong> [% IF Data.SyslogSSHUser && Data.SyslogSSHUser != 'NOT CONFIGURED' %][% Data.SyslogSSHUser | html %][% ELSE %]<span style="color: #ff6600;">[% Translate("Not set") | html %]</span>[% END %]<br>
+                                    <strong>[% Translate("SSH Key Path") | html %]:</strong> [% IF Data.SyslogSSHKeyPath && Data.SyslogSSHKeyPath != 'NOT CONFIGURED' %][% Data.SyslogSSHKeyPath | html %][% ELSE %]<span style="color: #ff6600;">[% Translate("Not set") | html %]</span>[% END %]<br>
+                                    <strong>[% Translate("SSH Port") | html %]:</strong> [% Data.SyslogSSHPort | html %]
+                                </p>
+                            [% END %]
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>
+                            [% Translate("Syslog Log Paths") | html %]:
+                        </label>
+                        <div class="Field">
+                            <p class="FieldExplanation">
+                                <strong>[% Data.SyslogLogPaths | html %]</strong><br>
+                                <span style="font-size: 0.9em; color: #666;">
+                                    [% Translate("To change, set ApplicationLogs::SyslogLogPaths in Config.pm") | html %]
+                                </span>
+                            </p>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label for="StartDate">
+                            [% Translate("Start Date") | html %]:
+                        </label>
+                        <div class="Field">
+                            <input type="date" name="StartDate" id="StartDate" value="[% Data.StartDate | html %]"
+                                   class="W50pc"/>
+                            <p class="FieldExplanation">[% Translate("Start date for log collection (YYYY-MM-DD format). Leave empty to collect all logs.") | html %]</p>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label for="EndDate">
+                            [% Translate("End Date") | html %]:
+                        </label>
+                        <div class="Field">
+                            <input type="date" name="EndDate" id="EndDate" value="[% Data.EndDate | html %]"
+                                   class="W50pc"/>
+                            <p class="FieldExplanation">[% Translate("End date for log collection (YYYY-MM-DD format). Leave empty to collect all logs.") | html %]</p>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <div class="Field SpacingTop">
+                            <button type="button" id="TestSyslogConnection" class="CallForAction">
+                                <span>[% Translate("Test Syslog Connection") | html %]</span>
+                            </button>
+                        </div>
+                        <div class="Clear"></div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+
+        <div class="WidgetSimple" id="SyslogConnectionTestResult" style="display:none;">
+            <div class="Header">
+                <h2>[% Translate("Syslog Connection Test Result") | html %]</h2>
+            </div>
+            <div class="Content">
+                <div id="SyslogTestResultMessage"></div>
+            </div>
+        </div>
+        
+        
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Export Logs") | html %]</h2>
+            </div>
+            <div class="Content">
+                <fieldset class="TableLike">
+                    <div class="Field SpacingTop">
+                        <button type="button" id="ExportLogs" class="CallForAction Primary">
+                            <span>[% Translate("Export Application Logs") | html %]</span>
+                        </button>
+                        [% Translate("or") | html %]
+                        <a href="[% Env("Baselink") %]Action=Admin">[% Translate("Cancel") | html %]</a>
+                    </div>
+                    <div class="Clear"></div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+</div>
+
+[% WRAPPER JSOnDocumentComplete %]
+<script type="text/javascript">//<![CDATA[
+    Core.Agent.Admin.ApplicationLogs.Init();
+//]]></script>
+[% END %]

@@ -1,0 +1,152 @@
+# --
+# Copyright (C) 2025 MSST, https://msst.com/
+# --
+# This software comes with ABSOLUTELY NO WARRANTY.
+# --
+
+<div class="MainBox ARIARoleMain">
+    <h1 class="InvisibleText">[% Translate("Event Reports - Details") | html %]</h1>
+
+    <div class="Content">
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>
+                    [% Translate("Event Details") | html %]
+                    <span style="font-weight: normal; font-size: 14px; margin-left: 15px;">
+                        [% Data.StartDate | html %] to [% Data.EndDate | html %]
+                        [% IF Data.IncidentStatus == 'with' %]
+                            - <span style="color: #5cb85c;">With Incident</span>
+                        [% ELSIF Data.IncidentStatus == 'without' %]
+                            - <span style="color: #d9534f;">Without Incident</span>
+                        [% ELSE %]
+                            - All Events
+                        [% END %]
+                    </span>
+                </h2>
+            </div>
+            <div class="Content">
+
+                <!-- Summary -->
+                <div style="margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-radius: 4px;">
+                    <strong>Total Events:</strong> [% Data.TotalCount | html %]
+                    | <strong>Showing:</strong> [% Data.EventCount | html %] events
+                    | <strong>Page:</strong> [% Data.CurrentPage | html %] of [% Data.TotalPages | html %]
+                </div>
+
+                <!-- Back Link -->
+                <div style="margin-bottom: 15px;">
+                    <a href="[% Env("Baselink") %]Action=AgentEventReports" style="color: #007bff; text-decoration: none;">
+                        <i class="fa fa-arrow-left"></i> Back to Event Reports
+                    </a>
+                </div>
+
+                <!-- Data Table -->
+                <table class="DataTable" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: #e3e8f4;">
+                            <th style="padding: 8px; text-align: left; border: 1px solid #dee2e6;">
+                                <a href="[% Env("Baselink") %]Action=AgentEventReportsList;StartDate=[% Data.StartDate | uri %];EndDate=[% Data.EndDate | uri %];IncidentStatus=[% Data.IncidentStatus | uri %];OrderBy=alarm_id;OrderDir=[% IF Data.OrderBy == 'alarm_id' AND Data.OrderDir == 'ASC' %]DESC[% ELSE %]ASC[% END %]" style="color: #333; text-decoration: none;">
+                                    Alarm ID
+                                    [% IF Data.OrderBy == 'alarm_id' %]
+                                        [% IF Data.OrderDir == 'ASC' %]<i class="fa fa-sort-up"></i>[% ELSE %]<i class="fa fa-sort-down"></i>[% END %]
+                                    [% END %]
+                                </a>
+                            </th>
+                            <th style="padding: 8px; text-align: left; border: 1px solid #dee2e6;">Trigger ID</th>
+                            <th style="padding: 8px; text-align: left; border: 1px solid #dee2e6;">
+                                <a href="[% Env("Baselink") %]Action=AgentEventReportsList;StartDate=[% Data.StartDate | uri %];EndDate=[% Data.EndDate | uri %];IncidentStatus=[% Data.IncidentStatus | uri %];OrderBy=event_clock;OrderDir=[% IF Data.OrderBy == 'event_clock' AND Data.OrderDir == 'ASC' %]DESC[% ELSE %]ASC[% END %]" style="color: #333; text-decoration: none;">
+                                    Event Time
+                                    [% IF Data.OrderBy == 'event_clock' %]
+                                        [% IF Data.OrderDir == 'ASC' %]<i class="fa fa-sort-up"></i>[% ELSE %]<i class="fa fa-sort-down"></i>[% END %]
+                                    [% END %]
+                                </a>
+                            </th>
+                            <th style="padding: 8px; text-align: left; border: 1px solid #dee2e6;">
+                                <a href="[% Env("Baselink") %]Action=AgentEventReportsList;StartDate=[% Data.StartDate | uri %];EndDate=[% Data.EndDate | uri %];IncidentStatus=[% Data.IncidentStatus | uri %];OrderBy=host_name;OrderDir=[% IF Data.OrderBy == 'host_name' AND Data.OrderDir == 'ASC' %]DESC[% ELSE %]ASC[% END %]" style="color: #333; text-decoration: none;">
+                                    Host
+                                    [% IF Data.OrderBy == 'host_name' %]
+                                        [% IF Data.OrderDir == 'ASC' %]<i class="fa fa-sort-up"></i>[% ELSE %]<i class="fa fa-sort-down"></i>[% END %]
+                                    [% END %]
+                                </a>
+                            </th>
+                            <th style="padding: 8px; text-align: left; border: 1px solid #dee2e6;">Summary</th>
+                            <th style="padding: 8px; text-align: center; border: 1px solid #dee2e6;">
+                                <a href="[% Env("Baselink") %]Action=AgentEventReportsList;StartDate=[% Data.StartDate | uri %];EndDate=[% Data.EndDate | uri %];IncidentStatus=[% Data.IncidentStatus | uri %];OrderBy=severity;OrderDir=[% IF Data.OrderBy == 'severity' AND Data.OrderDir == 'ASC' %]DESC[% ELSE %]ASC[% END %]" style="color: #333; text-decoration: none;">
+                                    Severity
+                                    [% IF Data.OrderBy == 'severity' %]
+                                        [% IF Data.OrderDir == 'ASC' %]<i class="fa fa-sort-up"></i>[% ELSE %]<i class="fa fa-sort-down"></i>[% END %]
+                                    [% END %]
+                                </a>
+                            </th>
+                            <th style="padding: 8px; text-align: center; border: 1px solid #dee2e6;">Incident</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+[% RenderBlockStart("EventRow") %]
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #dee2e6;">[% Data.AlarmID | html %]</td>
+                            <td style="padding: 8px; border: 1px solid #dee2e6;">[% Data.TriggerID | html %]</td>
+                            <td style="padding: 8px; border: 1px solid #dee2e6;">[% Data.EventClock | html %]</td>
+                            <td style="padding: 8px; border: 1px solid #dee2e6;">[% Data.HostName | html %]</td>
+                            <td style="padding: 8px; border: 1px solid #dee2e6; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="[% Data.EventName | html %]">[% Data.EventName | html %]</td>
+                            <td style="padding: 8px; border: 1px solid #dee2e6; text-align: center;">
+                                [% IF Data.Severity == 5 %]
+                                    <span style="background: #dc3545; color: white; padding: 2px 8px; border-radius: 3px;">Disaster</span>
+                                [% ELSIF Data.Severity == 4 %]
+                                    <span style="background: #e74c3c; color: white; padding: 2px 8px; border-radius: 3px;">High</span>
+                                [% ELSIF Data.Severity == 3 %]
+                                    <span style="background: #f39c12; color: white; padding: 2px 8px; border-radius: 3px;">Average</span>
+                                [% ELSIF Data.Severity == 2 %]
+                                    <span style="background: #ffc107; color: black; padding: 2px 8px; border-radius: 3px;">Warning</span>
+                                [% ELSIF Data.Severity == 1 %]
+                                    <span style="background: #17a2b8; color: white; padding: 2px 8px; border-radius: 3px;">Info</span>
+                                [% ELSE %]
+                                    <span style="background: #6c757d; color: white; padding: 2px 8px; border-radius: 3px;">N/A</span>
+                                [% END %]
+                            </td>
+                            <td style="padding: 8px; border: 1px solid #dee2e6; text-align: center;">
+                                [% IF Data.HasIncident %]
+                                    <a href="[% Env("Baselink") %]Action=AgentTicketZoom;TicketNumber=[% Data.IncidentNumber | uri %]" style="color: #5cb85c; font-weight: bold;" title="View Incident">
+                                        [% Data.IncidentNumber | html %]
+                                    </a>
+                                [% ELSE %]
+                                    <span style="color: #d9534f;">-</span>
+                                [% END %]
+                            </td>
+                        </tr>
+[% RenderBlockEnd("EventRow") %]
+[% RenderBlockStart("NoEvents") %]
+                        <tr>
+                            <td colspan="7" style="padding: 20px; text-align: center; border: 1px solid #dee2e6; color: #6c757d;">
+                                <i class="fa fa-info-circle"></i> No events found for the selected criteria.
+                            </td>
+                        </tr>
+[% RenderBlockEnd("NoEvents") %]
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+[% RenderBlockStart("PrevPage") %]
+                        <a href="[% Env("Baselink") %]Action=AgentEventReportsList;StartDate=[% Data.StartDate | uri %];EndDate=[% Data.EndDate | uri %];IncidentStatus=[% Data.IncidentStatus | uri %];OrderBy=[% Data.OrderBy | uri %];OrderDir=[% Data.OrderDir | uri %];Page=[% Data.PrevPage | uri %]" style="padding: 6px 12px; background: #007bff; color: white; text-decoration: none; border-radius: 4px;">
+                            <i class="fa fa-chevron-left"></i> Previous
+                        </a>
+[% RenderBlockEnd("PrevPage") %]
+                    </div>
+                    <div>
+                        Page [% Data.CurrentPage | html %] of [% Data.TotalPages | html %]
+                    </div>
+                    <div>
+[% RenderBlockStart("NextPage") %]
+                        <a href="[% Env("Baselink") %]Action=AgentEventReportsList;StartDate=[% Data.StartDate | uri %];EndDate=[% Data.EndDate | uri %];IncidentStatus=[% Data.IncidentStatus | uri %];OrderBy=[% Data.OrderBy | uri %];OrderDir=[% Data.OrderDir | uri %];Page=[% Data.NextPage | uri %]" style="padding: 6px 12px; background: #007bff; color: white; text-decoration: none; border-radius: 4px;">
+                            Next <i class="fa fa-chevron-right"></i>
+                        </a>
+[% RenderBlockEnd("NextPage") %]
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

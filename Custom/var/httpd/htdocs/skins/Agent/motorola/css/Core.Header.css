@@ -1,0 +1,55 @@
+/**
+ * Motorola Solutions Skin - Header Styling
+ */
+
+/* Main header container - use ID selector for higher specificity */
+#Header {
+    background: linear-gradient(135deg, var(--motorola-dark-blue) 0%, var(--motorola-light-blue) 100%) !important;
+    border-bottom: 3px solid var(--color-grey8) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Logo section */
+#Logo {
+    background-color: transparent !important;
+}
+
+/* Navigation items */
+#Navigation li a {
+    color: white !important;
+    font-weight: var(--motorola-font-medium) !important;
+    font-family: var(--motorola-font-family) !important;
+}
+
+/* Toolbar */
+
+#ToolBar li a {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+#ToolBar li a:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+}
+
+/* Search functionality */
+#ToolBarSearchProfile,
+#ToolBarSearch {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+}
+
+#ToolBarSearchProfile:focus,
+#ToolBarSearch:focus {
+    border-color: var(--color-grey13) !important;
+}
+
+/* User info */
+#UserInfo a {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+#UserInfo a:hover {
+    color: white !important;
+}

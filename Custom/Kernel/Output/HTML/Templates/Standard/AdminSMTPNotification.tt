@@ -1,0 +1,267 @@
+# --
+# Copyright (C) 2001-2021 OTRS AG, https://otrs.com/
+# Copyright (C) 2021 Znuny GmbH, https://znuny.org/
+# --
+# This software comes with ABSOLUTELY NO WARRANTY. For details, see
+# the enclosed file COPYING for license information (GPL). If you
+# did not receive this file, see https://www.gnu.org/licenses/gpl-3.0.txt.
+# --
+
+[% RenderBlockStart("Overview") %]
+<div class="MainBox ARIARoleMain LayoutFixedSidebar SidebarFirst">
+    <h1 class="InvisibleText">[% Translate("SMTP Notification Configuration") | html %]</h1>
+
+    [% BreadcrumbPath = [
+            {
+                Name => Translate('SMTP Notification Configuration'),
+            },
+        ]
+    %]
+
+    [% INCLUDE "Breadcrumb.tt" Path = BreadcrumbPath %]
+
+    <div class="SidebarColumn">
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Actions") | html %]</h2>
+            </div>
+            <div class="Content">
+                <ul class="ActionList">
+                    <li>
+                        <a id="TestConnection" href="#" class="CallForAction Fullsize Center">
+                            <span><i class="fa fa-caret-right"></i>[% Translate("Test Connection") | html %]</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Hint") | html %]</h2>
+            </div>
+            <div class="Content">
+                <p class="FieldExplanation">
+                    [% Translate("Configure SMTP server settings for sending email notifications when tickets are created, resolved, or reopened.") | html %]
+                </p>
+                <p class="FieldExplanation">
+                    [% Translate("You can enable or disable notifications for each ticket priority level.") | html %]
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="ContentColumn">
+        [% RenderBlockStart("SavedMessage") %]
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Notice") | html %]</h2>
+            </div>
+            <div class="Content">
+                <p class="Notice">
+                    [% Translate("Configuration saved successfully!") | html %]
+                </p>
+            </div>
+        </div>
+        [% RenderBlockEnd("SavedMessage") %]
+
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("SMTP Notification Configuration") | html %]</h2>
+            </div>
+            <div class="Content">
+                <form action="[% Env("CGIHandle") %]" method="post" enctype="multipart/form-data" class="Validate PreventMultipleSubmits">
+                    <input type="hidden" name="Action" value="[% Env("Action") %]" />
+                    <input type="hidden" name="Subaction" value="Save" />
+                    <input type="hidden" name="ChallengeToken" value="[% Env("UserChallengeToken") | html %]" />
+                    
+                    <fieldset class="TableLike">
+                        <legend>[% Translate("General Settings") | html %]</legend>
+                        
+                        <label for="SMTPEnabled">[% Translate("Enable SMTP Notifications") | html %]:</label>
+                        <div class="Field">
+                            <input type="checkbox" name="SMTPEnabled" id="SMTPEnabled" value="1" [% Data.SMTPEnabled == '1' ? 'checked="checked"' : '' %] />
+                            <p class="FieldExplanation">[% Translate("Enable or disable the SMTP notification system.") | html %]</p>
+                        </div>
+                        <div class="Clear"></div>
+                    </fieldset>
+                    
+                    <fieldset class="TableLike">
+                        <legend>[% Translate("SMTP Server Settings") | html %]</legend>
+                        
+                        <label class="Mandatory" for="Host">
+                            <span class="Marker">*</span>
+                            [% Translate("SMTP Host") | html %]:
+                        </label>
+                        <div class="Field">
+                            <input type="text" name="Host" id="Host" value="[% Data.Host | html %]" 
+                                   class="W50pc Validate_Required [% Data.HostInvalid | html %]" />
+                            <div id="HostError" class="TooltipErrorMessage">
+                                <p>[% Translate("This field is required.") | html %]</p>
+                            </div>
+                            <div id="HostServerError" class="TooltipErrorMessage">
+                                <p>[% Translate("Please enter a valid hostname or IP address.") | html %]</p>
+                            </div>
+                        </div>
+                        <div class="Clear"></div>
+                        
+                        <label class="Mandatory" for="Port">
+                            <span class="Marker">*</span>
+                            [% Translate("SMTP Port") | html %]:
+                        </label>
+                        <div class="Field">
+                            <input type="text" name="Port" id="Port" value="[% Data.Port | html %]" 
+                                   class="W50pc Validate_Required Validate_Number [% Data.PortInvalid | html %]" />
+                            <div id="PortError" class="TooltipErrorMessage">
+                                <p>[% Translate("This field is required.") | html %]</p>
+                            </div>
+                            <div id="PortServerError" class="TooltipErrorMessage">
+                                <p>[% Translate("Please enter a valid port number.") | html %]</p>
+                            </div>
+                            <p class="FieldExplanation">[% Translate("Common ports: 25 (unencrypted), 465 (SSL/TLS), 587 (STARTTLS)") | html %]</p>
+                        </div>
+                        <div class="Clear"></div>
+                        
+                        <label for="Encryption">[% Translate("Encryption") | html %]:</label>
+                        <div class="Field">
+                            [% Data.EncryptionStrg %]
+                        </div>
+                        <div class="Clear"></div>
+                        
+                        <label for="Module">[% Translate("SMTP Module") | html %]:</label>
+                        <div class="Field">
+                            [% Data.ModuleStrg %]
+                            <p class="FieldExplanation">[% Translate("Select the SMTP module to use. 'Automatic' will choose based on encryption type.") | html %]</p>
+                        </div>
+                        <div class="Clear"></div>
+                        
+                        <label for="AuthUser">[% Translate("Authentication Username") | html %]:</label>
+                        <div class="Field">
+                            <input type="text" name="AuthUser" id="AuthUser" value="[% Data.AuthUser | html %]" class="W50pc" />
+                            <p class="FieldExplanation">[% Translate("Leave empty if no authentication is required.") | html %]</p>
+                        </div>
+                        <div class="Clear"></div>
+                        
+                        <label for="AuthPassword">[% Translate("Authentication Password") | html %]:</label>
+                        <div class="Field">
+                            <input type="password" name="AuthPassword" id="AuthPassword" value="[% Data.AuthPassword | html %]" class="W50pc" />
+                        </div>
+                        <div class="Clear"></div>
+                        
+                        <label class="Mandatory" for="From">
+                            <span class="Marker">*</span>
+                            [% Translate("From Email Address") | html %]:
+                        </label>
+                        <div class="Field">
+                            <input type="text" name="From" id="From" value="[% Data.From | html %]" 
+                                   class="W50pc Validate_Required Validate_Email [% Data.FromInvalid | html %]" />
+                            <div id="FromError" class="TooltipErrorMessage">
+                                <p>[% Translate("This field is required.") | html %]</p>
+                            </div>
+                            <div id="FromServerError" class="TooltipErrorMessage">
+                                <p>[% Translate("Please enter a valid email address.") | html %]</p>
+                            </div>
+                        </div>
+                        <div class="Clear"></div>
+                        
+                        <label for="Recipients">[% Translate("Default Recipients") | html %]:</label>
+                        <div class="Field">
+                            <textarea name="Recipients" id="Recipients" class="W50pc" rows="3" style="font-size: 14px; padding: 5px 3px;">[% Data.Recipients | html %]</textarea>
+                            <p class="FieldExplanation">[% Translate("Enter email addresses, one per line or comma-separated.") | html %]</p>
+                        </div>
+                        <div class="Clear"></div>
+                    </fieldset>
+                    
+                    <fieldset class="TableLike">
+                        <legend>[% Translate("Priority Notification Settings") | html %]</legend>
+                        <p class="FieldExplanation">[% Translate("Enable or disable notifications for each ticket priority level.") | html %]</p>
+                        
+                        <label for="Priority1">[% Translate("P1-Critical") | html %]:</label>
+                        <div class="Field">
+                            <input type="checkbox" name="Priority1" id="Priority1" value="1" [% Data.Priority1 == '1' ? 'checked="checked"' : '' %] />
+                        </div>
+                        <div class="Clear"></div>
+                        
+                        <label for="Priority2">[% Translate("P2-High") | html %]:</label>
+                        <div class="Field">
+                            <input type="checkbox" name="Priority2" id="Priority2" value="1" [% Data.Priority2 == '1' ? 'checked="checked"' : '' %] />
+                        </div>
+                        <div class="Clear"></div>
+                        
+                        <label for="Priority3">[% Translate("P3-Medium") | html %]:</label>
+                        <div class="Field">
+                            <input type="checkbox" name="Priority3" id="Priority3" value="1" [% Data.Priority3 == '1' ? 'checked="checked"' : '' %] />
+                        </div>
+                        <div class="Clear"></div>
+                        
+                        <label for="Priority4">[% Translate("P4-Low") | html %]:</label>
+                        <div class="Field">
+                            <input type="checkbox" name="Priority4" id="Priority4" value="1" [% Data.Priority4 == '1' ? 'checked="checked"' : '' %] />
+                        </div>
+                        <div class="Clear"></div>
+                        
+                        <!-- Priority 5 is deprecated with the P1-P4 system -->
+                        <label for="Priority5" style="display: none;">[% Translate("Priority 5 (deprecated)") | html %]:</label>
+                        <div class="Field" style="display: none;">
+                            <input type="checkbox" name="Priority5" id="Priority5" value="0" disabled="disabled" />
+                        </div>
+                        <div class="Clear"></div>
+                    </fieldset>
+                    
+                    <div class="Field SpacingTop">
+                        <button class="Primary CallForAction" type="submit" value="[% Translate("Save") | html %]">
+                            <span>[% Translate("Save") | html %]</span>
+                        </button>
+                        [% Translate("or") | html %]
+                        <a href="[% Env("Baselink") %]Action=Admin">[% Translate("Cancel") | html %]</a>
+                    </div>
+                    <div class="Clear"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="Clear"></div>
+</div>
+
+[% WRAPPER JSOnDocumentComplete %]
+<script type="text/javascript">//<![CDATA[
+$('#TestConnection').on('click', function() {
+    var $Button = $(this);
+    $Button.find('span').html('<i class="fa fa-spinner fa-spin"></i> [% Translate("Testing...") | html %]');
+    
+    $.ajax({
+        url: '[% Env("Baselink") %]',
+        type: 'POST',
+        data: {
+            Action: '[% Env("Action") %]',
+            Subaction: 'TestConnection',
+            ChallengeToken: '[% Env("UserChallengeToken") | html %]'
+        },
+        success: function(Response) {
+            if (Response.Success) {
+                Core.UI.Dialog.ShowAlert(
+                    '[% Translate("Connection Test") | html %]',
+                    Response.Message,
+                    function() {
+                        Core.UI.Dialog.CloseDialog($('.Dialog'));
+                    }
+                );
+            } else {
+                Core.UI.Dialog.ShowAlert(
+                    '[% Translate("Connection Test Failed") | html %]',
+                    Response.Message,
+                    function() {
+                        Core.UI.Dialog.CloseDialog($('.Dialog'));
+                    }
+                );
+            }
+        },
+        complete: function() {
+            $Button.find('span').html('<i class="fa fa-caret-right"></i> [% Translate("Test Connection") | html %]');
+        }
+    });
+    return false;
+});
+//]]></script>
+[% END %]
+[% RenderBlockEnd("Overview") %]

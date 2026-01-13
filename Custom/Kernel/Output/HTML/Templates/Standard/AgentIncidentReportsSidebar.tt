@@ -1,0 +1,87 @@
+# --
+# Copyright (C) 2025 MSST, https://msst.com/
+# --
+# This software comes with ABSOLUTELY NO WARRANTY.
+# --
+# Shared sidebar for Incident Reports pages
+# Include with: [% INCLUDE "AgentIncidentReportsSidebar.tt" ActiveSection = "TicketsCreation" %]
+
+<h1>[% Translate("Incident Reports") | html %]</h1>
+<div class="SidebarColumn">
+    <div class="WidgetSimple">
+        <div class="Header">
+            <h2>[% Translate("Navigation") | html %]</h2>
+        </div>
+        <div class="Content" style="padding: 0;">
+            <style>
+                .incident-sidebar-nav {
+                    list-style: none;
+                    margin: 0;
+                    padding: 0;
+                }
+                .incident-sidebar-nav li {
+                    margin: 0;
+                    border-bottom: 1px solid #e8e8e8;
+                }
+                .incident-sidebar-nav li:last-child {
+                    border-bottom: none;
+                }
+                .incident-sidebar-nav li a {
+                    display: block;
+                    padding: 12px 15px;
+                    color: #333;
+                    text-decoration: none;
+                    font-size: 13px;
+                    transition: all 0.2s ease;
+                    border-left: 3px solid transparent;
+                }
+                .incident-sidebar-nav li a:hover {
+                    background: #f5f5f5;
+                    color: #000;
+                    border-left-color: #ccc;
+                }
+                .incident-sidebar-nav li.Active a {
+                    background: #e8f4fc;
+                    color: #004085;
+                    font-weight: bold;
+                    border-left-color: #004085;
+                }
+                .incident-sidebar-nav li a i {
+                    margin-right: 8px;
+                    width: 16px;
+                    text-align: center;
+                    color: #666;
+                }
+                .incident-sidebar-nav li.Active a i {
+                    color: #004085;
+                }
+            </style>
+            <ul class="incident-sidebar-nav">
+                <li class="[% IF ActiveSection == 'TicketsCreation' || !ActiveSection %]Active[% END %]">
+                    <a href="[% Env("Baselink") %]Action=AgentIncidentReports;Section=TicketsCreation">
+                        <i class="fa fa-bar-chart"></i>
+                        [% Translate("Ticket Creation") | html %]
+                    </a>
+                </li>
+                <li class="[% IF ActiveSection == 'TicketsClosure' %]Active[% END %]">
+                    <a href="[% Env("Baselink") %]Action=AgentIncidentReports;Section=TicketsClosure">
+                        <i class="fa fa-check-circle"></i>
+                        [% Translate("Ticket Closure") | html %]
+                    </a>
+                </li>
+                <li class="[% IF ActiveSection == 'TicketsClosureByProductCat3' %]Active[% END %]">
+                    <a href="[% Env("Baselink") %]Action=AgentIncidentReports;Section=TicketsClosureByProductCat3">
+                        <i class="fa fa-tags"></i>
+                        [% Translate("Tickets Closed by Top 10 Product Category") | html %]
+                    </a>
+                </li>
+                <li class="[% IF ActiveSection == 'TicketsClosureByCI' %]Active[% END %]">
+                    <a href="[% Env("Baselink") %]Action=AgentIncidentReports;Section=TicketsClosureByCI">
+                        <i class="fa fa-server"></i>
+                        [% Translate("Tickets Closed by Top 10 CI") | html %]
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

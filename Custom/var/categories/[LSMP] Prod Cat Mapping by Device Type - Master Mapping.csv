@@ -1,0 +1,228 @@
+Unique DIMETRA XML Device Type,Prod Cat - T1,Prod Cat - T2,Prod Cat - T3,Prod Cat - T4
+LSMP Eventmgmt,Local Service Management Platform (LSMP),Local Service Management Platform (LSMP),Local Service Management Platform (LSMP),Local Service Management Platform (LSMP)
+LSMP Monitoring Agent,Local Service Management Platform (LSMP),Local Service Management Platform (LSMP),Local Service Management Platform (LSMP),Local Service Management Platform (LSMP)
+LSMP ITSM,Local Service Management Platform (LSMP),Local Service Management Platform (LSMP),Local Service Management Platform (LSMP),Local Service Management Platform (LSMP)
+LSMP Linux,Local Service Management Platform (LSMP),Local Service Management Platform (LSMP),Local Service Management Platform (LSMP),Local Service Management Platform (LSMP)
+LSMP ICMP Ping,Local Service Management Platform (LSMP),Local Service Management Platform (LSMP),Local Service Management Platform (LSMP),Local Service Management Platform (LSMP)
+ActiveDirectoryCertificatesServer,DIMETRA,DIMETRA X Core,Consoles,DCS (Dispatch Communication Server)
+ADCS,DIMETRA,DIMETRA X Core,Consoles,DCS (Dispatch Communication Server)
+AGTW,DIMETRA,DIMETRA X Core,Consoles,DCS (Dispatch Communication Server)
+AIS,DIMETRA,DIMETRA X Core,Consoles,AIS (Archiving Interface Server)
+AISA,DIMETRA,DIMETRA X Core,Consoles,AIS (Archiving Interface Server)
+AliasServer,DIMETRA,DIMETRA X Core,Data Subsystem & CEN,Alias Server RUA/RUI
+Aruba,DIMETRA,DIMETRA X Core,Network Transport,LAN Switch - HPE A2930F-48
+ATR,DIMETRA,DIMETRA X Core,Network Management & Call Processing,ATR (Air Traffic Router)
+AUC,DIMETRA,DIMETRA X Core,Secure Subsystem,AuC (Authentication Centre)
+Ccgw_Site,DIMETRA,DIMETRA X Core,Network Transport,CCGW Router
+CHS,DIMETRA,DIMETRA X Core,Network Management & Call Processing,CHS (Cluster Hot Standby) Tools
+Cisco,DIMETRA,DIMETRA X Core,Network Transport,
+DConnectController,DIMETRA,DIMETRA X Core,Connect Gateway,
+DConnectControllerStatus,DIMETRA,DIMETRA X Core,Connect Gateway,
+DConnectGateway,DIMETRA,DIMETRA X Core,Connect Gateway,
+DConnectGWInterface,DIMETRA,DIMETRA X Core,Connect Gateway,
+DCS,DIMETRA,DIMETRA X Core,Consoles,DCS (Dispatch Communication Server)
+Dispatch,DIMETRA,DIMETRA X Core,Consoles,
+DomainController,DIMETRA,DIMETRA X Core,Network Management & Call Processing,DC (Domain Controller)
+EBTS,DIMETRA,DIMETRA X Core,RF Subsystem,EBTS
+EBTSBaseRadio,DIMETRA,DIMETRA X Core,RF Subsystem,EBTS
+EBTSStatus,DIMETRA,DIMETRA X Core,RF Subsystem,EBTS
+EsetAV,DIMETRA,DIMETRA X Core,Security Update Service,ESET Antivirus (RHEL)
+ESP,DIMETRA,DIMETRA X Core,Data Subsystem & CEN,
+ESXi,DIMETRA,DIMETRA X Core,Network Management & Call Processing,
+FortiGate,DIMETRA,DIMETRA X Core,Network Transport,
+FvServer,DIMETRA,DIMETRA X Core,Network Management & Call Processing,UEM (Unified Event Manager Server)
+GAS,DIMETRA,DIMETRA X Core,Network Management & Call Processing,GAS (General Administration Server)
+GGM8000,DIMETRA,DIMETRA X Core,Network Transport,GGM8000
+HP_iLO4,DIMETRA,DIMETRA X Core,Network Management & Call Processing,
+HP_iLO5,DIMETRA,DIMETRA X Core,Network Management & Call Processing,
+HPGX,DIMETRA,DIMETRA X Core,Network Transport,
+HPiLO,DIMETRA,DIMETRA X Core,Network Management & Call Processing,
+HPSwitch,DIMETRA,DIMETRA X Core,Network Transport,
+InfoVista,DIMETRA,DIMETRA X Core,Network Management & Call Processing,InfoVista
+InterWorkingFunction,DIMETRA,DIMETRA X Core,Platform Subsystem,X-Core Deployable (XCD) Server
+IvdPacketDataRouter,DIMETRA,DIMETRA X Core,Data Subsystem & CEN,PDR (Packet Data Router)
+IvdRadioNetworkGateway,DIMETRA,DIMETRA X Core,Data Subsystem & CEN,RNG (Radio Network Gateway)
+JuniperSRX1500,DIMETRA,DIMETRA X Core,Network Transport,
+JuniperSRX345,DIMETRA,DIMETRA X Core,Network Transport,
+LicenseManager,DIMETRA,DIMETRA X Core,Network Management & Call Processing,LM (License Manager)
+Manager Generated Events,DIMETRA,DIMETRA X Core,Network Management & Call Processing,UEM (Unified Event Manager Server)
+MCADI,DIMETRA,DIMETRA X Core,Data Subsystem & CEN,MCADI (Multi-CADI) Server
+MCG8000,DIMETRA,DIMETRA X Core,Network Transport,MCG8000 
+MD110,DIMETRA,DIMETRA X Core,Network Transport,
+MGEG,DIMETRA,DIMETRA X Core,Network Management & Call Processing,
+MISIAudioConverter,DIMETRA,DIMETRA X Core,Network Management & Call Processing,ISI (Inter-System Interconnect) Server
+MISICommunicationController,DIMETRA,DIMETRA X Core,Network Management & Call Processing,ISI (Inter-System Interconnect) Server
+MISIIP2E1Converter,DIMETRA,DIMETRA X Core,Network Management & Call Processing,ISI (Inter-System Interconnect) Server
+MNR,DIMETRA,DIMETRA X Core,Network Transport,
+MnrS2500,DIMETRA,DIMETRA X Core,Network Transport,
+MnrS5000,DIMETRA,DIMETRA X Core,Network Transport,
+MnrS6000,DIMETRA,DIMETRA X Core,Network Transport,
+MotCcgw,DIMETRA,DIMETRA X Core,Network Transport,CCGW Router
+MotGas,DIMETRA,DIMETRA X Core,Network Management & Call Processing,GAS (General Administration Server)
+motolocator,DIMETRA,DIMETRA X Core,Data Subsystem & CEN,
+MTIG,DIMETRA,DIMETRA X Core,Telephony ,
+MTS,DIMETRA,DIMETRA X Core,RF Subsystem,
+MTSBaseRadio,DIMETRA,DIMETRA X Core,RF Subsystem,
+MTSStatus,DIMETRA,DIMETRA X Core,RF Subsystem,
+MxOne,DIMETRA,DIMETRA X Core,Telephony ,Third Party PABX / Telephony System
+NetScreen,DIMETRA,DIMETRA X Core,Consoles,UEM (Unified Event Manager Server)
+NetSnmp,DIMETRA,DIMETRA X Core,Network Management & Call Processing,UEM (Unified Event Manager Server)
+NiceLogger,DIMETRA,DIMETRA X Core,Consoles,NICE Voice Logger
+NiceLoggerNRX,DIMETRA,DIMETRA X Core,Consoles,NICE Voice Logger
+NiceLoggerNRXv2,DIMETRA,DIMETRA X Core,Consoles,NICE Voice Logger
+NortelFW,DIMETRA,DIMETRA X Core,Network Transport,
+NortelPassport,DIMETRA,DIMETRA X Core,Network Transport,
+NTS,DIMETRA,DIMETRA X Core,Network Transport,Network Time Server
+PKI,DIMETRA,DIMETRA X Core,Connect Gateway,PKI Client
+RAD2100,DIMETRA,DIMETRA X Core,Network Transport,
+RADIPMux24,DIMETRA,DIMETRA X Core,Network Transport,
+Redfish,DIMETRA,DIMETRA X Core,Network Management & Call Processing,UEM (Unified Event Manager Server)
+RedfishNode,DIMETRA,DIMETRA X Core,Network Management & Call Processing,UEM (Unified Event Manager Server)
+S-DCS,DIMETRA,DIMETRA X Core,Consoles,DCS (Dispatch Communication Server)
+SDR,DIMETRA,DIMETRA X Core,Data Subsystem & CEN,SDR (Short Data Router)
+SdrBilling,DIMETRA,DIMETRA X Core,Data Subsystem & CEN,SDR (Short Data Router)
+SdrCapacityUtilization,DIMETRA,DIMETRA X Core,Data Subsystem & CEN,SDR (Short Data Router)
+SdrMsToGroup,DIMETRA,DIMETRA X Core,Data Subsystem & CEN,SDR (Short Data Router)
+SdrRui/Rua,DIMETRA,DIMETRA X Core,Data Subsystem & CEN,SDR (Short Data Router)
+SdrS&F,DIMETRA,DIMETRA X Core,Data Subsystem & CEN,SDR (Short Data Router)
+SLC8000,DIMETRA,DIMETRA X Core,Network Transport,Terminal Server
+SRSNode,DIMETRA,DIMETRA X Core,Data Subsystem & CEN,
+SRX,DIMETRA,DIMETRA X Core,Network Transport,
+Standard,DIMETRA,DIMETRA X Core,Network Management & Call Processing,UEM (Unified Event Manager Server)
+StatServer,DIMETRA,DIMETRA X Core,Network Management & Call Processing,
+TelsisETG,DIMETRA,DIMETRA X Core,Network Management & Call Processing,
+TerminalServer,DIMETRA,DIMETRA X Core,Network Transport,Terminal Server
+UEMSRVR,DIMETRA,DIMETRA X Core,Network Management & Call Processing,UEM (Unified Event Manager Server)
+UNS,DIMETRA,DIMETRA X Core,Network Management & Call Processing,
+USSRVR,DIMETRA,DIMETRA X Core,Network Management & Call Processing,UCS (User Configuration Server)
+Windows,DIMETRA,DIMETRA X Core,Platform Subsystem,
+ZC,DIMETRA,DIMETRA X Core,Network Management & Call Processing,ZC (Zone Controller)
+ZCambassadorElectronicsBank,DIMETRA,DIMETRA X Core,Network Management & Call Processing,ZC (Zone Controller)
+ZCanalogConventionalSubsystemSite,DIMETRA,DIMETRA X Core,Network Management & Call Processing,ZC (Zone Controller)
+ZCcallProcessingSubsystem,DIMETRA,DIMETRA X Core,Network Management & Call Processing,ZC (Zone Controller)
+ZCcallProcessingSubsystemSite,DIMETRA,DIMETRA X Core,Network Management & Call Processing,ZC (Zone Controller)
+ZCinterconnectSubsystem,DIMETRA,DIMETRA X Core,Network Management & Call Processing,ZC (Zone Controller)
+ZCzone,DIMETRA,DIMETRA X Core,Network Management & Call Processing,ZC (Zone Controller)
+AIS WRG,ASTRO Infrastructure,Consoles,IP Logging,AIS
+Authentication Center,ASTRO Infrastructure,Secure Subsystem,Authentication Center - AuC,
+AXS Dispatch Console,ASTRO Infrastructure,Consoles,AXS,AXS
+Backup and Restore,ASTRO Infrastructure,Network Management & Call Processing,Backup and Restore,
+CAD Radio Services,ASTRO Infrastructure,Network Management & Call Processing,Air Traffic Router - ATR,CADi
+Conventional Channel Gateway,ASTRO Infrastructure,RF Subsystem,CCGW,
+Core Security Management Server,ASTRO Infrastructure,Secure Subsystem,Core Security Management Server,
+Direct Attached Storage,ASTRO Infrastructure,Platform Subsystem,DAS,
+Domain Controller,ASTRO Infrastructure,Network Management & Call Processing,Domain Controller,Domain Controller - VM
+DSC - Conventional SC,ASTRO Infrastructure,RF Subsystem,DSC 8000,DSC 8000
+DSC - Prime Site,ASTRO Infrastructure,RF Subsystem,DSC 8000,DSC 8000
+DSC - Remote Site,ASTRO Infrastructure,RF Subsystem,DSC 8000,DSC 8000
+DSC - RF Site,ASTRO Infrastructure,RF Subsystem,DSC 8000,DSC 8000
+DSC8000 - Conventional SC,ASTRO Infrastructure,RF Subsystem,DSC 8000,DSC 8000
+DSC8000 - Prime Site,ASTRO Infrastructure,RF Subsystem,DSC 8000,DSC 8000
+DSC8000 - Remote Site,ASTRO Infrastructure,RF Subsystem,DSC 8000,DSC 8000
+DSC8000 - RF Site,ASTRO Infrastructure,RF Subsystem,DSC 8000,DSC 8000
+ESXi,ASTRO Infrastructure,Platform Subsystem,Vmware/ESXi,Vmware/ESXi
+Extreme Summit X460-G2-24t-10GE4,ASTRO Infrastructure,Network Transport,Switch,
+Extreme Summit X460-G2-24t-GE4,ASTRO Infrastructure,Network Transport,Switch,
+Extreme Summit X460-G2-48t-10GE4,ASTRO Infrastructure,Network Transport,Switch,
+Extreme Summit X670-G2-48x-4q,ASTRO Infrastructure,Network Transport,Switch,
+Extreme Summit X670-G2-72x,ASTRO Infrastructure,Network Transport,Switch,
+Extreme Switch - E4G-200,ASTRO Infrastructure,Network Transport,Switch,
+Extreme Switch - E4G-400,ASTRO Infrastructure,Network Transport,Switch,
+Extreme Switch - Summit X460-24t,ASTRO Infrastructure,Network Transport,Switch,
+Extreme Switch - Summit X460-48t,ASTRO Infrastructure,Network Transport,Switch,
+Fortinet FortiGate 100,ASTRO Infrastructure,Network Transport,Firewall,Fortigate 100D
+Fortinet FortiGate 1000,ASTRO Infrastructure,Network Transport,Firewall,
+Fortinet FortiGate 101,ASTRO Infrastructure,Network Transport,Firewall,Fortigate 101E
+General RFC Events,ASTRO Infrastructure,Network Management & Call Processing,Unified Event Manager - UEM,
+Generic SNMP Router,ASTRO Infrastructure,Network Transport,Router,
+Generic SNMP Switch,ASTRO Infrastructure,Network Transport,Switch,
+Genesis GenGET 2SQL,ASTRO Infrastructure,Network Management & Call Processing,,
+Genesis GenWatch3,ASTRO Infrastructure,Network Management & Call Processing,,
+GPB 8000 Reference Distribution Module,ASTRO Infrastructure,RF Subsystem,,
+HP Networking Switch - J9576A Networking Switch E3800-48G,ASTRO Infrastructure,Network Transport,Switch,HP 3800
+HP Networking Switch - J9623A Networking Switch E2620-24,ASTRO Infrastructure,Network Transport,Switch,HP 2620
+HP Networking Switch - J9626A Networking Switch E2620-48,ASTRO Infrastructure,Network Transport,Switch,HP 2620
+HP Procurve Switch - 5308XL Procurve Switch,ASTRO Infrastructure,Network Transport,Switch,
+HP Procurve Switch - J4813A Procurve Switch 2524,ASTRO Infrastructure,Network Transport,Switch,HP 2524
+HP Procurve Switch - J4899A Procurve Switch 2650,ASTRO Infrastructure,Network Transport,Switch,
+HP Procurve Switch - J4899B Procurve Switch 2650,ASTRO Infrastructure,Network Transport,Switch,
+HP Procurve Switch - J4900A Procurve Switch 2626,ASTRO Infrastructure,Network Transport,Switch,HP 2626
+HP Procurve Switch - J4900B Procurve Switch 2626,ASTRO Infrastructure,Network Transport,Switch,HP 2626
+HP Procurve Switch - J8692A Procurve Switch 3500yl-24G,ASTRO Infrastructure,Network Transport,Switch,HP 3500
+HP Procurve Switch - J8693A Procurve Switch 3500yl-48G,ASTRO Infrastructure,Network Transport,Switch,HP 3500
+HP Procurve Switch - J9085A Procurve Switch 2610-24,ASTRO Infrastructure,Network Transport,Switch,HP 2610
+HP Procurve Switch - J9088A Procurve Switch 2610-48,ASTRO Infrastructure,Network Transport,Switch,HP 2610
+HPE Networking Switch - 2930 Stacked,ASTRO Infrastructure,Network Transport,Switch,HP 2930
+HPE Networking Switch - 2930-24,ASTRO Infrastructure,Network Transport,Switch,HP 2930
+HPE Networking Switch - 2930-24 PoE+,ASTRO Infrastructure,Network Transport,Switch,HP 2930
+HPE Networking Switch - 2930-24 PoE+ TAA,ASTRO Infrastructure,Network Transport,Switch,HP 2930
+HPE Networking Switch - 2930-48,ASTRO Infrastructure,Network Transport,Switch,HP 2930
+HPE Networking Switch - 2930-48 4SFP,ASTRO Infrastructure,Network Transport,Switch,HP 2930
+HPE Networking Switch - 2930-48 PoE+,ASTRO Infrastructure,Network Transport,Switch,HP 2930
+HPE Networking Switch - 2930-48 PoE+ TAA,ASTRO Infrastructure,Network Transport,Switch,HP 2930
+ILO,ASTRO Infrastructure,Platform Subsystem,HP Server,
+Intelligent Middleware Classic,ASTRO Infrastructure,Data Subsystem & CEN,IMW,
+Inter-System Gateway,ASTRO Infrastructure,Network Management & Call Processing,Inter SubSystem Interface - ISSI/CCSI,
+IP Packet Capture,ASTRO Infrastructure,Network Management & Call Processing,IP Packet Capture - IPCAP,IPCAP - VM
+ISSI.1 Gateway,ASTRO Infrastructure,Network Management & Call Processing,Inter SubSystem Interface - ISSI/CCSI,ISSI.1
+Manager Generated Events,ASTRO Infrastructure,Network Management & Call Processing,Unified Event Manager - UEM,
+MCC7500 VPM,ASTRO Infrastructure,Consoles,MCC Peripherals,VPM
+MIB-2 Events,ASTRO Infrastructure,Network Management & Call Processing,Unified Event Manager - UEM,
+Motorola Base Radio - CS,ASTRO Infrastructure,RF Subsystem,Base Radio,
+Motorola Base Radio - GTR8000 - HPD,ASTRO Infrastructure,RF Subsystem,Base Radio,GTR 8000
+Motorola Base Radio - MS,ASTRO Infrastructure,RF Subsystem,Base Radio,
+Motorola Base Radio - RS,ASTRO Infrastructure,RF Subsystem,Base Radio,
+Motorola Comparator - ATAC9600 - MS,ASTRO Infrastructure,RF Subsystem,Comparator,ASTRO-TAC 9600
+Motorola Comparator - GCM8000 - MS,ASTRO Infrastructure,RF Subsystem,Comparator,GCM 8000
+Motorola Console,ASTRO Infrastructure,Consoles,,
+Motorola Console Alias Manager - MKM7000,ASTRO Infrastructure,Consoles,MKM7000 (CAM),MKM7000 (CAM)
+Motorola Console Proxy,ASTRO Infrastructure,Consoles,PRX 7000 (Proxy),PRX 7000 (Proxy)
+Motorola Conventional Comparator - GCM8000 - CS,ASTRO Infrastructure,RF Subsystem,Comparator,GCM 8000
+Motorola Conventional IVD Packet Data Gateway,ASTRO Infrastructure,Data Subsystem & CEN,PDR,PDR
+Motorola Conventional Site Controller - GCP8000 - CSC,ASTRO Infrastructure,RF Subsystem,Site Controller,GCP 8000
+Motorola Dynamic Transcoder,ASTRO Infrastructure,Network Management & Call Processing,Dynamic Transcoder,Dynamic Transcoder - VM
+Motorola Express Conventional IVD Packet Data Router,ASTRO Infrastructure,Data Subsystem & CEN,PDR,PDR
+Motorola G-Series Sub-site Link Converter,ASTRO Infrastructure,RF Subsystem,,
+Motorola Generic Application Server,ASTRO Infrastructure,Network Management & Call Processing,General Application Server - GAS,
+Motorola Gold Elite Gateway,ASTRO Infrastructure,Consoles,CENTRACOM Gold Elite,
+Motorola Group Data Gateway,ASTRO Infrastructure,Data Subsystem & CEN,,
+Motorola GRV 8000 Comparator,ASTRO Infrastructure,RF Subsystem,comparator,GRV 8000
+Motorola HPD Packet Data Gateway,ASTRO Infrastructure,Data Subsystem & CEN,PDR,PDR
+Motorola IVD Packet Data Gateway,ASTRO Infrastructure,Data Subsystem & CEN,PDR,PDR
+Motorola License Manager,ASTRO Infrastructure,Network Management & Call Processing,License Manager - LM,License Manager - VM
+Motorola Network Management Air Traffic Router,ASTRO Infrastructure,Network Management & Call Processing,Air Traffic Router - ATR,ATR - VM
+Motorola Network Management General Purpose Server,ASTRO Infrastructure,Network Management & Call Processing,,
+Motorola Network Resource - GGM8000,ASTRO Infrastructure,Network Transport,Router,GGM 8000
+Motorola Network Resource - S2500,ASTRO Infrastructure,Network Transport,Router,S2500
+Motorola Network Resource - S4000,ASTRO Infrastructure,Network Transport,Router,
+Motorola Network Resource - S6000,ASTRO Infrastructure,Network Transport,Router,S6000
+Motorola Network Resource - ST5000,ASTRO Infrastructure,Network Transport,Router,
+Motorola Site Controller - GCP8000 - HPD,ASTRO Infrastructure,RF Subsystem,Site Controller,GCP 8000
+Motorola Site Controller - GCP8000 - MS,ASTRO Infrastructure,RF Subsystem,Site Controller,GCP 8000
+Motorola Site Controller - RS,ASTRO Infrastructure,RF Subsystem,Site Controller,
+Motorola SmartX Site Converter,ASTRO Infrastructure,RF Subsystem,SmartX,SmartX
+Motorola Unified Provisioning Management Server,ASTRO Infrastructure,Network Management & Call Processing,User Configuration Server - UCS,Provisioning Manager
+Motorola VPM AIS,ASTRO Infrastructure,Consoles,IP Logging,AIS - VPM
+Motorola Zone Controller - MZC5000,ASTRO Infrastructure,Network Management & Call Processing,Zone Controller - ZC,ZC - VM
+MPTT Gateway,ASTRO Infrastructure,Data Subsystem & CEN,,
+MRV Terminal Server - IR 8004,ASTRO Infrastructure,Network Transport,Terminal Server,Inreach Terminal Srvr
+MRV Terminal Server - IR 8008,ASTRO Infrastructure,Network Transport,Terminal Server,Inreach Terminal Srvr
+MRV Terminal Server - IR 8020,ASTRO Infrastructure,Network Transport,Terminal Server,Inreach Terminal Srvr
+MRV Terminal Server - IR 8040,ASTRO Infrastructure,Network Transport,Terminal Server,Inreach Terminal Srvr
+MRV Terminal Server - LX4000T,ASTRO Infrastructure,Network Transport,Terminal Server,Lantronix Terminal Srvr
+MRV Terminal Server - LX4008S,ASTRO Infrastructure,Network Transport,Terminal Server,Lantronix Terminal Srvr
+MRV Terminal Server - LX4048S,ASTRO Infrastructure,Network Transport,Terminal Server,Lantronix Terminal Srvr
+NICE Logging Recorder - NiceLog,ASTRO Infrastructure,Consoles,IP Logging,Logger - NICE  
+Oracle Server,ASTRO Infrastructure,Network Management & Call Processing,,
+PTP 600 Series Bridge,ASTRO Infrastructure,RF Subsystem,,
+PTP 800 Series Bridge,ASTRO Infrastructure,RF Subsystem,,
+Radio Alias Proxy,ASTRO Infrastructure,Data Subsystem & CEN,,
+Site Link Relay,ASTRO Infrastructure,RF Subsystem,,
+Telephone Media Gateway,ASTRO Infrastructure,Telephony,Media Gateway,
+TRAK-8835,ASTRO Infrastructure,RF Subsystem,TRAK,TRAK 8835
+TRAK-9104-14,ASTRO Infrastructure,RF Subsystem,TRAK,TRAK 9100
+VMware vCenter Server,ASTRO Infrastructure,Platform Subsystem,Vmware/ESXi,Vmware/ESXi
+Windows Server,ASTRO Infrastructure,Platform Subsystem,,
+KPI,WAVE,WAVE on Prem,POC ,
+Application,WAVE,WAVE on Prem,POC ,
+Hardware,WAVE,WAVE on Prem,Datacenter,

@@ -1,0 +1,119 @@
+---
+Debugger:
+  DebugThreshold: debug
+  TestMode: '0'
+Description: REST API for Incident Operations - Create, Read, Update, Search incidents via API
+FrameworkVersion: 6.5.15
+ID: 0
+Name: IncidentAPI
+NameSpace: http://www.znuny.org/IncidentAPI/1.0
+Provider:
+  ErrorHandling: {}
+  ErrorHandlingPriority: []
+  Operation:
+    SessionCreate:
+      Description: Creates a Session
+      IncludeTicketData: '0'
+      MappingInbound: {}
+      MappingOutbound: {}
+      Type: Session::SessionCreate
+    SessionGet:
+      Description: Retrieves a Session data
+      IncludeTicketData: '0'
+      MappingInbound: {}
+      MappingOutbound: {}
+      Type: Session::SessionGet
+    SessionRemove:
+      Description: Removes a Session
+      IncludeTicketData: '0'
+      MappingInbound: {}
+      MappingOutbound: {}
+      Type: Session::SessionRemove
+    IncidentCreate:
+      Description: Creates an Incident
+      IncludeTicketData: '0'
+      MappingInbound: {}
+      MappingOutbound: {}
+      Type: Incident::IncidentCreate
+    IncidentGet:
+      Description: Retrieves Incident data
+      IncludeTicketData: '0'
+      MappingInbound: {}
+      MappingOutbound: {}
+      Type: Incident::IncidentGet
+    IncidentSearch:
+      Description: Search for Incidents
+      IncludeTicketData: '0'
+      MappingInbound: {}
+      MappingOutbound: {}
+      Type: Incident::IncidentSearch
+    IncidentUpdate:
+      Description: Updates an Incident
+      IncludeTicketData: '0'
+      MappingInbound: {}
+      MappingOutbound: {}
+      Type: Incident::IncidentUpdate
+    IncidentHistoryGet:
+      Description: Get Incident History
+      IncludeTicketData: '0'
+      MappingInbound: {}
+      MappingOutbound: {}
+      Type: Incident::IncidentHistoryGet
+  Transport:
+    Config:
+      AuthModule: Kernel::System::Auth
+      AuthModule::User: 1
+      BasicAuth: 1
+      Realm: Znuny REST API
+      AdditionalHeaders: ~
+      KeepAlive: ''
+      MaxLength: '52428800'
+      RouteOperationMapping:
+        SessionCreate:
+          RequestMethod:
+            - POST
+          Route: /Session
+        SessionGet:
+          RequestMethod:
+            - GET
+            - POST
+          Route: /Session/:SessionID
+        SessionRemove:
+          RequestMethod:
+            - DELETE
+            - POST
+          Route: /Session/:SessionID
+        IncidentCreate:
+          RequestMethod:
+            - POST
+          Route: /Incident
+        IncidentGet:
+          RequestMethod:
+            - GET
+            - POST
+          Route: /Incident/:IncidentID
+        IncidentSearch:
+          RequestMethod:
+            - GET
+            - POST
+          Route: /IncidentSearch
+        IncidentUpdate:
+          RequestMethod:
+            - PATCH
+            - POST
+          Route: /Incident/:IncidentID
+        IncidentHistoryGet:
+          RequestMethod:
+            - GET
+            - POST
+          Route: /IncidentHistory/:IncidentID
+    Type: HTTP::REST
+Requester:
+  ErrorHandling: {}
+  ErrorHandlingPriority: []
+  Invoker: {}
+  Transport:
+    Config: {}
+    Type: ''
+RemoteSystem: ''
+Valid: 1

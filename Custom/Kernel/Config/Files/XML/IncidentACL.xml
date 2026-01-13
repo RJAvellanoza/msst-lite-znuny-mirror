@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Framework">
+    <Setting Name="TicketAcl###100-IncidentClosedLock" Required="0" Valid="0">
+        <Description Translatable="1">ACL to prevent editing of closed/cancelled incidents and any locked incidents</Description>
+        <Navigation>Core::Ticket::ACL</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Properties">
+                    <Hash>
+                        <Item Key="Ticket">
+                            <Hash>
+                                <Item Key="Type">
+                                    <Array>
+                                        <Item>Incident</Item>
+                                        <Item>Incident::Critical</Item>
+                                        <Item>Incident::Major</Item>
+                                        <Item>Incident::Minor</Item>
+                                    </Array>
+                                </Item>
+                                <Item Key="State">
+                                    <Array>
+                                        <Item>closed successful</Item>
+                                        <Item>closed unsuccessful</Item>
+                                        <Item>cancelled</Item>
+                                    </Array>
+                                </Item>
+                                <Item Key="Lock">
+                                    <Array>
+                                        <Item>lock</Item>
+                                    </Array>
+                                </Item>
+                            </Hash>
+                        </Item>
+                    </Hash>
+                </Item>
+                <Item Key="Possible">
+                    <Hash>
+                        <Item Key="Action">
+                            <Hash>
+                                <Item Key="AgentTicketNote">0</Item>
+                                <Item Key="AgentIncidentNote">0</Item>
+                                <Item Key="AgentTicketClose">0</Item>
+                                <Item Key="AgentTicketCompose">0</Item>
+                                <Item Key="AgentTicketCustomer">0</Item>
+                                <Item Key="AgentTicketFreeText">0</Item>
+                                <Item Key="AgentTicketOwner">0</Item>
+                                <Item Key="AgentTicketPending">0</Item>
+                                <Item Key="AgentTicketPriority">0</Item>
+                                <Item Key="AgentTicketResponsible">0</Item>
+                            </Hash>
+                        </Item>
+                    </Hash>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+    
+    <Setting Name="TicketAcl###101-IncidentAutoLockOnClose" Required="0" Valid="0">
+        <Description Translatable="1">ACL to auto-lock incidents when closed</Description>
+        <Navigation>Core::Ticket::ACL</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Properties">
+                    <Hash>
+                        <Item Key="Ticket">
+                            <Hash>
+                                <Item Key="Type">
+                                    <Array>
+                                        <Item>Incident</Item>
+                                        <Item>Incident::Critical</Item>
+                                        <Item>Incident::Major</Item>
+                                        <Item>Incident::Minor</Item>
+                                    </Array>
+                                </Item>
+                            </Hash>
+                        </Item>
+                    </Hash>
+                </Item>
+                <Item Key="PossibleAdd">
+                    <Hash>
+                        <Item Key="Ticket">
+                            <Hash>
+                                <Item Key="State">
+                                    <Hash>
+                                        <Item Key="closed successful">lock</Item>
+                                        <Item Key="closed unsuccessful">lock</Item>
+                                        <Item Key="cancelled">lock</Item>
+                                    </Hash>
+                                </Item>
+                            </Hash>
+                        </Item>
+                    </Hash>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+</otrs_config>

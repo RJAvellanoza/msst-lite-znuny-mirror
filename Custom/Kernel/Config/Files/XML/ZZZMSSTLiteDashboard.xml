@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Application">
+    <!--
+    MSSTLITE-139: Hide Unnecessary Dashboard Features for All Users
+    
+    This configuration completely disables dashboard widgets that are not needed.
+    -->
+
+    <!-- Disable Reminder Tickets dashboard widget -->
+    <Setting Name="DashboardBackend###0100-TicketPendingReminder" Required="0" Valid="0">
+        <Description Translatable="1">DISABLED: Dashboard backend for ticket pending reminder overview.</Description>
+        <Navigation>Frontend::Agent::View::Dashboard</Navigation>
+        <Value>
+            <Hash>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Disable Upcoming Events dashboard widget -->
+    <Setting Name="DashboardBackend###0260-TicketCalendar" Required="0" Valid="0">
+        <Description Translatable="1">DISABLED: Dashboard backend for ticket events calendar.</Description>
+        <Navigation>Frontend::Agent::View::Dashboard</Navigation>
+        <Value>
+            <Hash>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Disable Events Ticket Calendar dashboard widget -->
+    <Setting Name="DashboardBackend###0280-DashboardEventsTicketCalendar" Required="0" Valid="0">
+        <Description Translatable="1">DISABLED: Dashboard backend for events ticket calendar.</Description>
+        <Navigation>Frontend::Agent::View::Dashboard</Navigation>
+        <Value>
+            <Hash>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Disable Out of Office dashboard widget -->
+    <Setting Name="DashboardBackend###0390-UserOutOfOffice" Required="0" Valid="0">
+        <Description Translatable="1">DISABLED: Dashboard backend for user out of office.</Description>
+        <Navigation>Frontend::Agent::View::Dashboard</Navigation>
+        <Value>
+            <Hash>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Disable News dashboard widget -->
+    <Setting Name="DashboardBackend###0442-RSS" Required="0" Valid="0">
+        <Description Translatable="1">DISABLED: Dashboard backend for RSS feed overview.</Description>
+        <Navigation>Frontend::Agent::View::Dashboard</Navigation>
+        <Value>
+            <Hash>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Disable Appointments dashboard widget -->
+    <Setting Name="DashboardBackend###0500-AppointmentCalendar" Required="0" Valid="0">
+        <Description Translatable="1">DISABLED: Dashboard backend for appointment calendar.</Description>
+        <Navigation>Frontend::Agent::View::Dashboard</Navigation>
+        <Value>
+            <Hash>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Disable Logged-In Users dashboard widget -->
+    <Setting Name="DashboardBackend###0400-UserOnline" Required="0" Valid="0">
+        <Description Translatable="1">DISABLED: Dashboard backend for logged-in users.</Description>
+        <Navigation>Frontend::Agent::View::Dashboard</Navigation>
+        <Value>
+            <Hash>
+            </Hash>
+        </Value>
+    </Setting>
+
+</otrs_config>

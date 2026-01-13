@@ -1,0 +1,81 @@
+# --
+# Copyright (C) 2025 MSST, https://msst.com/
+# --
+# This software comes with ABSOLUTELY NO WARRANTY.
+# --
+# Shared sidebar for all Escalation Reports pages
+# Include with: [% INCLUDE "AgentEscalationReportsSidebar.tt" %]
+
+<h1>[% Translate("Escalation Reports") | html %]</h1>
+<div class="SidebarColumn">
+    <div class="WidgetSimple">
+        <div class="Header">
+            <h2>[% Translate("Navigation") | html %]</h2>
+        </div>
+        <div class="Content" style="padding: 0;">
+            <style>
+                .sidebar-nav {
+                    list-style: none;
+                    margin: 0;
+                    padding: 0;
+                }
+                .sidebar-nav li {
+                    margin: 0;
+                    border-bottom: 1px solid #e8e8e8;
+                }
+                .sidebar-nav li:last-child {
+                    border-bottom: none;
+                }
+                .sidebar-nav li a {
+                    display: block;
+                    padding: 12px 15px;
+                    color: #333;
+                    text-decoration: none;
+                    font-size: 13px;
+                    transition: all 0.2s ease;
+                    border-left: 3px solid transparent;
+                }
+                .sidebar-nav li a:hover {
+                    background: #f5f5f5;
+                    color: #000;
+                    border-left-color: #ccc;
+                }
+                .sidebar-nav li.Active a {
+                    background: #e8f4fc;
+                    color: #004085;
+                    font-weight: bold;
+                    border-left-color: #004085;
+                }
+                .sidebar-nav li a i {
+                    margin-right: 8px;
+                    width: 16px;
+                    text-align: center;
+                    color: #666;
+                }
+                .sidebar-nav li.Active a i {
+                    color: #004085;
+                }
+            </style>
+            <ul class="sidebar-nav">
+                <li class="[% IF ActiveSidebar == 'EscalatedActiveTicket' %]Active[% END %]">
+                    <a href="[% Env("Baselink") %]Action=AgentEscalatedActiveTicket">
+                        <i class="fa fa-pie-chart"></i>
+                        [% Translate("Active Tickets") | html %]
+                    </a>
+                </li>
+                <li class="[% IF ActiveSidebar == 'EscalatedActiveTicketBreakdown' %]Active[% END %]">
+                    <a href="[% Env("Baselink") %]Action=AgentEscalatedActiveTicketBreakdown">
+                        <i class="fa fa-hourglass-half"></i>
+                        [% Translate("Escalated Active Tickets") | html %]
+                    </a>
+                </li>
+                <li class="[% IF ActiveSidebar == 'EscalatedClosedTicket' %]Active[% END %]">
+                    <a href="[% Env("Baselink") %]Action=AgentEscalatedClosedTicket">
+                        <i class="fa fa-clock-o"></i>
+                        [% Translate("Escalated Closed Tickets") | html %]
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

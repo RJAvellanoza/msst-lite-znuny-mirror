@@ -1,0 +1,162 @@
+# --
+# Copyright (C) 2001-2021 OTRS AG, https://otrs.com/
+# Copyright (C) 2021 Znuny GmbH, https://znuny.org/
+# --
+# This software comes with ABSOLUTELY NO WARRANTY. For details, see
+# the enclosed file COPYING for license information (GPL). If you
+# did not receive this file, see https://www.gnu.org/licenses/gpl-3.0.txt.
+# --
+
+[% RenderBlockStart("Overview") %]
+<div class="MainBox ARIARoleMain LayoutFixedSidebar SidebarFirst">
+    <h1 class="InvisibleText">[% Translate("License Overview") | html %]</h1>
+
+    [% BreadcrumbPath = [
+            {
+                Name => Translate('License Overview'),
+                Link => Env("Action"),
+            },
+        ]
+    %]
+
+    [% SWITCH Data.Action %]
+        [% CASE 'Add' %]
+            [% BreadcrumbPath.push({ Name => Translate("Upload License"),}) %]
+        [% CASE 'Change' %]
+            [% USE EditTitle = String(Translate("Edit License")) %]
+            [% BreadcrumbPath.push({ Name => EditTitle.append( ': ', Data.Name ) }) %]
+    [% END %]
+
+    [% INCLUDE "Breadcrumb.tt" Path = BreadcrumbPath %]
+
+    <div class="SidebarColumn">
+
+[% RenderBlockStart("ActionList") %]
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Actions") | html %]</h2>
+            </div>
+            <div class="Content">
+                <ul class="ActionList">
+[% RenderBlockStart("ActionOverview") %]
+                    <li>
+                        <a href="[% Env("Baselink") %]Action=[% Env("Action") %]" class="CallForAction Fullsize Center"><span><i class="fa fa-caret-left"></i>[% Translate("Go to overview") | html %]</span></a>
+                    </li>
+[% RenderBlockEnd("ActionOverview") %]
+[% RenderBlockStart("ActionAdd") %]
+                    <li>
+                        <a class="CallForAction Fullsize Center" href="[% Env("Baselink") %]Action=[% Env("Action") %];Subaction=Add">
+                            <span><i class="fa fa-plus-square"></i>[% Translate("Upload License") | html %]</span>
+                        </a>
+                    </li>
+[% RenderBlockEnd("ActionAdd") %]
+                </ul>
+            </div>
+        </div>
+[% RenderBlockEnd("ActionList") %]
+    </div>
+
+    <div class="ContentColumn">
+        <div class="WidgetSimple">
+
+[% RenderBlockStart("OverviewResult") %]
+            <div class="Header">
+                <h2>[% Translate("List") | html %]</h2>
+            </div>
+            <div class="Content">
+
+                <table class="DataTable" id="Licenses">
+                    <thead>
+                        <tr>
+                            
+                            <th>[% Translate("File Name") | html %]</th>
+                            <th>[% Translate("Created Time") | html %]</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+[% RenderBlockStart("NoDataFoundMsg") %]
+                        <tr>
+                            <td colspan="7">
+                                [% Translate("No data found.") | html %]
+                            </td>
+                        </tr>
+[% RenderBlockEnd("NoDataFoundMsg") %]
+[% RenderBlockStart("OverviewResultRow") %]
+                        <tr>
+                            
+                            <td title="[% Translate("Download file") | html %]: [% Data.Filename | html %]">
+                                <!-- <a href="[% Env("Baselink") %]Action=[% Env("Action") %];Subaction=Download;ID=[% Data.id | uri %];[% Env("ChallengeTokenParam") | html %]">
+                                    [% Data.filename | truncate(30) | html %]
+                                </a> -->
+                                [% Data.filename | truncate(30) | html %]
+                            </td>
+                            <td>[% Data.CreateTime | Localize("TimeShort") %]</td>
+                           
+                        </tr>
+[% RenderBlockEnd("OverviewResultRow") %]
+                        <tr class="FilterMessage Hidden">
+                            <td colspan="7">[% Translate("No matches found.") | html %]</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+[% RenderBlockEnd("OverviewResult") %]
+[% RenderBlockStart("OverviewUpdate") %]
+            <div class="Header">
+                [% IF Data.Action == 'Add' %]
+                    <h2>[% Translate("Add License") | html %]</h2>
+                [% ELSE %]
+                    <h2>[% Translate("Edit License") | html %]</h2>
+                [% END %]
+
+            </div>
+            <div class="Content">
+
+                <form action="[% Env("CGIHandle") %]" method="post" enctype="multipart/form-data" class="Validate PreventMultipleSubmits">
+                    <input type="hidden" name="Action" value="[% Env("Action") %]"/>
+                    <input type="hidden" name="Subaction" value="[% Data.Action | uri %]Action"/>
+                    <input type="hidden" name="ID" value="[% Data.ID | html %]"/>
+                    [% IF Data.Action == 'Change' %]
+                        <input type="hidden" name="ContinueAfterSave" id="ContinueAfterSave" value=""/>
+                    [% END %]
+
+                    <fieldset class="TableLike">
+
+                        [% IF Data.Action == 'Add' %]
+                            <label class="Mandatory" for="FileUpload"><span class="Marker">*</span> [% Translate("License") | html %]:</label>
+                        [% ELSE %]
+                            <label for="FileUpload">[% Translate("License") | html %]:</label>
+                        [% END %]
+                        <div class="Field">
+                            <input name="FileUpload" accept=".json,application/json" id="FileUpload" type="file" class="W50pc"/>
+                            
+                        </div>
+                        <div class="Clear"></div>
+
+                        <div class="Content">
+                            <fieldset class="TableLike">
+                                <div class="Field SpacingTop SaveButtons">
+                                    [% IF Data.Action == 'Change' %]
+                                        <button class="CallForAction Primary" id="SubmitAndContinue" type="button" value="[% Translate("Save") | html %]"><span>[% Translate("Save") | html %]</span></button>
+                                        [% Translate("or") | html %]
+                                        <button class="CallForAction Primary" id="Submit" type="submit" value="[% Translate("Save") | html %]"><span>[% Translate("Save and finish") | html %]</span></button>
+                                    [% ELSE %]
+                                        <button class="CallForAction Primary" id="Submit" type="submit" value="[% Translate("Save") | html %]"><span>[% Translate("Save") | html %]</span></button>
+                                    [% END %]
+                                    [% Translate("or") | html %]
+                                    <a href="[% Env("Baselink") %]Action=[% Env("Action") %]"><span>[% Translate("Cancel") | html %]</span></a>
+                                </div>
+                                <div class="Clear"></div>
+                            </fieldset>
+                        </div>
+                        <div class="Clear"></div>
+                    </fieldset>
+                </form>
+            </div>
+[% RenderBlockEnd("OverviewUpdate") %]
+        </div>
+    </div>
+    <div class="Clear"></div>
+</div>
+[% RenderBlockEnd("Overview") %]

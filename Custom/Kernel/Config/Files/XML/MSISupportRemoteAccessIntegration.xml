@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Framework">
+    
+    <!-- Navigation Module Registration -->
+    <Setting Name="Frontend::NavigationModule###AdminMSISupportRemoteAccessConfiguration" Required="0" Valid="1">
+        <Description Translatable="1">Admin area navigation for the MSI Support Remote Access remote support configuration interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration::AdminOverview</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Group">
+                    <Array>
+                        <Item>admin</Item>
+                        <Item>MSIAdmin</Item>
+                        <Item>NOCAdmin</Item>
+                    </Array>
+                </Item>
+                <Item Key="GroupRo">
+                    <Array>
+                    </Array>
+                </Item>
+                <Item Key="Module">Kernel::Output::HTML::NavBar::ModuleAdmin</Item>
+                <Item Key="Name" Translatable="1">MSI Support Remote Access Configuration</Item>
+                <Item Key="Block">MSSTLite</Item>
+                <Item Key="Description" Translatable="1">Configure MSI Support Remote Access/BeyondTrust remote support integration.</Item>
+                <Item Key="IconBig">fa-desktop</Item>
+                <Item Key="IconSmall">fa-desktop</Item>
+                <Item Key="Prio">920</Item>
+            </Hash>
+        </Value>
+    </Setting>
+    
+    <!-- Frontend Module Registration -->
+    <Setting Name="Frontend::Module###AdminMSISupportRemoteAccessConfiguration" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for the MSI Support Remote Access configuration admin interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="GroupRo">
+                        <Array>
+                        </Array>
+                    </Item>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>admin</Item>
+                            <Item>MSIAdmin</Item>
+                            <Item>NOCAdmin</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Description" Translatable="1">Configure MSI Support Remote Access/BeyondTrust remote support integration via Proxmox container control.</Item>
+                    <Item Key="Title" Translatable="1">MSI Support Remote Access Configuration</Item>
+                    <Item Key="NavBarName">Admin</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+    
+    <!-- Proxmox Configuration Settings -->
+    <Setting Name="MSISupportRemoteAccessConfiguration::ProxmoxHost" Required="0" Valid="1">
+        <Description Translatable="1">Proxmox server hostname or IP address.</Description>
+        <Navigation>Core::MSISupportRemoteAccess::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex=""></Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="MSISupportRemoteAccessConfiguration::ProxmoxPort" Required="0" Valid="1">
+        <Description Translatable="1">Proxmox web interface port (default: 8006).</Description>
+        <Navigation>Core::MSISupportRemoteAccess::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="">8006</Item>
+        </Value>
+    </Setting>
+    
+    
+    <!-- Container Configuration Settings -->
+    <Setting Name="MSISupportRemoteAccessConfiguration::ContainerNode" Required="0" Valid="1">
+        <Description Translatable="1">Proxmox node name where the MSI Support Remote Access container is located.</Description>
+        <Navigation>Core::MSISupportRemoteAccess::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex=""></Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="MSISupportRemoteAccessConfiguration::ContainerID" Required="0" Valid="1">
+        <Description Translatable="1">Numeric ID of the MSI Support Remote Access container on Proxmox.</Description>
+        <Navigation>Core::MSISupportRemoteAccess::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex=""></Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="MSISupportRemoteAccessConfiguration::ManualContainerID" Required="0" Valid="1">
+        <Description Translatable="1">Manual override for Container ID when auto-detection fails.</Description>
+        <Navigation>Core::MSISupportRemoteAccess::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex=""></Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="MSISupportRemoteAccessConfiguration::ManualContainerName" Required="0" Valid="1">
+        <Description Translatable="1">Auto-filled container name for manual Container ID (read-only).</Description>
+        <Navigation>Core::MSISupportRemoteAccess::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex=""></Item>
+        </Value>
+    </Setting>
+    
+    <!-- Proxmox API Token Authentication Settings -->
+    <Setting Name="MSISupportRemoteAccessConfiguration::ProxmoxTokenID" Required="0" Valid="1">
+        <Description Translatable="1">Proxmox API token ID (format: user@realm!tokenname, e.g., root@pam!bomgar).</Description>
+        <Navigation>Core::MSISupportRemoteAccess::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex=""></Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="MSISupportRemoteAccessConfiguration::ProxmoxTokenSecret" Required="0" Valid="1">
+        <Description Translatable="1">Proxmox API token secret key (stored encrypted).</Description>
+        <Navigation>Core::MSISupportRemoteAccess::Config</Navigation>
+        <Value>
+            <Item ValueType="Password"></Item>
+        </Value>
+    </Setting>
+    
+    <!-- Admin Groups for MSI Support Remote Access Configuration -->
+    <Setting Name="MSISupportRemoteAccessConfiguration::AdminGroups" Required="1" Valid="1">
+        <Description Translatable="1">Groups that can manage MSI Support Remote Access configuration.</Description>
+        <Navigation>Core::MSSTLite::MSISupportRemoteAccessConfiguration</Navigation>
+        <Value>
+            <Array>
+                <Item>admin</Item>
+                <Item>MSIAdmin</Item>
+                <Item>NOCAdmin</Item>
+            </Array>
+        </Value>
+    </Setting>
+    
+    <!-- Container Control Timeout Settings -->
+    <Setting Name="MSISupportRemoteAccessConfiguration::ControlTimeout" Required="0" Valid="1">
+        <Description Translatable="1">Timeout in seconds for container control operations (start/stop).</Description>
+        <Navigation>Core::MSISupportRemoteAccess::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="">30</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="MSISupportRemoteAccessConfiguration::StatusTimeout" Required="0" Valid="1">
+        <Description Translatable="1">Timeout in seconds for container status checks.</Description>
+        <Navigation>Core::MSISupportRemoteAccess::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="">10</Item>
+        </Value>
+    </Setting>
+    
+    <!-- Audit Log Settings -->
+    <Setting Name="MSISupportRemoteAccessConfiguration::EnableAuditLog" Required="0" Valid="1">
+        <Description Translatable="1">Enable audit logging for all MSI Support Remote Access container control operations.</Description>
+        <Navigation>Core::MSISupportRemoteAccess::Config</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">1</Item>
+        </Value>
+    </Setting>
+    
+    <!-- Security Settings -->
+    <Setting Name="MSISupportRemoteAccessConfiguration::SSLVerifyMode" Required="0" Valid="1">
+        <Description Translatable="1">SSL verification mode for Proxmox API connections (0=disabled, 1=enabled). Disable only for testing.</Description>
+        <Navigation>Core::MSISupportRemoteAccess::Config</Navigation>
+        <Value>
+            <Item ValueType="Select" SelectedID="0">
+                <Item ValueType="Option" Value="0" Translatable="1">Disabled (for testing)</Item>
+                <Item ValueType="Option" Value="1" Translatable="1">Enabled (recommended)</Item>
+            </Item>
+        </Value>
+    </Setting>
+    
+</otrs_config>

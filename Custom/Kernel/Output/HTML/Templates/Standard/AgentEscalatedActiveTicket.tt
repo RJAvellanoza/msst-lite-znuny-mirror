@@ -1,0 +1,177 @@
+# --
+# Copyright (C) 2025 MSST, https://msst.com/
+# --
+# This software comes with ABSOLUTELY NO WARRANTY.
+# --
+
+<div class="MainBox ARIARoleMain LayoutFixedSidebar SidebarFirst">
+
+    <!-- Side Navigation (Shared) -->
+    [% INCLUDE "AgentEscalationReportsSidebar.tt" ActiveSidebar = 'EscalatedActiveTicket' %]
+
+    <div class="ContentColumn">
+
+        <!-- Section 1: Active Tickets - Escalation Status -->
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Active Tickets - Escalation Status") | html %]</h2>
+            </div>
+            <div class="Content">
+
+                <!-- Chart with Legend -->
+                <div style="display: flex; gap: 40px; align-items: center; justify-content: center;">
+                    <!-- Single Pie Chart (Centered, Larger) -->
+                    <div style="text-align: center;">
+                        <svg id="mtrdChart" width="300" height="300"></svg>
+                    </div>
+
+                    <!-- Legend on right -->
+                    <div style="flex: 0 0 200px;">
+                        <h4 style="margin-top: 0;">[% Translate("Legend") | html %]</h4>
+                        <div style="padding: 15px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px;">
+                            <div style="margin-bottom: 12px;">
+                                <div style="display: inline-block; width: 20px; height: 20px; background: #4285F4; margin-right: 10px; vertical-align: middle; border-radius: 3px;"></div>
+                                <span style="font-size: 14px;">[% Translate("Escalated") | html %]</span>
+                            </div>
+                            <div>
+                                <div style="display: inline-block; width: 20px; height: 20px; background: #EA4335; margin-right: 10px; vertical-align: middle; border-radius: 3px;"></div>
+                                <span style="font-size: 14px;">[% Translate("Non-Escalated") | html %]</span>
+                            </div>
+                        </div>
+                        <p style="font-size: 11px; color: #666; margin-top: 10px;">
+                            [% Translate("Escalated = Has MSI Ticket Number") | html %]
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Section 2: Breakdown -->
+        <div class="WidgetSimple" style="margin-top: 20px;">
+            <div class="Header">
+                <h2>[% Translate("Breakdown") | html %]</h2>
+            </div>
+            <div class="Content">
+                <table class="DataTable" style="width: auto; min-width: 300px;">
+                    <thead>
+                        <tr>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: left;">[% Translate("Status") | html %]</th>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: center;">[% Translate("Count") | html %]</th>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: center;">[% Translate("Percentage") | html %]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 10px 12px;">
+                                <span style="display: inline-block; width: 12px; height: 12px; background: #4285F4; margin-right: 8px; vertical-align: middle; border-radius: 2px;"></span>
+                                [% Translate("Escalated") | html %]
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentEscalationReportTickets;StateType=Open;Types=Incident;EscalatedOnly=1;Source=AgentEscalatedActiveTicket" style="color: #007bff; text-decoration: none; font-weight: bold;">[% Data.Escalated || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">[% Data.EscalatedPct || 0 %]%</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px 12px;">
+                                <span style="display: inline-block; width: 12px; height: 12px; background: #EA4335; margin-right: 8px; vertical-align: middle; border-radius: 2px;"></span>
+                                [% Translate("Non-Escalated") | html %]
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentEscalationReportTickets;StateType=Open;Types=Incident;NonEscalatedOnly=1;Source=AgentEscalatedActiveTicket" style="color: #007bff; text-decoration: none; font-weight: bold;">[% Data.NonEscalated || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">[% Data.NonEscalatedPct || 0 %]%</td>
+                        </tr>
+                        <tr style="font-weight: bold; border-top: 2px solid #dee2e6;">
+                            <td style="padding: 10px 12px;">[% Translate("Total") | html %]</td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentEscalationReportTickets;StateType=Open;Types=Incident;Source=AgentEscalatedActiveTicket" style="color: #007bff; text-decoration: none;">[% Data.GrandTotal || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">100%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- D3.js Library -->
+<script src="[% Config("Frontend::WebPath") %]js/thirdparty/d3-3.5.7/d3.min.js"></script>
+<script type="text/javascript">
+(function() {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initMTRDChart);
+    } else {
+        initMTRDChart();
+    }
+
+    function initMTRDChart() {
+        var escalated = [% Data.Escalated || 0 %];
+        var nonEscalated = [% Data.NonEscalated || 0 %];
+        var escalatedPct = [% Data.EscalatedPct || 0 %];
+        var nonEscalatedPct = [% Data.NonEscalatedPct || 0 %];
+
+        var width = 300;
+        var height = 300;
+        var radius = Math.min(width, height) / 2;
+
+        var svg = d3.select('#mtrdChart')
+            .append('g')
+            .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')');
+
+        var arc = d3.svg.arc()
+            .outerRadius(radius - 10)
+            .innerRadius(0);
+
+        var pie = d3.layout.pie()
+            .sort(null)
+            .value(function(d) { return d.value; });
+
+        var total = escalated + nonEscalated;
+        var pieData = [];
+
+        if (total > 0) {
+            if (escalated > 0) {
+                pieData.push({ label: 'Escalated', value: escalated, color: '#4285F4', pct: escalatedPct });
+            }
+            if (nonEscalated > 0) {
+                pieData.push({ label: 'Non-Escalated', value: nonEscalated, color: '#EA4335', pct: nonEscalatedPct });
+            }
+        } else {
+            // No data - show empty chart
+            pieData.push({ label: 'No Data', value: 1, color: '#e0e0e0', pct: 0 });
+        }
+
+        var g = svg.selectAll('.arc')
+            .data(pie(pieData))
+            .enter().append('g')
+            .attr('class', 'arc');
+
+        g.append('path')
+            .attr('d', arc)
+            .style('fill', function(d) { return d.data.color; });
+
+        // Add count label (top line)
+        g.append('text')
+            .attr('transform', function(d) { return 'translate(' + arc.centroid(d) + ')'; })
+            .attr('dy', '-0.2em')
+            .style('text-anchor', 'middle')
+            .style('fill', 'white')
+            .style('font-size', '18px')
+            .style('font-weight', 'bold')
+            .text(function(d) { return d.data.value > 0 && d.data.label !== 'No Data' ? d.data.value : ''; });
+
+        // Add percentage label (bottom line)
+        g.append('text')
+            .attr('transform', function(d) { return 'translate(' + arc.centroid(d) + ')'; })
+            .attr('dy', '1.2em')
+            .style('text-anchor', 'middle')
+            .style('fill', 'white')
+            .style('font-size', '14px')
+            .style('font-weight', 'bold')
+            .text(function(d) { return d.data.pct > 5 ? '(' + d.data.pct + '%)' : ''; });
+    }
+})();
+</script>

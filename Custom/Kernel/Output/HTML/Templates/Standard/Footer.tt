@@ -1,0 +1,30 @@
+# --
+# Copyright (C) 2001-2021 OTRS AG, https://otrs.com/
+# Copyright (C) 2021 Znuny GmbH, https://znuny.org/
+# --
+# This software comes with ABSOLUTELY NO WARRANTY. For details, see
+# the enclosed file COPYING for license information (GPL). If you
+# did not receive this file, see https://www.gnu.org/licenses/gpl-3.0.txt.
+# --
+
+<div id="Footer" class="ARIARoleContentinfo">
+    <div id="Footer-Copyright-Content">
+    MOTOROLA, MOTO, MOTOROLA SOLUTIONS and the Stylized M Logo are trademarks or registered trademarks of Motorola Trademark Holdings, LLC and are used under license. All other trademarks are the property of their respective owners.
+    </div>
+    <div id="Footer-Copyright-Content">
+    &copy;2025 Motorola Solutions, Inc. All rights reserved.
+    </div>
+[% IF !Config("Secure::DisableBanner") %]
+    <a href="https://www.znuny.org" title="[% Config("Product") | html %][% IF !Data.IsLoginPage %] [% Config("Version") | html %][% END %]" target="_blank">
+        <span></span>
+        [% Translate("Powered by %s", Config("Product")) | html %]
+    </a>
+[% END %]
+</div>
+
+[% InsertTemplate("FooterJS.tt") %]
+
+    </div><!-- end AppWrapper -->
+
+</body>
+</html>

@@ -1,0 +1,56 @@
+/**
+ * Motorola Solutions Skin - Form Styling
+ */
+
+/* Input fields */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+textarea,
+select {
+    border: 2px solid #e0e0e0 !important;
+    border-radius: 4px !important;
+    font-family: var(--motorola-font-family) !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Focus states */
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--motorola-light-blue) !important;
+    box-shadow: 0 0 0 2px rgba(0, 165, 229, 0.2) !important;
+    outline: none !important;
+}
+
+/* Labels */
+label {
+    color: var(--motorola-dark-blue) !important;
+    font-weight: var(--motorola-font-medium) !important;
+    font-family: var(--motorola-font-family) !important;
+}
+
+/* Checkboxes and radio buttons */
+input[type="checkbox"],
+input[type="radio"] {
+    accent-color: var(--motorola-light-blue) !important;
+}
+
+/* Validation states */
+input.Error,
+textarea.Error,
+select.Error {
+    border-color: var(--motorola-red) !important;
+    background-color: rgba(203, 51, 59, 0.05) !important;
+}
+
+input.Success,
+textarea.Success,
+select.Success {
+    border-color: var(--motorola-dark-green) !important;
+    background-color: rgba(107, 113, 30, 0.05) !important;
+}

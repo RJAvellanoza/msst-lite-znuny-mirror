@@ -1,0 +1,433 @@
+<div class="MainBox ARIARoleMain LayoutFixedSidebar SidebarFirst ActionsSideBar">
+    <div class="SidebarColumn ActionsSideBarComp">
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Actions") | html %]</h2>
+            </div>
+            <div class="Content">
+                <ul class="ActionList">
+                    <li>
+                        <a href="[% Env("Baselink") %]Action=AgentDashboard" class="CallForAction Fullsize Center">
+                            <span><i class="fa fa-caret-left"></i>[% Translate("Go to Dashboard") | html %]</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Filters") | html %]</h2>
+            </div>
+            <div class="Content">
+                <form action="[% Env("CGIHandle") %]" method="get" name="FilterForm" id="OperationalKPIsFilterForm">
+                    <input type="hidden" name="Action" value="AgentOperationalKPIsReport"/>
+
+                    <fieldset class="TableLike">
+                        <label for="ReportType">[% Translate("Report Type") | html %]:</label>
+                        <div class="Field">
+                            <select name="ReportType" id="ReportType">
+                                <option value="mtrd" [% IF Data.ReportType == 'mtrd' %]selected="selected"[% END %]>MTRD (Mean Time to Respond)</option>
+                                <option value="mttr" [% IF Data.ReportType == 'mttr' %]selected="selected"[% END %]>MTTR (Mean Time to Resolve)</option>
+                                <option value="trends" [% IF Data.ReportType == 'trends' %]selected="selected"[% END %]>Incident Trends</option>
+                                <option value="msi_handover" [% IF Data.ReportType == 'msi_handover' %]selected="selected"[% END %]>MSI Handover Statistics</option>
+                            </select>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label for="DateStart">[% Translate("Start Date") | html %]:</label>
+                        <div class="Field">
+                            <input type="date" name="DateStart" id="DateStart" value="[% Data.DateStart | html %]" required/>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label for="DateEnd">[% Translate("End Date") | html %]:</label>
+                        <div class="Field">
+                            <input type="date" name="DateEnd" id="DateEnd" value="[% Data.DateEnd | html %]" required/>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label for="Priority">[% Translate("Priority") | html %]:</label>
+                        <div class="Field">
+                            <select name="Priority" id="Priority">
+                                <option value="">[% Translate("All Priorities") | html %]</option>
+                                <option value="P1-Critical" [% IF Data.Priority == 'P1-Critical' %]selected="selected"[% END %]>P1-Critical</option>
+                                <option value="P2-High" [% IF Data.Priority == 'P2-High' %]selected="selected"[% END %]>P2-High</option>
+                                <option value="P3-Medium" [% IF Data.Priority == 'P3-Medium' %]selected="selected"[% END %]>P3-Medium</option>
+                                <option value="P4-Low" [% IF Data.Priority == 'P4-Low' %]selected="selected"[% END %]>P4-Low</option>
+                            </select>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label for="Source">[% Translate("Source") | html %]:</label>
+                        <div class="Field">
+                            <select name="Source" id="Source">
+                                <option value="">[% Translate("All Sources") | html %]</option>
+                                <option value="Zabbix" [% IF Data.Source == 'Zabbix' %]selected="selected"[% END %]>Zabbix</option>
+                                <option value="Direct Input" [% IF Data.Source == 'Direct Input' %]selected="selected"[% END %]>Direct Input</option>
+                            </select>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label for="AggregationLevel">[% Translate("Aggregation Level") | html %]:</label>
+                        <div class="Field">
+                            <select name="AggregationLevel" id="AggregationLevel">
+                                <option value="daily" [% IF Data.AggregationLevel == 'daily' %]selected="selected"[% END %]>Daily</option>
+                                <option value="weekly" [% IF Data.AggregationLevel == 'weekly' %]selected="selected"[% END %]>Weekly</option>
+                                <option value="monthly" [% IF Data.AggregationLevel == 'monthly' %]selected="selected"[% END %]>Monthly</option>
+                                <option value="quarterly" [% IF Data.AggregationLevel == 'quarterly' %]selected="selected"[% END %]>Quarterly</option>
+                            </select>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <div class="Field SpacingTop">
+                            <button type="submit" class="CallForAction Primary" id="ApplyFilterButton">
+                                <span>[% Translate("Apply Filter") | html %]</span>
+                            </button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Export") | html %]</h2>
+            </div>
+            <div class="Content">
+                <ul class="ActionList">
+                    <li>
+                        <a href="[% Env("Baselink") %]Action=AgentOperationalKPIsReport;Subaction=ExportCSV;ReportType=[% Data.ReportType | uri %];DateStart=[% Data.DateStart | uri %];DateEnd=[% Data.DateEnd | uri %];Priority=[% Data.Priority | uri %];Source=[% Data.Source | uri %]" class="CallForAction">
+                            <span><i class="fa fa-download"></i>[% Translate("Export to CSV") | html %]</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="[% Env("Baselink") %]Action=AgentOperationalKPIsReport;Subaction=ExportExcel;ReportType=[% Data.ReportType | uri %];DateStart=[% Data.DateStart | uri %];DateEnd=[% Data.DateEnd | uri %];Priority=[% Data.Priority | uri %];Source=[% Data.Source | uri %]" class="CallForAction">
+                            <span><i class="fa fa-download"></i>[% Translate("Export to Excel") | html %]</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="ContentColumn">
+        <h1>[% Translate("Operational KPIs Report") | html %]</h1>
+
+        [% IF Data.RetentionWarning %]
+        <div class="WidgetSimple">
+            <div class="Content Error">
+                <p>[% Translate("Warning: The selected date range exceeds the data retention period. Results may be incomplete.") | html %]</p>
+            </div>
+        </div>
+        [% END %]
+
+        <!-- MTRD Report -->
+        [% IF Data.ReportType == 'mtrd' %]
+
+        [% IF Data.TotalIncidents %]
+        <!-- Executive Summary - KPI Cards -->
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Executive Summary") | html %]</h2>
+            </div>
+            <div class="Content">
+                <div class="LayoutGrid ColumnsWithSpacing">
+                    <div class="Size1of4">
+                        <div class="KPICard" style="text-align: center; padding: 20px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 3px;">
+                            <div style="font-size: 32px; font-weight: bold; color: #333;">[% Data.TotalIncidents | html %]</div>
+                            <div style="font-size: 14px; color: #666; margin-top: 5px;">[% Translate("Total Incidents") | html %]</div>
+                        </div>
+                    </div>
+                    <div class="Size1of4">
+                        <div class="KPICard" style="text-align: center; padding: 20px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 3px;">
+                            <div style="font-size: 32px; font-weight: bold; color: #ff9900;">[% Data.AverageMTRDFormatted | html %]</div>
+                            <div style="font-size: 14px; color: #666; margin-top: 5px;">[% Translate("Average MTRD") | html %]</div>
+                        </div>
+                    </div>
+                    <div class="Size1of4">
+                        <div class="KPICard" style="text-align: center; padding: 20px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 3px;">
+                            <div style="font-size: 32px; font-weight: bold; color: #0066cc;">[% Data.AssignmentStats.AssignedCount | html %]</div>
+                            <div style="font-size: 14px; color: #666; margin-top: 5px;">[% Translate("Assigned Incidents") | html %]</div>
+                        </div>
+                    </div>
+                    <div class="Size1of4">
+                        <div class="KPICard" style="text-align: center; padding: 20px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 3px;">
+                            <div style="font-size: 32px; font-weight: bold; color: #009900;">[% Data.AssignmentStats.AssignmentRate | html %]%</div>
+                            <div style="font-size: 14px; color: #666; margin-top: 5px;">[% Translate("Assignment Rate") | html %]</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Priority Breakdown -->
+        [% IF Data.PriorityBreakdown %]
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Performance by Priority Level") | html %]</h2>
+            </div>
+            <div class="Content">
+                <table class="DataTable">
+                    <thead>
+                        <tr>
+                            <th>[% Translate("Priority") | html %]</th>
+                            <th>[% Translate("Incident Count") | html %]</th>
+                            <th>[% Translate("% of Total") | html %]</th>
+                            <th>[% Translate("Average MTRD") | html %]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        [% FOREACH Item IN Data.PriorityBreakdown %]
+                        <tr>
+                            <td>
+                                [% IF Item.Priority == 'P1-Critical' %]
+                                <span style="background: #d32f2f; color: white; padding: 2px 8px; border-radius: 3px; font-weight: bold;">
+                                [% ELSIF Item.Priority == 'P2-High' %]
+                                <span style="background: #ff9800; color: white; padding: 2px 8px; border-radius: 3px; font-weight: bold;">
+                                [% ELSIF Item.Priority == 'P3-Medium' %]
+                                <span style="background: #ffc107; color: #333; padding: 2px 8px; border-radius: 3px; font-weight: bold;">
+                                [% ELSE %]
+                                <span style="background: #4caf50; color: white; padding: 2px 8px; border-radius: 3px; font-weight: bold;">
+                                [% END %]
+                                [% Item.Priority | html %]</span>
+                            </td>
+                            <td>[% Item.Count | html %]</td>
+                            <td>[% Item.Percentage | html %]%</td>
+                            <td><strong>[% Item.AverageMTRDFormatted | html %]</strong></td>
+                        </tr>
+                        [% END %]
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        [% END %]
+
+        <!-- Source Breakdown -->
+        [% IF Data.SourceBreakdown %]
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Performance by Incident Source") | html %]</h2>
+            </div>
+            <div class="Content">
+                <table class="DataTable">
+                    <thead>
+                        <tr>
+                            <th>[% Translate("Source") | html %]</th>
+                            <th>[% Translate("Incident Count") | html %]</th>
+                            <th>[% Translate("% of Total") | html %]</th>
+                            <th>[% Translate("Average MTRD") | html %]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        [% FOREACH Item IN Data.SourceBreakdown %]
+                        <tr>
+                            <td><strong>[% Item.Source | html %]</strong></td>
+                            <td>[% Item.Count | html %]</td>
+                            <td>[% Item.Percentage | html %]%</td>
+                            <td><strong>[% Item.AverageMTRDFormatted | html %]</strong></td>
+                        </tr>
+                        [% END %]
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        [% END %]
+
+        <!-- Assignment Statistics -->
+        [% IF Data.AssignmentStats %]
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Assignment Statistics") | html %]</h2>
+            </div>
+            <div class="Content">
+                <table class="DataTable">
+                    <thead>
+                        <tr>
+                            <th>[% Translate("Metric") | html %]</th>
+                            <th>[% Translate("Value") | html %]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>[% Translate("Total Incidents") | html %]</td>
+                            <td><strong>[% Data.AssignmentStats.TotalIncidents | html %]</strong></td>
+                        </tr>
+                        <tr style="background: #e8f5e9;">
+                            <td>[% Translate("Assigned Incidents") | html %]</td>
+                            <td><strong>[% Data.AssignmentStats.AssignedCount | html %]</strong> ([% Data.AssignmentStats.AssignmentRate | html %]%)</td>
+                        </tr>
+                        <tr style="background: #ffebee;">
+                            <td>[% Translate("Unassigned Incidents") | html %]</td>
+                            <td><strong>[% Data.AssignmentStats.UnassignedCount | html %]</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        [% END %]
+
+        [% ELSE %]
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Mean Time to Respond (MTRD)") | html %]</h2>
+            </div>
+            <div class="Content">
+                <p class="EmptyState" style="text-align: center; padding: 40px; color: #666;">
+                    [% Translate("No incident data found for the selected criteria.") | html %]
+                    <br/><br/>
+                    [% Translate("Try selecting a different date range or removing filters.") | html %]
+                </p>
+            </div>
+        </div>
+        [% END %]
+
+        [% END %]
+
+        <!-- MTTR Report -->
+        [% IF Data.ReportType == 'mttr' %]
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Mean Time to Resolve (MTTR)") | html %]</h2>
+            </div>
+            <div class="Content">
+                [% IF Data.TotalResolved %]
+                <div class="TableLike">
+                    <table class="DataTable">
+                        <thead>
+                            <tr>
+                                <th>[% Translate("Metric") | html %]</th>
+                                <th>[% Translate("Value") | html %]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>[% Translate("Total Resolved") | html %]</td>
+                                <td>[% Data.TotalResolved | html %]</td>
+                            </tr>
+                            <tr>
+                                <td>[% Translate("Average MTTR") | html %]</td>
+                                <td>[% Data.AverageMTTRFormatted | html %]</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                [% ELSE %]
+                <p class="EmptyState">[% Translate("No resolved incidents found for the selected criteria.") | html %]</p>
+                [% END %]
+            </div>
+        </div>
+        [% END %]
+
+        <!-- Incident Trends Report -->
+        [% IF Data.ReportType == 'trends' %]
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Incident Trends") | html %]</h2>
+            </div>
+            <div class="Content">
+                [% IF Data.Trends && Data.Trends.size %]
+                <div class="TableLike">
+                    <table class="DataTable">
+                        <thead>
+                            <tr>
+                                <th>[% Translate("Date") | html %]</th>
+                                <th>[% Translate("Total Incidents") | html %]</th>
+                                <th>[% Translate("P1-Critical") | html %]</th>
+                                <th>[% Translate("P2-High") | html %]</th>
+                                <th>[% Translate("P3-Medium") | html %]</th>
+                                <th>[% Translate("P4-Low") | html %]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            [% FOREACH Trend IN Data.Trends %]
+                            <tr>
+                                <td>[% Trend.Date | html %]</td>
+                                <td>[% Trend.TotalCount | html %]</td>
+                                <td>[% Trend.PriorityBreakdown.P1 | html %]</td>
+                                <td>[% Trend.PriorityBreakdown.P2 | html %]</td>
+                                <td>[% Trend.PriorityBreakdown.P3 | html %]</td>
+                                <td>[% Trend.PriorityBreakdown.P4 | html %]</td>
+                            </tr>
+                            [% END %]
+                        </tbody>
+                    </table>
+                </div>
+                [% ELSE %]
+                <p class="EmptyState">[% Translate("No incident trend data found for the selected criteria.") | html %]</p>
+                [% END %]
+            </div>
+        </div>
+        [% END %]
+
+        <!-- MSI Handover Report -->
+        [% IF Data.ReportType == 'msi_handover' %]
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("MSI Handover Statistics") | html %]</h2>
+            </div>
+            <div class="Content">
+                [% IF Data.TotalHandovers %]
+                <div class="TableLike">
+                    <table class="DataTable">
+                        <thead>
+                            <tr>
+                                <th>[% Translate("Metric") | html %]</th>
+                                <th>[% Translate("Value") | html %]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>[% Translate("Total Handovers") | html %]</td>
+                                <td>[% Data.TotalHandovers | html %]</td>
+                            </tr>
+                            <tr>
+                                <td>[% Translate("Successful Handovers") | html %]</td>
+                                <td>[% Data.SuccessfulHandovers | html %]</td>
+                            </tr>
+                            <tr>
+                                <td>[% Translate("Success Rate") | html %]</td>
+                                <td>[% Data.SuccessRateFormatted | html %]%</td>
+                            </tr>
+                            <tr>
+                                <td>[% Translate("Average Handover Time") | html %]</td>
+                                <td>[% Data.AverageHandoverTimeFormatted | html %]</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                [% ELSE %]
+                <p class="EmptyState">[% Translate("No handover data found for the selected criteria.") | html %]</p>
+                [% END %]
+            </div>
+        </div>
+        [% END %]
+
+        <!-- Loading indicator (hidden by default) -->
+        <div id="LoadingIndicator" class="WidgetSimple Hidden">
+            <div class="Content Center">
+                <p><i class="fa fa-spinner fa-spin"></i> [% Translate("Loading report data...") | html %]</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+[% WRAPPER JSOnDocumentComplete %]
+<script type="text/javascript">//<![CDATA[
+$(document).ready(function() {
+    // Initialize form handling
+    Core.Agent.OperationalKPIsReport.Init();
+
+    // Handle form submission with loading indicator
+    $('#OperationalKPIsFilterForm').on('submit', function() {
+        $('#LoadingIndicator').removeClass('Hidden');
+        $('#ApplyFilterButton').prop('disabled', true).find('span').text('Loading...');
+    });
+
+    // Auto-submit form when report type changes
+    $('#ReportType').on('change', function() {
+        $('#OperationalKPIsFilterForm').submit();
+    });
+});
+//]]></script>
+[% END %]

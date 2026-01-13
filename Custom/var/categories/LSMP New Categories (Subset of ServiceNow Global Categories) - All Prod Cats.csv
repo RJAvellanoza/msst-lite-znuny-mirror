@@ -1,0 +1,441 @@
+Prod Cat - T1,Prod Cat - T2,Prod Cat - T3,Prod Cat - T4
+Local Service Management Platform (LSMP),Local Service Management Platform (LSMP),Local Service Management Platform (LSMP),Local Service Management Platform (LSMP)
+ASTRO Infrastructure,Cloud Based ,Cirrus,ATIA Connector
+ASTRO Infrastructure,Cloud Based ,Cirrus,CGATE Connector
+ASTRO Infrastructure,Cloud Based ,Cirrus,CMEP Connector
+ASTRO Infrastructure,Cloud Based ,Cirrus,CNode
+ASTRO Infrastructure,Cloud Based ,Cirrus,Diag Connector
+ASTRO Infrastructure,Cloud Based ,Cirrus,Discovery Connector
+ASTRO Infrastructure,Cloud Based ,Cirrus,GSC Connector
+ASTRO Infrastructure,Cloud Based ,Cirrus,NGTM Connector
+ASTRO Infrastructure,Cloud Based ,Cirrus,NMA Connector
+ASTRO Infrastructure,Cloud Based ,Cirrus,PM Connector
+ASTRO Infrastructure,Cloud Based ,Cirrus,Service Connector
+ASTRO Infrastructure,Cloud Based ,Cirrus,UEM Connector
+ASTRO Infrastructure,Cloud Based ,Cirrus,UNC Connector
+ASTRO Infrastructure,Cloud Based ,Cirrus,VCenter HA
+ASTRO Infrastructure,Cloud Based ,Cirrus ,CirrusCentral
+ASTRO Infrastructure,Cloud Based ,CriticalConnect,CriticalConnect
+ASTRO Infrastructure,Cloud Based ,Land Mobile Radio Multicast Proxy - LMP,Console Site Proxy
+ASTRO Infrastructure,Cloud Based ,Land Mobile Radio Multicast Proxy - LMP,CriticalConnect Site Link
+ASTRO Infrastructure,Cloud Based ,Land Mobile Radio Multicast Proxy - LMP,SmartConnect
+ASTRO Infrastructure,Cloud Based ,LMRIA,LMRIA
+ASTRO Infrastructure,Cloud Based ,Network Transport,Astro Connectivity Service (ACS)
+ASTRO Infrastructure,Cloud Based ,Network Transport,Customer Provided
+ASTRO Infrastructure,Cloud Based ,SmartConnect,SmartConnect
+ASTRO Infrastructure,Cloud Based ,ViQi Virtual Partner,ViQi
+ASTRO Infrastructure,Cloud Based ,WRG,WRG
+ASTRO Infrastructure,Consoles,Aux IO Server,MC-Edge
+ASTRO Infrastructure,Consoles,Aux IO Server,SDM 3000
+ASTRO Infrastructure,Consoles,AXS,AXS
+ASTRO Infrastructure,Consoles,CENTRACOM Gold Elite,Embassy Audio Switch
+ASTRO Infrastructure,Consoles,CENTRACOM Gold Elite,Gold Elite Console
+ASTRO Infrastructure,Consoles,CommandCentral,CommandCentral Hub
+ASTRO Infrastructure,Consoles,CommandCentral AXS,CommandCentral AXS
+ASTRO Infrastructure,Consoles,Dispatch Assistant,Dispatch Assistant
+ASTRO Infrastructure,Consoles,Instant Recall Recorder - IRR,IRR
+ASTRO Infrastructure,Consoles,IP Logging,AIS
+ASTRO Infrastructure,Consoles,IP Logging,AIS - VPM
+ASTRO Infrastructure,Consoles,IP Logging,Logger - NICE  
+ASTRO Infrastructure,Consoles,IP Logging,Logger - Other
+ASTRO Infrastructure,Consoles,IP Logging,Logger - Verint 
+ASTRO Infrastructure,Consoles,MCC Peripherals,AIM
+ASTRO Infrastructure,Consoles,MCC Peripherals,Headset
+ASTRO Infrastructure,Consoles,MCC Peripherals,Mic
+ASTRO Infrastructure,Consoles,MCC Peripherals,Speaker
+ASTRO Infrastructure,Consoles,MCC Peripherals,VPM
+ASTRO Infrastructure,Consoles,MCC5500,MCC5500 CAB
+ASTRO Infrastructure,Consoles,MCC5500,MCC5500 CSDM
+ASTRO Infrastructure,Consoles,MCC5500,MCC5500 OP
+ASTRO Infrastructure,Consoles,MCC7100,MCC7100
+ASTRO Infrastructure,Consoles,MCC7500,MCC7500
+ASTRO Infrastructure,Consoles,MCC7500E,CommandCentral Hub
+ASTRO Infrastructure,Consoles,MCC7500E,MCC7500E
+ASTRO Infrastructure,Consoles,MCC7500E,Telephony
+ASTRO Infrastructure,Consoles,MCD 5000 Deskset,MCD 5000 Deskset
+ASTRO Infrastructure,Consoles,MIP5000,MIP5000
+ASTRO Infrastructure,Consoles,MKM7000 (CAM),MKM7000 (CAM)
+ASTRO Infrastructure,Consoles,PRX 7000 (Proxy),PRX 7000 (Proxy)
+ASTRO Infrastructure,DAS,Vendor,Model
+ASTRO Infrastructure,Data Subsystem & CEN,AMS,AMS
+ASTRO Infrastructure,Data Subsystem & CEN,Border Router,Border Router
+ASTRO Infrastructure,Data Subsystem & CEN,Customer CEN Equipment,Customer CEN Equipment
+ASTRO Infrastructure,Data Subsystem & CEN,GGSN,GGSN
+ASTRO Infrastructure,Data Subsystem & CEN,Group Data Gateway - GDG,GDG
+ASTRO Infrastructure,Data Subsystem & CEN,IMW,AE
+ASTRO Infrastructure,Data Subsystem & CEN,IMW,Core
+ASTRO Infrastructure,Data Subsystem & CEN,IMW,DB
+ASTRO Infrastructure,Data Subsystem & CEN,IMW,DNS
+ASTRO Infrastructure,Data Subsystem & CEN,IMW,IDM
+ASTRO Infrastructure,Data Subsystem & CEN,IMW,IMW
+ASTRO Infrastructure,Data Subsystem & CEN,IMW,MSG
+ASTRO Infrastructure,Data Subsystem & CEN,IMW,NTP
+ASTRO Infrastructure,Data Subsystem & CEN,Motolocator,Motolocator
+ASTRO Infrastructure,Data Subsystem & CEN,PDR,PDR
+ASTRO Infrastructure,Data Subsystem & CEN,POP25,POP25
+ASTRO Infrastructure,Data Subsystem & CEN,Radiotracker,Radiotracker
+ASTRO Infrastructure,Data Subsystem & CEN,UNS,UNS
+ASTRO Infrastructure,Managed Backhaul,ACS,ACS
+ASTRO Infrastructure,MOSCAD,FSA,FSA
+ASTRO Infrastructure,MOSCAD,FSA,FSA1000
+ASTRO Infrastructure,MOSCAD,FSA,FSA3000
+ASTRO Infrastructure,MOSCAD,Irrigation,Irrigation
+ASTRO Infrastructure,MOSCAD,Network Fault Management,MC-Edge
+ASTRO Infrastructure,MOSCAD,Network Fault Management,SDM 3000
+ASTRO Infrastructure,MOSCAD,SCADA,SCADA
+ASTRO Infrastructure,MOSCAD,Siren/Public Warning,Siren/Public Warning
+ASTRO Infrastructure,MOSCAD,Site,Site
+ASTRO Infrastructure,MOSCAD,VAR,VAR
+ASTRO Infrastructure,Motobridge,Motobridge,Motobridge
+ASTRO Infrastructure,Network Management & Call Processing,Air Traffic Router - ATR,Affiliation Display
+ASTRO Infrastructure,Network Management & Call Processing,Air Traffic Router - ATR,ATIA Log Viewer
+ASTRO Infrastructure,Network Management & Call Processing,Air Traffic Router - ATR,ATR - VM
+ASTRO Infrastructure,Network Management & Call Processing,Air Traffic Router - ATR,CADi
+ASTRO Infrastructure,Network Management & Call Processing,Air Traffic Router - ATR,Dynamic Reports
+ASTRO Infrastructure,Network Management & Call Processing,Air Traffic Router - ATR,FullVision
+ASTRO Infrastructure,Network Management & Call Processing,Air Traffic Router - ATR,Radio Control Manager
+ASTRO Infrastructure,Network Management & Call Processing,Air Traffic Router - ATR,RCM Reports
+ASTRO Infrastructure,Network Management & Call Processing,Air Traffic Router - ATR,ZoneWatch
+ASTRO Infrastructure,Network Management & Call Processing,Backup and Restore,BAR Client
+ASTRO Infrastructure,Network Management & Call Processing,Backup and Restore,Baseline BAR VM
+ASTRO Infrastructure,Network Management & Call Processing,Backup and Restore,Full BAR VM
+ASTRO Infrastructure,Network Management & Call Processing,Backup and Restore,NAS
+ASTRO Infrastructure,Network Management & Call Processing,Backup and Restore,Snap Server
+ASTRO Infrastructure,Network Management & Call Processing,Configuration Manager,Configuration Manager
+ASTRO Infrastructure,Network Management & Call Processing,Domain Controller,DNS
+ASTRO Infrastructure,Network Management & Call Processing,Domain Controller,Domain Controller - VM
+ASTRO Infrastructure,Network Management & Call Processing,Domain Controller,Group Policy
+ASTRO Infrastructure,Network Management & Call Processing,Domain Controller,Radius
+ASTRO Infrastructure,Network Management & Call Processing,Dynamic Transcoder,Dynamic Transcoder - VM
+ASTRO Infrastructure,Network Management & Call Processing,FullVision,FullVision
+ASTRO Infrastructure,Network Management & Call Processing,General Application Server - GAS,GAS Application
+ASTRO Infrastructure,Network Management & Call Processing,General Application Server - GAS,T5220 Server
+ASTRO Infrastructure,Network Management & Call Processing,Inter SubSystem Interface - ISSI/CCSI,ISGW - VM
+ASTRO Infrastructure,Network Management & Call Processing,Inter SubSystem Interface - ISSI/CCSI,ISSI.1
+ASTRO Infrastructure,Network Management & Call Processing,IP Packet Capture - IPCAP,IPCAP - VM
+ASTRO Infrastructure,Network Management & Call Processing,LAN Printer,LAN Printer
+ASTRO Infrastructure,Network Management & Call Processing,License Manager - LM,License Manager - VM
+ASTRO Infrastructure,Network Management & Call Processing,NM Client ,NM Client - PC
+ASTRO Infrastructure,Network Management & Call Processing,NM Client ,PRNM Suite
+ASTRO Infrastructure,Network Management & Call Processing,NTP Server,NTP Server
+ASTRO Infrastructure,Network Management & Call Processing,Site Lens,Site Lens
+ASTRO Infrastructure,Network Management & Call Processing,Syslog,Syslog - Client
+ASTRO Infrastructure,Network Management & Call Processing,Syslog,Syslog - VM
+ASTRO Infrastructure,Network Management & Call Processing,System Statistical Server - SSS,SSS - VM
+ASTRO Infrastructure,Network Management & Call Processing,System Statistical Server - SSS,System Historical Reports
+ASTRO Infrastructure,Network Management & Call Processing,Unified Event Manager - UEM,UEM - VM
+ASTRO Infrastructure,Network Management & Call Processing,Unified Network Configurator - UNC,Interference Locator
+ASTRO Infrastructure,Network Management & Call Processing,Unified Network Configurator - UNC,NCR
+ASTRO Infrastructure,Network Management & Call Processing,Unified Network Configurator - UNC,UNC - VM
+ASTRO Infrastructure,Network Management & Call Processing,Unified Network Configurator - UNC,UNCW
+ASTRO Infrastructure,Network Management & Call Processing,Unified Network Configurator - UNC,Voyence
+ASTRO Infrastructure,Network Management & Call Processing,User Configuration Server - UCS,Audit Report Viewer 
+ASTRO Infrastructure,Network Management & Call Processing,User Configuration Server - UCS,Provisioning Manager
+ASTRO Infrastructure,Network Management & Call Processing,User Configuration Server - UCS,UCM
+ASTRO Infrastructure,Network Management & Call Processing,User Configuration Server - UCS,UCS - VM
+ASTRO Infrastructure,Network Management & Call Processing,Zone Controller - ZC,ZC - VM
+ASTRO Infrastructure,Network Management & Call Processing,Zone Database Server - ZDS,ZCM
+ASTRO Infrastructure,Network Management & Call Processing,Zone Database Server - ZDS,ZDS - VM
+ASTRO Infrastructure,Network Management & Call Processing,Zone Statistical Server - ZSS,Zone Historical Reports
+ASTRO Infrastructure,Network Management & Call Processing,Zone Statistical Server - ZSS,ZSS - VM
+ASTRO Infrastructure,Network Transport,Customer Backhaul Network,Microwave
+ASTRO Infrastructure,Network Transport,Customer Backhaul Network,Other
+ASTRO Infrastructure,Network Transport,Customer Backhaul Network,Telco
+ASTRO Infrastructure,Network Transport,DACs,DACs
+ASTRO Infrastructure,Network Transport,Firewall,FMS
+ASTRO Infrastructure,Network Transport,Firewall,Fortigate 100D
+ASTRO Infrastructure,Network Transport,Firewall,Fortigate 101E
+ASTRO Infrastructure,Network Transport,Firewall,Juniper EX4100-F
+ASTRO Infrastructure,Network Transport,Firewall,Juniper SRX 345
+ASTRO Infrastructure,Network Transport,Firewall,SSG140
+ASTRO Infrastructure,Network Transport,Firewall,SSG20
+ASTRO Infrastructure,Network Transport,Firewall,SSG5
+ASTRO Infrastructure,Network Transport,Info Vista,Info Vista Server
+ASTRO Infrastructure,Network Transport,Parydne 3810 Plus,Parydne 3810 Plus
+ASTRO Infrastructure,Network Transport,Router,GGM 8000
+ASTRO Infrastructure,Network Transport,Router,MCG 8000
+ASTRO Infrastructure,Network Transport,Router,S2500
+ASTRO Infrastructure,Network Transport,Router,S6000
+ASTRO Infrastructure,Network Transport,Router,SRX 1500
+ASTRO Infrastructure,Network Transport,Router,SRX 345
+ASTRO Infrastructure,Network Transport,Switch,HP 2524
+ASTRO Infrastructure,Network Transport,Switch,HP 2610
+ASTRO Infrastructure,Network Transport,Switch,HP 2620
+ASTRO Infrastructure,Network Transport,Switch,HP 2626
+ASTRO Infrastructure,Network Transport,Switch,HP 2930
+ASTRO Infrastructure,Network Transport,Switch,HP 3500
+ASTRO Infrastructure,Network Transport,Switch,HP 3800
+ASTRO Infrastructure,Network Transport,TeNSr Channel Bank,TeNSr Channel Bank
+ASTRO Infrastructure,Network Transport,Terminal Server,Inreach Terminal Srvr
+ASTRO Infrastructure,Network Transport,Terminal Server,iTouch Terminal Srvr
+ASTRO Infrastructure,Network Transport,Terminal Server,Lantronix Terminal Srvr
+ASTRO Infrastructure,Network Transport,Terminal Server,Xyplex Terminal Srvr
+ASTRO Infrastructure,Network Transport,TNCT,TNCT
+ASTRO Infrastructure,Platform Subsystem,DAS,DAS 3520
+ASTRO Infrastructure,Platform Subsystem,DAS,DAS 4524
+ASTRO Infrastructure,Platform Subsystem,DAS,DAS 4525
+ASTRO Infrastructure,Platform Subsystem,DAS,MSA 2060
+ASTRO Infrastructure,Platform Subsystem,HP Server,DL20
+ASTRO Infrastructure,Platform Subsystem,HP Server,DL360
+ASTRO Infrastructure,Platform Subsystem,HP Server,DL380 Gen 10
+ASTRO Infrastructure,Platform Subsystem,HP Server,DL380 Gen 8
+ASTRO Infrastructure,Platform Subsystem,HP Server,DL380 Gen 9
+ASTRO Infrastructure,Platform Subsystem,Vmware/ESXi,VMS
+ASTRO Infrastructure,Platform Subsystem,Vmware/ESXi,Vmware/ESXi
+ASTRO Infrastructure,RF Subsystem,Base Radio,GPW 8000
+ASTRO Infrastructure,RF Subsystem,Base Radio,GTR 8000
+ASTRO Infrastructure,RF Subsystem,Base Radio,MTR 2000
+ASTRO Infrastructure,RF Subsystem,Base Radio,MTR 3000
+ASTRO Infrastructure,RF Subsystem,Base Radio,Quantar 3600
+ASTRO Infrastructure,RF Subsystem,Base Radio,Quantar 9600
+ASTRO Infrastructure,RF Subsystem,Base Radio,Quantro
+ASTRO Infrastructure,RF Subsystem,CCGW,DCG 9000
+ASTRO Infrastructure,RF Subsystem,CCGW,GGM 8000
+ASTRO Infrastructure,RF Subsystem,CCGW,S2500
+ASTRO Infrastructure,RF Subsystem,Comparator,ASTRO-TAC 3000
+ASTRO Infrastructure,RF Subsystem,Comparator,ASTRO-TAC 9600
+ASTRO Infrastructure,RF Subsystem,Comparator,Digitac
+ASTRO Infrastructure,RF Subsystem,Comparator,GCM 8000
+ASTRO Infrastructure,RF Subsystem,comparator,GRV 8000
+ASTRO Infrastructure,RF Subsystem,Comparator,MLC 8000
+ASTRO Infrastructure,RF Subsystem,Comparator,Spectra TAC
+ASTRO Infrastructure,RF Subsystem,Data Broadcast Box,Data Broadcast Box
+ASTRO Infrastructure,RF Subsystem,DIU,DIU
+ASTRO Infrastructure,RF Subsystem,DSC 8000,DSC 8000
+ASTRO Infrastructure,RF Subsystem,Interference,Dummy Carrier
+ASTRO Infrastructure,RF Subsystem,Interference,Intermod
+ASTRO Infrastructure,RF Subsystem,M12 Multicarrier Site,PA
+ASTRO Infrastructure,RF Subsystem,M12 Multicarrier Site,XCVR
+ASTRO Infrastructure,RF Subsystem,RDM 8000,RDM 8000
+ASTRO Infrastructure,RF Subsystem,Service Software,CSS
+ASTRO Infrastructure,RF Subsystem,Service Software,On Premise Software Hub
+ASTRO Infrastructure,RF Subsystem,Service Software,Provisioning and Configuration Agent
+ASTRO Infrastructure,RF Subsystem,Service Software,RSS
+ASTRO Infrastructure,RF Subsystem,Service Software,SWDL
+ASTRO Infrastructure,RF Subsystem,Simulcast Distribution Amplifier - SDA,SDA
+ASTRO Infrastructure,RF Subsystem,Site Controller,6809
+ASTRO Infrastructure,RF Subsystem,Site Controller,GCP 8000
+ASTRO Infrastructure,RF Subsystem,Site Controller,MTC 3600
+ASTRO Infrastructure,RF Subsystem,Site Controller,MTC 9600
+ASTRO Infrastructure,RF Subsystem,SmartX,SmartX
+ASTRO Infrastructure,RF Subsystem,TeNSr Channel Bank,TeNSr Channel Bank
+ASTRO Infrastructure,RF Subsystem,TRAK,TRAK 8835
+ASTRO Infrastructure,RF Subsystem,TRAK,TRAK 9100
+ASTRO Infrastructure,RF Subsystem,Universal Simulcast Controller Interface - USCI,USCI
+ASTRO Infrastructure,Secure Subsystem,ActiveEye,CEN AERSS
+ASTRO Infrastructure,Secure Subsystem,ActiveEye,RNI AERSS
+ASTRO Infrastructure,Secure Subsystem,Antivirus,Cortex XDR
+ASTRO Infrastructure,Secure Subsystem,Authentication Center - AuC,AuC - VM
+ASTRO Infrastructure,Secure Subsystem,CDEM,CDEM
+ASTRO Infrastructure,Secure Subsystem,Core Security Management Server,Trellix
+ASTRO Infrastructure,Secure Subsystem,CryptR,AuC CryptR
+ASTRO Infrastructure,Secure Subsystem,CryptR,Dispatch Console CryptR
+ASTRO Infrastructure,Secure Subsystem,CryptR,KMF CryptR
+ASTRO Infrastructure,Secure Subsystem,CryptR,WAVE CryptR
+ASTRO Infrastructure,Secure Subsystem,Intrusion Detection System - IDS,IBM Proventia
+ASTRO Infrastructure,Secure Subsystem,Intrusion Detection System - IDS,Juniper SRX
+ASTRO Infrastructure,Secure Subsystem,Key Management Facility - KMF,KMF Client
+ASTRO Infrastructure,Secure Subsystem,Key Management Facility - KMF,KMF Server
+ASTRO Infrastructure,Secure Subsystem,Key Variable Loader - KVL,KVL 3000+
+ASTRO Infrastructure,Secure Subsystem,Key Variable Loader - KVL,KVL 4000
+ASTRO Infrastructure,Secure Subsystem,Key Variable Loader - KVL,KVL 5000
+ASTRO Infrastructure,Secure Subsystem,OTAR,OTAR
+ASTRO Infrastructure,Secure Subsystem,OTEK,OTEK
+ASTRO Infrastructure,Secure Subsystem,PDEG,PDEG
+ASTRO Infrastructure,Security Update Service,Security Update Service,ESXi
+ASTRO Infrastructure,Security Update Service,Security Update Service,Firewalls & Routers
+ASTRO Infrastructure,Security Update Service,Security Update Service,McAfee
+ASTRO Infrastructure,Security Update Service,Security Update Service,Microsoft SQL
+ASTRO Infrastructure,Security Update Service,Security Update Service,PostgreSQL
+ASTRO Infrastructure,Security Update Service,Security Update Service,RHEL
+ASTRO Infrastructure,Security Update Service,Security Update Service,vCENTER
+ASTRO Infrastructure,Security Update Service,Security Update Service,Windows
+ASTRO Infrastructure,Telephony,Customer PBX,Customer PBX
+ASTRO Infrastructure,Telephony,MBX,MBX
+ASTRO Infrastructure,Telephony,Media Gateway,Audio Codes MP-118
+ASTRO Infrastructure,Telephony,Media Gateway,Audio Codes MP-800
+ASTRO Infrastructure,Telephony,Media Gateway,Cisco Console Telephony Gtwy
+ASTRO Infrastructure,Telephony,Media Gateway,NEC Branchhub
+ASTRO Infrastructure,Telephony,Media Gateway,NEC CoHub
+ASTRO Infrastructure,Telephony,Media Gateway,Quintum Cohub
+ASTRO Infrastructure,Telephony,NEC IP PBX,NEC IP PBX
+ASTRO Infrastructure,Telephony,Nova 2000,Nova 2000
+ASTRO Infrastructure,Telephony,TMG (VPM),TMG (VPM)
+DIMETRA,DIMETRA X Core,Connect Gateway,Connect Firewall
+DIMETRA,DIMETRA X Core,Connect Gateway,Connect Server
+DIMETRA,DIMETRA X Core,Connect Gateway,Connect TSC
+DIMETRA,DIMETRA X Core,Connect Gateway,PKI Client
+DIMETRA,DIMETRA X Core,Consoles,AIS (Archiving Interface Server)
+DIMETRA,DIMETRA X Core,Consoles,DCS (Dispatch Communication Server)
+DIMETRA,DIMETRA X Core,Consoles,DCX9000 Console
+DIMETRA,DIMETRA X Core,Consoles,MCC7500 Dispatch Console
+DIMETRA,DIMETRA X Core,Consoles,MCD5000
+DIMETRA,DIMETRA X Core,Consoles,NICE Voice Logger
+DIMETRA,DIMETRA X Core,Consoles,Third Party Dispatch Console
+DIMETRA,DIMETRA X Core,Consoles,Third Party Voice Logger
+DIMETRA,DIMETRA X Core,Data Subsystem & CEN,Alias Server RUA/RUI
+DIMETRA,DIMETRA X Core,Data Subsystem & CEN,IMW (Intelligent MiddleWare)
+DIMETRA,DIMETRA X Core,Data Subsystem & CEN,MCADI (Multi-CADI) Server
+DIMETRA,DIMETRA X Core,Data Subsystem & CEN,PDR (Packet Data Router)
+DIMETRA,DIMETRA X Core,Data Subsystem & CEN,RadioTracker
+DIMETRA,DIMETRA X Core,Data Subsystem & CEN,RNG (Radio Network Gateway)
+DIMETRA,DIMETRA X Core,Data Subsystem & CEN,SDR (Short Data Router)
+DIMETRA,DIMETRA X Core,Network Management & Call Processing,ATR (Air Traffic Router)
+DIMETRA,DIMETRA X Core,Network Management & Call Processing,CHS (Cluster Hot Standby) Tools
+DIMETRA,DIMETRA X Core,Network Management & Call Processing,DC (Domain Controller)
+DIMETRA,DIMETRA X Core,Network Management & Call Processing,GAS (General Administration Server)
+DIMETRA,DIMETRA X Core,Network Management & Call Processing,InfoVista
+DIMETRA,DIMETRA X Core,Network Management & Call Processing,ISI (Inter-System Interconnect) Server
+DIMETRA,DIMETRA X Core,Network Management & Call Processing,KVM Switch
+DIMETRA,DIMETRA X Core,Network Management & Call Processing,LM (License Manager)
+DIMETRA,DIMETRA X Core,Network Management & Call Processing,NM Client (NMT)
+DIMETRA,DIMETRA X Core,Network Management & Call Processing,PRNM Suite Client Application
+DIMETRA,DIMETRA X Core,Network Management & Call Processing,SSS (System Statistics Server)
+DIMETRA,DIMETRA X Core,Network Management & Call Processing,Storage PC
+DIMETRA,DIMETRA X Core,Network Management & Call Processing,Third Party Client
+DIMETRA,DIMETRA X Core,Network Management & Call Processing,UCS (User Configuration Server)
+DIMETRA,DIMETRA X Core,Network Management & Call Processing,UCS Synchronization Tool
+DIMETRA,DIMETRA X Core,Network Management & Call Processing,UEM (Unified Event Manager Server)
+DIMETRA,DIMETRA X Core,Network Management & Call Processing,UIS (Upgrade Install Server)
+DIMETRA,DIMETRA X Core,Network Management & Call Processing,ZC (Zone Controller)
+DIMETRA,DIMETRA X Core,Network Management & Call Processing,ZDS (Zone Database Server)
+DIMETRA,DIMETRA X Core,Network Management & Call Processing,ZSS (Zone Statistical Server)
+DIMETRA,DIMETRA X Core,Network Transport,CCGW Router
+DIMETRA,DIMETRA X Core,Network Transport,CEN / GBN / ISP
+DIMETRA,DIMETRA X Core,Network Transport,CEN Router
+DIMETRA,DIMETRA X Core,Network Transport,CWR Relay Panel
+DIMETRA,DIMETRA X Core,Network Transport,Ethernet Site Links
+DIMETRA,DIMETRA X Core,Network Transport,External Customer Network
+DIMETRA,DIMETRA X Core,Network Transport,Fortinet Firewall -  FG 100D
+DIMETRA,DIMETRA X Core,Network Transport,Fortinet Firewall -  FG 101E
+DIMETRA,DIMETRA X Core,Network Transport,Fortinet Firewall -  FG 101F
+DIMETRA,DIMETRA X Core,Network Transport,GGM8000
+DIMETRA,DIMETRA X Core,Network Transport,LAN Switch - HP2010-48
+DIMETRA,DIMETRA X Core,Network Transport,LAN Switch - HP2620-48
+DIMETRA,DIMETRA X Core,Network Transport,LAN Switch - HP2626
+DIMETRA,DIMETRA X Core,Network Transport,LAN Switch - HP2650
+DIMETRA,DIMETRA X Core,Network Transport,LAN Switch - HP5300
+DIMETRA,DIMETRA X Core,Network Transport,LAN Switch - HPE A2930F-48
+DIMETRA,DIMETRA X Core,Network Transport,LAN Switch Procurve M/Svr HP
+DIMETRA,DIMETRA X Core,Network Transport,MCG8000 
+DIMETRA,DIMETRA X Core,Network Transport,MUX
+DIMETRA,DIMETRA X Core,Network Transport,Network Time Server
+DIMETRA,DIMETRA X Core,Network Transport,S2500 
+DIMETRA,DIMETRA X Core,Network Transport,S6000
+DIMETRA,DIMETRA X Core,Network Transport,Terminal Server
+DIMETRA,DIMETRA X Core,Network Transport,TNCT / TNDM / NCT Express
+DIMETRA,DIMETRA X Core,Platform Subsystem,"Client PC platform (NMT, PRC, KMF Client, Other)"
+DIMETRA,DIMETRA X Core,Platform Subsystem,DCS Server platform
+DIMETRA,DIMETRA X Core,Platform Subsystem,ISI Core Server Platform
+DIMETRA,DIMETRA X Core,Platform Subsystem,PCS / SCS (Primary/Secondary Core Server)
+DIMETRA,DIMETRA X Core,Platform Subsystem,Performance Security Management Server (PSMS)
+DIMETRA,DIMETRA X Core,Platform Subsystem,Pyramid PC platform (AIS / APE)
+DIMETRA,DIMETRA X Core,Platform Subsystem,X-Core Deployable (XCD) Server
+DIMETRA,DIMETRA X Core,Platform Subsystem,X-Core Edge (XCE) Server
+DIMETRA,DIMETRA X Core,RF Subsystem,EBTS
+DIMETRA,DIMETRA X Core,RF Subsystem,MTS LiTE
+DIMETRA,DIMETRA X Core,RF Subsystem,MTS1
+DIMETRA,DIMETRA X Core,RF Subsystem,MTS2
+DIMETRA,DIMETRA X Core,RF Subsystem,MTS4
+DIMETRA,DIMETRA X Core,Secure Subsystem,AuC (Authentication Centre)
+DIMETRA,DIMETRA X Core,Secure Subsystem,CryptR
+DIMETRA,DIMETRA X Core,Secure Subsystem,CSMS (Core Security Management Server)
+DIMETRA,DIMETRA X Core,Secure Subsystem,KMF (Key Management Facility)
+DIMETRA,DIMETRA X Core,Secure Subsystem,KVL 3000
+DIMETRA,DIMETRA X Core,Secure Subsystem,KVL 4000
+DIMETRA,DIMETRA X Core,Secure Subsystem,KVL6K
+DIMETRA,DIMETRA X Core,Secure Subsystem,PDEG
+DIMETRA,DIMETRA X Core,Secure Subsystem,PrC (Provisioning Centre)
+DIMETRA,DIMETRA X Core,Secure Subsystem,RSA ACE
+DIMETRA,DIMETRA X Core,Secure Subsystem,SDEG
+DIMETRA,DIMETRA X Core,Security Update Service,ActiveEye MDR
+DIMETRA,DIMETRA X Core,Security Update Service,ESET Antivirus (RHEL)
+DIMETRA,DIMETRA X Core,Security Update Service,ESET Antivirus (Windows)
+DIMETRA,DIMETRA X Core,Security Update Service,MotoPatch (RHEL)
+DIMETRA,DIMETRA X Core,Security Update Service,MotoPatch (Windows)
+DIMETRA,DIMETRA X Core,Telephony ,Echo Canceller
+DIMETRA,DIMETRA X Core,Telephony ,MTIG-E1
+DIMETRA,DIMETRA X Core,Telephony ,MTIG-IP
+DIMETRA,DIMETRA X Core,Telephony ,Third Party PABX / Telephony System
+WAVE,WAVE on Prem,Accessories,Bluetooth
+WAVE,WAVE on Prem,Accessories,Foot Pedal
+WAVE,WAVE on Prem,Accessories,Wired
+WAVE,WAVE on Prem,API,Contact group mgmt APIs
+WAVE,WAVE on Prem,API,Dispatch API
+WAVE,WAVE on Prem,API,Gateway APIs
+WAVE,WAVE on Prem,API,Others APIs
+WAVE,WAVE on Prem,API,Subscriber Provisioning APIs
+WAVE,WAVE on Prem,AWS,IOT
+WAVE,WAVE on Prem,AWS,SMTP
+WAVE,WAVE on Prem,BYOD,Android
+WAVE,WAVE on Prem,BYOD,IOS
+WAVE,WAVE on Prem,Client App,Built-in App
+WAVE,WAVE on Prem,Datacenter,3rd Party DC
+WAVE,WAVE on Prem,Datacenter,AWS
+WAVE,WAVE on Prem,Datacenter,AZURE
+WAVE,WAVE on Prem,Datacenter,CustomerDC
+WAVE,WAVE on Prem,Datacenter,DNS
+WAVE,WAVE on Prem,Datacenter,Firewall
+WAVE,WAVE on Prem,Datacenter,ISP Link
+WAVE,WAVE on Prem,Datacenter,Network/Transport
+WAVE,WAVE on Prem,Datacenter,Other
+WAVE,WAVE on Prem,Datacenter,Routers
+WAVE,WAVE on Prem,Datacenter,Switches
+WAVE,WAVE on Prem,Datacenter,UCDC
+WAVE,WAVE on Prem,Devices,Evolve
+WAVE,WAVE on Prem,Devices,ION
+WAVE,WAVE on Prem,Devices,Other
+WAVE,WAVE on Prem,Devices,R7
+WAVE,WAVE on Prem,Devices,Rug Gear
+WAVE,WAVE on Prem,Devices,TLK 100
+WAVE,WAVE on Prem,Devices,TLK 110
+WAVE,WAVE on Prem,Devices,TLK 150
+WAVE,WAVE on Prem,Devices,TLK25
+WAVE,WAVE on Prem,Dispatch App,Chrome
+WAVE,WAVE on Prem,Dispatch App,Edge
+WAVE,WAVE on Prem,Dispatch App,Firefox
+WAVE,WAVE on Prem,Dispatch App,MFA Authorization
+WAVE,WAVE on Prem,Dispatch App,OTP
+WAVE,WAVE on Prem,Dispatch App,Plugin
+WAVE,WAVE on Prem,Gateway,CSSI
+WAVE,WAVE on Prem,Gateway,ISSI
+WAVE,WAVE on Prem,Gateway,JPS Gateway
+WAVE,WAVE on Prem,Gateway,Multi Tenant Gateway
+WAVE,WAVE on Prem,Gateway,Patching
+WAVE,WAVE on Prem,Gateway,ROIP Gateway
+WAVE,WAVE on Prem,Gateway,Single Tenant Gateway
+WAVE,WAVE on Prem,Gateway,Vocality Gateway
+WAVE,WAVE on Prem,Gateway,WRG
+WAVE,WAVE on Prem,LMR,CEN
+WAVE,WAVE on Prem,LMR,M-Core Conventional - Wireline
+WAVE,WAVE on Prem,Mobile TLK Config App,Mobile TLK Config App
+WAVE,WAVE on Prem,Network,Carrier/Telco/MVNO
+WAVE,WAVE on Prem,Observability ,Alarms
+WAVE,WAVE on Prem,Observability ,AWS Alerts
+WAVE,WAVE on Prem,Observability ,Azure Alerts
+WAVE,WAVE on Prem,Observability ,KPI's
+WAVE,WAVE on Prem,Observability ,Logic Monitor Alerts
+WAVE,WAVE on Prem,Operational Tools,Fieldutils
+WAVE,WAVE on Prem,Operational Tools,IDAP Grafana
+WAVE,WAVE on Prem,Operational Tools,IDAP Kibana
+WAVE,WAVE on Prem,POC ,Container
+WAVE,WAVE on Prem,POC ,F5
+WAVE,WAVE on Prem,POC ,Host
+WAVE,WAVE on Prem,POC ,VM
+WAVE,WAVE on Prem,Portal,Allocation/Deallocation
+WAVE,WAVE on Prem,Portal,CAT
+WAVE,WAVE on Prem,Portal,One Portal
+WAVE,WAVE on Prem,Portal,Reseller Dashboard
+WAVE,WAVE on Prem,Portal,UGW
+WAVE,WAVE on Prem,Portal,WCSR
+WAVE,WAVE on Prem,Portal,WoC Portal
+WAVE,WAVE on Prem,Reporting,Monthly
+WAVE,WAVE on Prem,Reporting,Other
+WAVE,WAVE on Prem,Reporting,Usage
+WAVE,WAVE on Prem,Reporting,Weekly
+WAVE,WAVE on Prem,TalkGroups,Interop
+WAVE,WAVE on Prem,TalkGroups,Large TalkGroups
+WAVE,WAVE on Prem,TalkGroups,Patching
+WAVE,WAVE on Prem,TalkGroups,Site Survey (ISSI/CSSI/ROPI/P25
+WAVE,WAVE on Prem,TalkGroups,TalkGroup Sharing
+WAVE,WAVE on Prem,Unified Recorder,Unified Recorder

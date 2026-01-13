@@ -1,0 +1,37 @@
+/**
+ * Motorola Solutions Skin - Widget Styling
+ */
+
+/* Widget containers */
+.WidgetSimple > .Header {
+    background: linear-gradient(135deg, var(--motorola-dark-blue) 0%, var(--motorola-dark-blue-tint-30) 100%) !important;
+    color: white !important;
+    font-weight: var(--motorola-font-medium) !important;
+    font-family: var(--motorola-font-family) !important;
+    border-bottom: 2px solid var(--color-grey8) !important;
+}
+
+.WidgetSimple > .Header h2 {
+    color: white !important;
+    font-weight: var(--motorola-font-medium) !important;
+}
+
+.WidgetSimple > .Header h2 label {
+    color: white !important;
+}
+
+/* Dashboard widgets */
+.DashboardWidget .Header {
+    background: linear-gradient(135deg, var(--motorola-dark-blue) 0%, var(--motorola-light-blue) 100%) !important;
+    color: white !important;
+    font-weight: var(--motorola-font-medium) !important;
+}
+
+/* Widget actions */
+.WidgetAction {
+    color: white !important;
+}
+
+.WidgetAction:hover {
+    color: white !important;
+}

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Application">
+    <Setting Name="Ticket::NumberGenerator" Required="1" Valid="1">
+        <Description Translatable="1">The ticket number generator module. This module will be called to generate a new ticket number.</Description>
+        <Navigation>Core::Ticket</Navigation>
+        <Value>
+            <Item ValueType="String">Kernel::System::Ticket::Number::AutoIncrementWithPrefix</Item>
+        </Value>
+    </Setting>
+</otrs_config>

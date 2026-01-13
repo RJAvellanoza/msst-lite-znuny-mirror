@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Framework">
+    
+    <!-- Navigation Module Registration -->
+    <Setting Name="Frontend::NavigationModule###AdminZabbixConfiguration" Required="0" Valid="1">
+        <Description Translatable="1">Admin area navigation for the Zabbix integration interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration::AdminOverview</Navigation>
+        <Value>
+            <Hash>
+                <!-- Group permissions managed in ZZZZZNOCAdminNavigation.pm -->
+                <Item Key="Module">Kernel::Output::HTML::NavBar::ModuleAdmin</Item>
+                <Item Key="Name" Translatable="1">Zabbix Integration</Item>
+                <Item Key="Block">MSSTLite</Item>
+                <Item Key="Description" Translatable="1">Configure Zabbix API integration for event synchronization.</Item>
+                <Item Key="IconBig">fa-server</Item>
+                <Item Key="IconSmall">fa-server</Item>
+                <Item Key="Prio">920</Item>
+            </Hash>
+        </Value>
+    </Setting>
+    
+    <!-- Frontend Module Registration -->
+    <Setting Name="Frontend::Module###AdminZabbixConfiguration" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for the Zabbix integration configuration admin interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <!-- Group permissions managed in ZZZZZNOCAdminNavigation.pm -->
+                    <Item Key="Module">Kernel::Modules::AdminZabbixConfiguration</Item>
+                    <Item Key="Description" Translatable="1">Configure Zabbix API integration for event synchronization.</Item>
+                    <Item Key="Title" Translatable="1">Zabbix Integration</Item>
+                    <Item Key="NavBarName">Admin</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+    
+    <!-- Zabbix Integration Configuration Settings -->
+    <Setting Name="ZabbixIntegration::Enabled" Required="0" Valid="1">
+        <Description Translatable="1">Enable or disable the Zabbix integration.</Description>
+        <Navigation>Core::ZabbixIntegration::Config</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">0</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="ZabbixIntegration::APIURL" Required="0" Valid="1">
+        <Description Translatable="1">Zabbix API URL endpoint (typically ends with api_jsonrpc.php).</Description>
+        <Navigation>Core::ZabbixIntegration::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex=""></Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="ZabbixIntegration::APIUser" Required="0" Valid="1">
+        <Description Translatable="1">Zabbix API username with event acknowledgment permissions.</Description>
+        <Navigation>Core::ZabbixIntegration::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex=""></Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="ZabbixIntegration::APIPassword" Required="0" Valid="1">
+        <Description Translatable="1">Zabbix API password (stored encrypted).</Description>
+        <Navigation>Core::ZabbixIntegration::Config</Navigation>
+        <Value>
+            <Item ValueType="Password" ValueRegex=""></Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="ZabbixIntegration::TriggerStates" Required="0" Valid="1">
+        <Description Translatable="1">Comma-separated list of ticket states that trigger Zabbix event closure.</Description>
+        <Navigation>Core::ZabbixIntegration::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="">resolved,closed,cancelled</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="ZabbixIntegration::ConnectionTimeout" Required="0" Valid="1">
+        <Description Translatable="1">Connection timeout in seconds for Zabbix API requests.</Description>
+        <Navigation>Core::ZabbixIntegration::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="^\d+$">30</Item>
+        </Value>
+    </Setting>
+    
+    
+    <!-- JavaScript Module Loader Registration -->
+    <Setting Name="Loader::Module::AdminZabbixConfiguration###002-Framework" Required="0" Valid="1">
+        <Description Translatable="1">List of JS files loaded for AdminZabbixConfiguration frontend module.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration::Loader</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="JavaScript">
+                    <Array>
+                        <Item>Core.Agent.Admin.ZabbixConfiguration.js</Item>
+                    </Array>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+    
+    <!-- Admin Groups for Zabbix Configuration -->
+    <Setting Name="ZabbixIntegration::AdminGroups" Required="1" Valid="1">
+        <Description Translatable="1">Groups that can manage Zabbix integration.</Description>
+        <Navigation>Core::MSSTLite::ZabbixIntegration</Navigation>
+        <Value>
+            <Array>
+                <Item>admin</Item>
+            </Array>
+        </Value>
+    </Setting>
+    
+</otrs_config>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Framework">
+
+    <!-- Frontend Module Registration -->
+    <Setting Name="Frontend::Module###AgentReportTickets" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for Report Tickets view.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>users</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="GroupRo">
+                        <Array>
+                            <Item>users</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Description" Translatable="1">View filtered tickets from reports.</Item>
+                    <Item Key="Title" Translatable="1">Report Tickets</Item>
+                    <Item Key="NavBarName">Ticket</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+
+</otrs_config>

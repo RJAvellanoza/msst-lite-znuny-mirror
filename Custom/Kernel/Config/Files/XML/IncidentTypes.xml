@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Framework">
+    <!-- Enable Ticket Types -->
+    <Setting Name="Ticket::Type" Required="1" Valid="1">
+        <Description Translatable="1">Enable ticket type feature to support incident categorization.</Description>
+        <Navigation>Core::Ticket</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">1</Item>
+        </Value>
+    </Setting>
+    
+    <!-- Frontend Module Configuration to show Type field -->
+    <Setting Name="Ticket::Frontend::AgentTicketPhone###TicketType" Required="0" Valid="1">
+        <Description Translatable="1">Enable ticket type selection in phone ticket screen.</Description>
+        <Navigation>Frontend::Agent::Ticket::ViewPhoneNew</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">1</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="Ticket::Frontend::AgentTicketEmail###TicketType" Required="0" Valid="1">
+        <Description Translatable="1">Enable ticket type selection in email ticket screen.</Description>
+        <Navigation>Frontend::Agent::Ticket::ViewEmailNew</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">1</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="Ticket::Frontend::AgentTicketProcess###TicketType" Required="0" Valid="1">
+        <Description Translatable="1">Enable ticket type selection in process ticket screen.</Description>
+        <Navigation>Frontend::Agent::Ticket::ViewProcess</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">1</Item>
+        </Value>
+    </Setting>
+    
+    <!-- Set default ticket type to Incident -->
+    <Setting Name="Ticket::Type::Default" Required="1" Valid="1">
+        <Description Translatable="1">Defines the default ticket type for MSST Lite incidents.</Description>
+        <Navigation>Core::Ticket</Navigation>
+        <Value>
+            <Item ValueType="String">Incident</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="Ticket::Frontend::CustomerTicketMessage###TicketTypeDefault" Required="0" Valid="0">
+        <Description Translatable="1">Defines the default ticket type for new customer tickets in the customer interface.</Description>
+        <Navigation>Frontend::Customer::View::TicketMessage</Navigation>
+        <Value>
+            <Item ValueType="String">Incident</Item>
+        </Value>
+    </Setting>
+</otrs_config>

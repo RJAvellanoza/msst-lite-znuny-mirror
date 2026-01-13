@@ -1,0 +1,142 @@
+# --
+# Copyright (C) 2024 Athena Technologies LLC, https://athena.us
+# --
+# This software comes with ABSOLUTELY NO WARRANTY. For details, see
+# the enclosed file COPYING for license information (GPL). If you
+# did not receive this file, see https://www.gnu.org/licenses/gpl-3.0.txt.
+# --
+
+<div class="MainBox ARIARoleMain LayoutFixedSidebar SidebarFirst">
+    <h1 class="InvisibleText">[% Translate("Incident List") | html %]</h1>
+
+    <div class="SidebarColumn">
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Actions") | html %]</h2>
+            </div>
+            <div class="Content">
+                <ul class="ActionList">
+                    <li>
+                        <a href="[% Env("Baselink") %]Action=AgentIncidentForm;Subaction=Add" class="CallForAction Fullsize Center">
+                            <span><i class="fa fa-plus-square"></i>[% Translate("Add New Incident") | html %]</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Hint") | html %]</h2>
+            </div>
+            <div class="Content">
+                <p class="FieldExplanation">
+                    [% Translate("This is a list of all incidents in the system. Click on an incident to view or edit it.") | html %]
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="ContentColumn">
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Incident List") | html %]</h2>
+            </div>
+            <div class="Content">
+                <table class="DataTable">
+                    <thead>
+                        <tr>
+                            <th>[% Translate("Incident ID") | html %]</th>
+                            <th>[% Translate("Date") | html %]</th>
+                            <th>[% Translate("Time") | html %]</th>
+                            <th>[% Translate("Type") | html %]</th>
+                            <th>[% Translate("Location") | html %]</th>
+                            <th>[% Translate("Severity") | html %]</th>
+                            <th>[% Translate("Ticket #") | html %]</th>
+                            <th>[% Translate("State") | html %]</th>
+                            <th>[% Translate("Created By") | html %]</th>
+                            <th>[% Translate("Actions") | html %]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+[% IF Data.IncidentList && Data.IncidentList.size %]
+    [% FOREACH Incident IN Data.IncidentList %]
+                        <tr>
+                            <td>
+                                <a href="[% Env("Baselink") %]Action=AgentIncidentForm;Subaction=View;IncidentID=[% Incident.incident_id | uri %]" class="AsBlock">
+                                    [% Incident.incident_id | html %]
+                                </a>
+                            </td>
+                            <td>[% Incident.incident_date | html %]</td>
+                            <td>[% Incident.incident_time | html %]</td>
+                            <td>[% Incident.incident_type | html %]</td>
+                            <td>[% Incident.location_name | html %]</td>
+                            <td>
+        [% IF Incident.incident_severity == 'Critical' %]
+                                <div class="Flag Small">
+                                    <span class="PriorityID-5">[% Incident.incident_severity | html %]</span>
+                                </div>
+        [% ELSIF Incident.incident_severity == 'High' %]
+                                <div class="Flag Small">
+                                    <span class="PriorityID-4">[% Incident.incident_severity | html %]</span>
+                                </div>
+        [% ELSIF Incident.incident_severity == 'Medium' %]
+                                <div class="Flag Small">
+                                    <span class="PriorityID-3">[% Incident.incident_severity | html %]</span>
+                                </div>
+        [% ELSE %]
+                                <div class="Flag Small">
+                                    <span class="PriorityID-2">[% Incident.incident_severity | html %]</span>
+                                </div>
+        [% END %]
+                            </td>
+                            <td>
+        [% IF Incident.TicketNumber %]
+                                <a href="[% Env("Baselink") %]Action=AgentTicketZoom;TicketID=[% Incident.ticket_id | uri %]" class="AsBlock">
+                                    [% Incident.TicketNumber | html %]
+                                </a>
+        [% ELSE %]
+                                -
+        [% END %]
+                            </td>
+                            <td>
+        [% IF Incident.State %]
+                                [% Translate(Incident.State) | html %]
+        [% ELSE %]
+                                -
+        [% END %]
+                            </td>
+                            <td>[% Incident.created_by | html %]</td>
+                            <td class="Center">
+                                <a href="[% Env("Baselink") %]Action=AgentIncidentForm;Subaction=View;IncidentID=[% Incident.incident_id | uri %]" title="[% Translate("View") | html %]">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                                <a href="[% Env("Baselink") %]Action=AgentIncidentForm;Subaction=Update;IncidentID=[% Incident.incident_id | uri %]" title="[% Translate("Edit") | html %]">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                            </td>
+                        </tr>
+    [% END %]
+[% ELSE %]
+                        <tr>
+                            <td colspan="10" class="Center">
+                                [% Translate("No incidents found.") | html %]
+                            </td>
+                        </tr>
+[% END %]
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+[% WRAPPER JSOnDocumentComplete %]
+<script type="text/javascript">//<![CDATA[
+    // Initialize DataTable for better sorting and searching
+    $('.DataTable').DataTable({
+        "order": [[ 1, "desc" ], [ 2, "desc" ]],  // Sort by date and time descending
+        "pageLength": 25
+    });
+//]]></script>
+[% END %]

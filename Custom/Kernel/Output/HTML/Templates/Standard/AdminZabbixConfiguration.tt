@@ -1,0 +1,201 @@
+# --
+# Copyright (C) 2025 MSST, https://msst.com/
+# --
+# This software comes with ABSOLUTELY NO WARRANTY. For details, see
+# the enclosed file COPYING for license information (GPL). If you
+# did not receive this file, see https://www.gnu.org/licenses/gpl-3.0.txt.
+# --
+
+<div class="MainBox ARIARoleMain LayoutFixedSidebar SidebarFirst ActionsSideBar">
+    <div class="SidebarColumn ActionsSideBarComp">
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Actions") | html %]</h2>
+            </div>
+            <div class="Content">
+                <ul class="ActionList">
+                    <li>
+                        <a href="[% Env("Baselink") %]Action=Admin" class="CallForAction Fullsize Center">
+                            <span><i class="fa fa-caret-left"></i>[% Translate("Go to overview") | html %]</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Note") | html %]</h2>
+            </div>
+            <div class="Content">
+                <p class="FieldExplanation">
+                    [% Translate("Configure the Zabbix API integration to automatically acknowledge and close problem events when tickets are resolved.") | html %]
+                </p>
+                <p class="FieldExplanation">
+                    [% Translate("The integration will map Zabbix problem events to ticket creation and synchronize resolution status.") | html %]
+                </p>
+                <p class="FieldExplanation">
+                    [% Translate("Use the test connection button to verify API credentials and connectivity.") | html %]
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="ContentColumn">
+        <h1>[% Translate("Zabbix Integration Configuration") | html %]</h1>
+        
+        [% IF Data.Saved %]
+        <div class="MessageBox Notice">
+            <p>[% Translate("Configuration saved successfully.") | html %]</p>
+        </div>
+        [% END %]
+        
+        [% IF Data.ConfigMissing %]
+        <div class="MessageBox Warning">
+            <p><strong>[% Translate("Warning: Zabbix API credentials are not configured!") | html %]</strong></p>
+            <p>[% Translate("The following configuration settings are missing in Config.pm:") | html %] <code>[% Data.MissingFields | html %]</code></p>
+            <p>[% Translate("Please contact your system administrator to configure the Zabbix API credentials in /opt/znuny-6.5.15/Kernel/Config.pm") | html %]</p>
+            <p>[% Translate("Example configuration:") | html %]</p>
+            <pre style="background: #f5f5f5; padding: 10px; border-radius: 3px; margin: 10px 0;">
+    # Zabbix Integration Configuration
+    $Self->{'ZabbixIntegration::APIURL'}      = 'https://your-zabbix-server/api_jsonrpc.php';
+    $Self->{'ZabbixIntegration::APIUser'}     = 'your-api-username';
+    $Self->{'ZabbixIntegration::APIPassword'} = 'your-api-password';</pre>
+        </div>
+        [% END %]
+        
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Zabbix API Settings") | html %]</h2>
+            </div>
+            <div class="Content">
+                <form action="[% Env("CGIHandle") %]" method="post" enctype="multipart/form-data" name="compose" class="Validate PreventMultipleSubmits">
+                    <input type="hidden" name="Action" value="[% Env("Action") %]"/>
+                    <input type="hidden" name="Subaction" value="Save"/>
+                    <input type="hidden" name="[% Env("SessionName") %]" value="[% Env("SessionID") %]"/>
+                    <!-- Hidden fields for API credentials (from Config.pm) -->
+                    <input type="hidden" name="APIURL" id="APIURL" value="[% Data.APIURL | html %]"/>
+                    <input type="hidden" name="APIUser" id="APIUser" value="[% Data.APIUser | html %]"/>
+                    <input type="hidden" name="APIPassword" id="APIPassword" value="[% Data.APIPassword | html %]"/>
+                    
+                    <fieldset class="TableLike">
+                        <label>[% Translate("API Configuration") | html %]:</label>
+                        <div class="Field">
+                            [% IF Data.ConfigMissing %]
+                                <p class="FieldExplanation" style="color: #ff6600;">
+                                    <i class="fa fa-warning"></i> <strong>[% Translate("Not Configured") | html %]</strong> - [% Translate("API credentials must be set in Config.pm") | html %]
+                                </p>
+                            [% ELSE %]
+                                <p class="FieldExplanation" style="color: #009900;">
+                                    <i class="fa fa-check-circle"></i> <strong>[% Translate("Configured") | html %]</strong> - [% Translate("API credentials are loaded from Config.pm") | html %]
+                                </p>
+                                <p class="FieldExplanation">
+                                    <strong>[% Translate("API URL") | html %]:</strong> [% IF Data.APIURL %][% Data.APIURL | html %][% ELSE %]<span style="color: #ff6600;">[% Translate("Not set") | html %]</span>[% END %]<br>
+                                    <strong>[% Translate("API User") | html %]:</strong> [% IF Data.APIUser %][% Data.APIUser | html %][% ELSE %]<span style="color: #ff6600;">[% Translate("Not set") | html %]</span>[% END %]<br>
+                                    <strong>[% Translate("API Password") | html %]:</strong> [% IF Data.APIPassword %]********[% ELSE %]<span style="color: #ff6600;">[% Translate("Not set") | html %]</span>[% END %]
+                                </p>
+                            [% END %]
+                        </div>
+                        <div class="Clear"></div>
+                        
+                        
+                        
+                        <div class="Field SpacingTop">
+                            [% IF Data.ConfigMissing %]
+                                <button type="button" id="TestConnection" class="CallForAction" disabled="disabled" title="[% Translate("API credentials must be configured first") | html %]">
+                                    <span>[% Translate("Test Connection") | html %]</span>
+                                </button>
+                                <button type="submit" class="CallForAction" disabled="disabled" title="[% Translate("API credentials must be configured first") | html %]" value="[% Translate("Save") | html %]">
+                                    <span>[% Translate("Save") | html %]</span>
+                                </button>
+                            [% ELSE %]
+                                <button type="button" id="TestConnection" class="CallForAction Primary">
+                                    <span>[% Translate("Test Connection") | html %]</span>
+                                </button>
+                                <button type="submit" class="CallForAction Primary" value="[% Translate("Save") | html %]">
+                                    <span>[% Translate("Save") | html %]</span>
+                                </button>
+                            [% END %]
+                            [% Translate("or") | html %]
+                            <a href="[% Env("Baselink") %]Action=Admin">[% Translate("Cancel") | html %]</a>
+                        </div>
+                        <div class="Clear"></div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+        
+        <div class="WidgetSimple" id="ConnectionTestResult" style="display:none;">
+            <div class="Header">
+                <h2>[% Translate("Connection Test Result") | html %]</h2>
+            </div>
+            <div class="Content">
+                <div id="TestResultMessage"></div>
+            </div>
+        </div>
+        
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Zabbix API Call History") | html %]</h2>
+            </div>
+            <div class="Content">
+                [% IF Data.AuditLogs.size %]
+                <table class="DataTable">
+                    <thead>
+                        <tr>
+                            <th>[% Translate("Time") | html %]</th>
+                            <th>[% Translate("Action") | html %]</th>
+                            <th>[% Translate("Ticket") | html %]</th>
+                            <th>[% Translate("Event ID") | html %]</th>
+                            <th>[% Translate("Status") | html %]</th>
+                            <th>[% Translate("Error Message") | html %]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        [% FOREACH Log IN Data.AuditLogs %]
+                        <tr>
+                            <td>[% Log.CreateTime | html %]</td>
+                            <td>[% Log.Action | html %]</td>
+                            <td>
+                                [% IF Log.TicketNumber %]
+                                    <a href="[% Env("Baselink") %]Action=AgentTicketZoom;TicketID=[% Log.TicketID | uri %]" target="_blank">
+                                        [% Log.TicketNumber | html %]
+                                    </a>
+                                [% ELSE %]
+                                    -
+                                [% END %]
+                            </td>
+                            <td>[% Log.RequestInfo | html %]</td>
+                            <td>
+                                <span class="Flag [% Log.SuccessClass | html %]">
+                                    [% Log.Success | html %]
+                                </span>
+                            </td>
+                            <td [% IF Log.ErrorMessage %]title="[% Log.ErrorMessage | html %]"[% END %]>
+                                [% IF Log.ErrorMessage %]
+                                    [% IF Log.ErrorMessage.length > 80 %]
+                                        [% Log.ErrorMessage.substr(0, 80) | html %]...
+                                    [% ELSE %]
+                                        [% Log.ErrorMessage | html %]
+                                    [% END %]
+                                [% ELSE %]
+                                    -
+                                [% END %]
+                            </td>
+                        </tr>
+                        [% END %]
+                    </tbody>
+                </table>
+                [% ELSE %]
+                <p>[% Translate("No API calls recorded yet.") | html %]</p>
+                [% END %]
+            </div>
+        </div>
+    </div>
+</div>
+
+[% WRAPPER JSOnDocumentComplete %]
+<script type="text/javascript">//<![CDATA[
+    Core.Agent.Admin.ZabbixConfiguration.Init();
+//]]></script>
+[% END %]

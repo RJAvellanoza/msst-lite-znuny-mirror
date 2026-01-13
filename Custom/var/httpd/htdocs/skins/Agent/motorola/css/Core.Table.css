@@ -1,0 +1,54 @@
+/**
+ * Motorola Solutions Skin - Table Styling
+ */
+
+/* Table headers */
+.DataTable thead th,
+.TableLike thead th {
+/*    background: linear-gradient(135deg, var(--motorola-dark-blue) 0%, var(--motorola-dark-blue-tint-30) 100%) !important;*/
+    color: var(--color-grey6) !important;
+    font-weight: var(--motorola-font-medium) !important;
+    border-bottom: 2px solid var(--color-grey11) !important;
+    font-family: var(--motorola-font-family) !important;
+}
+
+/* Table hover effects */
+.DataTable tbody tr:hover,
+.TableLike tbody tr:hover {
+    background-color: rgba(0, 165, 229, 0.05) !important;
+}
+
+/* Selected rows */
+.DataTable tbody tr.Selected,
+.TableLike tbody tr.Selected {
+    background-color: rgba(0, 95, 190, 0.1) !important;
+    border-left: 4px solid var(--motorola-orange) !important;
+}
+
+/* Sortable headers */
+.DataTable th.SortAscending,
+.DataTable th.SortDescending {
+    background: linear-gradient(135deg, var(--motorola-light-blue) 0%, var(--motorola-dark-blue) 100%) !important;
+}
+
+.DataTable th.SortAscending::after {
+    content: "▲" !important;
+    color: var(--motorola-orange) !important;
+}
+
+.DataTable th.SortDescending::after {
+    content: "▼" !important;
+    color: var(--motorola-orange) !important;
+}
+
+/* Links in tables */
+.DataTable a,
+.TableLike a {
+    color: var(--motorola-dark-blue) !important;
+    font-weight: var(--motorola-font-medium) !important;
+}
+
+.DataTable a:hover,
+.TableLike a:hover {
+    color: var(--motorola-light-blue) !important;
+}

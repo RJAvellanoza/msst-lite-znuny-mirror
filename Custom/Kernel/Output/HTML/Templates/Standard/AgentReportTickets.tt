@@ -1,0 +1,293 @@
+# --
+# Copyright (C) 2025 MSST, https://msst.com/
+# --
+# This software comes with ABSOLUTELY NO WARRANTY.
+# --
+
+<style>
+#ReportTicketsTable th a {
+    display: block;
+    cursor: pointer;
+}
+#ReportTicketsTable th a:hover {
+    background: #e9ecef;
+}
+#ReportTicketsTable th {
+    white-space: nowrap;
+}
+</style>
+
+<div class="MainBox ARIARoleMain LayoutFixedSidebar SidebarFirst">
+    <h1>[% Translate(Data.Title) | html %]</h1>
+
+    <div class="SidebarColumn">
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Navigation") | html %]</h2>
+            </div>
+            <div class="Content">
+                <p>
+                    [% IF Data.Source == 'AgentMTRD' %]
+                    <a href="[% Env("Baselink") %]Action=AgentMTRD" class="CallForAction">
+                        <span>← [% Translate("Back to Active Tickets Response Status") | html %]</span>
+                    </a>
+                    [% ELSIF Data.Source == 'AgentTicketResolution' %]
+                    <a href="[% Env("Baselink") %]Action=AgentTicketResolution" class="CallForAction">
+                        <span>← [% Translate("Back to Ticket Resolution") | html %]</span>
+                    </a>
+                    [% ELSIF Data.Source == 'AgentActiveTicketsAssignment' %]
+                    <a href="[% Env("Baselink") %]Action=AgentActiveTicketsAssignment" class="CallForAction">
+                        <span>← [% Translate("Back to Active Tickets Assignment") | html %]</span>
+                    </a>
+                    [% ELSIF Data.Source == 'AgentAverageBacklog' %]
+                    <a href="[% Env("Baselink") %]Action=AgentAverageBacklog" class="CallForAction">
+                        <span>← [% Translate("Back to Average Backlog") | html %]</span>
+                    </a>
+                    [% ELSIF Data.Source == 'AgentIncidentReports' %]
+                    <a href="[% Env("Baselink") %]Action=AgentIncidentReports" class="CallForAction">
+                        <span>← [% Translate("Back to Incident Reports") | html %]</span>
+                    </a>
+                    [% ELSIF Data.Source == 'AgentIncidentReportsClosure' %]
+                    <a href="[% Env("Baselink") %]Action=AgentIncidentReports;Section=TicketsClosure" class="CallForAction">
+                        <span>← [% Translate("Back to Incident Reports") | html %]</span>
+                    </a>
+                    [% ELSIF Data.Source == 'AgentIncidentReportsClosureByProductCat3' %]
+                    <a href="[% Env("Baselink") %]Action=AgentIncidentReports;Section=TicketsClosureByProductCat3" class="CallForAction">
+                        <span>← [% Translate("Back to Product Cat 3") | html %]</span>
+                    </a>
+                    [% ELSIF Data.Source == 'AgentIncidentReportsClosureByCI' %]
+                    <a href="[% Env("Baselink") %]Action=AgentIncidentReports;Section=TicketsClosureByCI" class="CallForAction">
+                        <span>← [% Translate("Back to CI") | html %]</span>
+                    </a>
+                    [% ELSE %]
+                    <a href="[% Env("Baselink") %]Action=AgentOperationalReports" class="CallForAction">
+                        <span>← [% Translate("Back to Operational Reports") | html %]</span>
+                    </a>
+                    [% END %]
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="ContentColumn">
+        <!-- Filter Panel -->
+        <div class="WidgetSimple">
+            <div class="Header">
+                <div class="WidgetAction Toggle">
+                    <a href="#" title="[% Translate("Show or hide the content") | html %]"><i class="fa fa-caret-right"></i><i class="fa fa-caret-down"></i></a>
+                </div>
+                <h2>[% Translate("Filters") | html %]</h2>
+            </div>
+            <div class="Content">
+                <form action="[% Env("CGIHandle") %]" method="get" id="FilterForm">
+                    <input type="hidden" name="Action" value="AgentReportTickets" />
+                    <input type="hidden" name="Source" value="[% Data.Source | html %]" />
+                    <input type="hidden" name="SortBy" value="[% Data.SortBy | html %]" />
+                    <input type="hidden" name="OrderBy" value="[% Data.OrderBy | html %]" />
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                        <!-- Priority Filter -->
+                        <div>
+                            <label for="Priorities" style="display: block; margin-bottom: 5px; font-weight: bold;">[% Translate("Priority") | html %]</label>
+                            <select name="Priorities" id="Priorities" style="width: 100%; padding: 6px;">
+                                <option value="">[% Translate("All") | html %]</option>
+                                [% FOREACH Priority IN Data.FilterOptions.Priorities %]
+                                    <option value="[% Priority.Name | html %]" [% IF Data.CurrentFilters.Priorities == Priority.Name %]selected[% END %]>[% Priority.Name | html %]</option>
+                                [% END %]
+                            </select>
+                        </div>
+
+                        <!-- State Type Filter -->
+                        <div>
+                            <label for="StateType" style="display: block; margin-bottom: 5px; font-weight: bold;">[% Translate("State Type") | html %]</label>
+                            <select name="StateType" id="StateType" style="width: 100%; padding: 6px;">
+                                <option value="">[% Translate("All") | html %]</option>
+                                [% FOREACH StateType IN Data.FilterOptions.StateTypes %]
+                                    <option value="[% StateType.ID | html %]" [% IF Data.CurrentFilters.StateType == StateType.ID %]selected[% END %]>[% StateType.Name | html %]</option>
+                                [% END %]
+                            </select>
+                        </div>
+
+                        <!-- State Filter -->
+                        <div>
+                            <label for="StateIDs" style="display: block; margin-bottom: 5px; font-weight: bold;">[% Translate("State") | html %]</label>
+                            <select name="StateIDs" id="StateIDs" style="width: 100%; padding: 6px;">
+                                <option value="">[% Translate("All") | html %]</option>
+                                [% FOREACH State IN Data.FilterOptions.States %]
+                                    <option value="[% State.ID %]" [% IF Data.CurrentFilters.StateIDs == State.ID %]selected[% END %]>[% State.Name | html %]</option>
+                                [% END %]
+                            </select>
+                        </div>
+
+                        <!-- Assignment Status Filter -->
+                        <div>
+                            <label for="AssignmentStatus" style="display: block; margin-bottom: 5px; font-weight: bold;">[% Translate("Assignment") | html %]</label>
+                            <select name="AssignmentStatus" id="AssignmentStatus" style="width: 100%; padding: 6px;">
+                                <option value="">[% Translate("All") | html %]</option>
+                                <option value="assigned" [% IF Data.CurrentFilters.AssignmentStatus == 'assigned' %]selected[% END %]>[% Translate("Assigned") | html %]</option>
+                                <option value="unassigned" [% IF Data.CurrentFilters.AssignmentStatus == 'unassigned' %]selected[% END %]>[% Translate("Unassigned") | html %]</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" style="padding: 4px 12px; font-size: 12px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer;">
+                            <i class="fa fa-filter"></i> [% Translate("Apply") | html %]
+                        </button>
+                        <button type="button" onclick="window.location.href='[% Env("Baselink") %]Action=AgentReportTickets;Source=[% Data.Source | html %]'" style="padding: 4px 12px; font-size: 12px; background: #6c757d; color: white; border: none; border-radius: 3px; cursor: pointer;">
+                            <i class="fa fa-times"></i> [% Translate("Clear") | html %]
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="WidgetSimple">
+            <div class="Header">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2>[% Translate("Ticket List") | html %] ([% Data.TotalCount %])</h2>
+                    <a href="[% Data.BaseURL %];SortBy=[% Data.SortBy | uri %];OrderBy=[% Data.OrderBy | uri %];Subaction=ExportCSV" style="padding: 5px 15px; background: #eee; color: #000; text-decoration: none; border: 1px solid #ccc;">
+                        <i class="fa fa-download"></i> [% Translate("Export CSV") | html %]
+                    </a>
+                </div>
+            </div>
+            <div class="Content">
+                [% IF Data.Tickets.size > 0 %]
+                <!-- Pagination Info -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-radius: 4px;">
+                    <span>
+                        [% Translate("Showing") | html %] [% Data.StartItem %] - [% Data.EndItem %] [% Translate("of") | html %] [% Data.TotalCount %] [% Translate("tickets") | html %]
+                    </span>
+                    <div>
+                        [% IF Data.CurrentPage > 1 %]
+                            <a href="[% Data.BaseURL %];SortBy=[% Data.SortBy | uri %];OrderBy=[% Data.OrderBy | uri %];Page=[% Data.CurrentPage - 1 %]" style="padding: 5px 10px; background: #eee; color: #000; text-decoration: none; border: 1px solid #ccc; margin-right: 5px;">← [% Translate("Previous") | html %]</a>
+                        [% END %]
+                        <span style="padding: 0 10px;">[% Translate("Page") | html %] [% Data.CurrentPage %] / [% Data.TotalPages %]</span>
+                        [% IF Data.CurrentPage < Data.TotalPages %]
+                            <a href="[% Data.BaseURL %];SortBy=[% Data.SortBy | uri %];OrderBy=[% Data.OrderBy | uri %];Page=[% Data.CurrentPage + 1 %]" style="padding: 5px 10px; background: #eee; color: #000; text-decoration: none; border: 1px solid #ccc; margin-left: 5px;">[% Translate("Next") | html %] →</a>
+                        [% END %]
+                    </div>
+                </div>
+
+                <table class="DataTable" id="ReportTicketsTable">
+                    <thead>
+                        <tr>
+                            [% SET NewOrder = Data.OrderBy == 'Up' ? 'Down' : 'Up' %]
+                            <th>
+                                <a href="[% Data.BaseURL %];SortBy=TicketNumber;OrderBy=[% Data.SortBy == 'TicketNumber' ? NewOrder : 'Up' %]" style="color: inherit; text-decoration: none;">
+                                    [% Translate("Ticket#") | html %]
+                                    [% IF Data.SortBy == 'TicketNumber' %]
+                                        [% IF Data.OrderBy == 'Up' %]▲[% ELSE %]▼[% END %]
+                                    [% END %]
+                                </a>
+                            </th>
+                            <th>
+                                <a href="[% Data.BaseURL %];SortBy=Title;OrderBy=[% Data.SortBy == 'Title' ? NewOrder : 'Up' %]" style="color: inherit; text-decoration: none;">
+                                    [% Translate("Title") | html %]
+                                    [% IF Data.SortBy == 'Title' %]
+                                        [% IF Data.OrderBy == 'Up' %]▲[% ELSE %]▼[% END %]
+                                    [% END %]
+                                </a>
+                            </th>
+                            <th>
+                                <a href="[% Data.BaseURL %];SortBy=Queue;OrderBy=[% Data.SortBy == 'Queue' ? NewOrder : 'Up' %]" style="color: inherit; text-decoration: none;">
+                                    [% Translate("Queue") | html %]
+                                    [% IF Data.SortBy == 'Queue' %]
+                                        [% IF Data.OrderBy == 'Up' %]▲[% ELSE %]▼[% END %]
+                                    [% END %]
+                                </a>
+                            </th>
+                            <th>
+                                <a href="[% Data.BaseURL %];SortBy=Priority;OrderBy=[% Data.SortBy == 'Priority' ? NewOrder : 'Up' %]" style="color: inherit; text-decoration: none;">
+                                    [% Translate("Priority") | html %]
+                                    [% IF Data.SortBy == 'Priority' %]
+                                        [% IF Data.OrderBy == 'Up' %]▲[% ELSE %]▼[% END %]
+                                    [% END %]
+                                </a>
+                            </th>
+                            <th>
+                                <a href="[% Data.BaseURL %];SortBy=State;OrderBy=[% Data.SortBy == 'State' ? NewOrder : 'Up' %]" style="color: inherit; text-decoration: none;">
+                                    [% Translate("State") | html %]
+                                    [% IF Data.SortBy == 'State' %]
+                                        [% IF Data.OrderBy == 'Up' %]▲[% ELSE %]▼[% END %]
+                                    [% END %]
+                                </a>
+                            </th>
+                            <th>[% Translate("ProductCat3") | html %]</th>
+                            <th>
+                                <a href="[% Data.BaseURL %];SortBy=Owner;OrderBy=[% Data.SortBy == 'Owner' ? NewOrder : 'Up' %]" style="color: inherit; text-decoration: none;">
+                                    [% Translate("Owner") | html %]
+                                    [% IF Data.SortBy == 'Owner' %]
+                                        [% IF Data.OrderBy == 'Up' %]▲[% ELSE %]▼[% END %]
+                                    [% END %]
+                                </a>
+                            </th>
+                            <th>
+                                <a href="[% Data.BaseURL %];SortBy=Age;OrderBy=[% Data.SortBy == 'Age' ? NewOrder : 'Down' %]" style="color: inherit; text-decoration: none;">
+                                    [% Translate("Age") | html %]
+                                    [% IF Data.SortBy == 'Age' %]
+                                        [% IF Data.OrderBy == 'Up' %]▲[% ELSE %]▼[% END %]
+                                    [% END %]
+                                </a>
+                            </th>
+                            <th>
+                                <a href="[% Data.BaseURL %];SortBy=Created;OrderBy=[% Data.SortBy == 'Created' ? NewOrder : 'Down' %]" style="color: inherit; text-decoration: none;">
+                                    [% Translate("Created") | html %]
+                                    [% IF Data.SortBy == 'Created' %]
+                                        [% IF Data.OrderBy == 'Up' %]▲[% ELSE %]▼[% END %]
+                                    [% END %]
+                                </a>
+                            </th>
+                            <th>[% Translate("First Assigned") | html %]</th>
+                            <th>[% Translate("Resolved") | html %]</th>
+                            <th>[% Translate("Closed") | html %]</th>
+                            <th>[% Translate("MTRD (Hours)") | html %]</th>
+                            <th>[% Translate("MTTR (Days)") | html %]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        [% FOREACH Ticket IN Data.Tickets %]
+                        <tr>
+                            <td>
+                                <a href="[% Env("Baselink") %]Action=AgentTicketZoom;TicketID=[% Ticket.TicketID %]" class="MasterActionLink">
+                                    [% Ticket.TicketNumber | html %]
+                                </a>
+                            </td>
+                            <td>[% Ticket.Title | html %]</td>
+                            <td>[% Ticket.Queue | html %]</td>
+                            <td>[% Ticket.Priority | html %]</td>
+                            <td>[% Ticket.State | html %]</td>
+                            <td>[% Ticket.ProductCat3 | html %]</td>
+                            <td>[% Ticket.Owner | html %]</td>
+                            <td>[% Ticket.Age | html %]</td>
+                            <td>[% Ticket.CreateTime | html %]</td>
+                            <td>[% Ticket.FirstAssigned | html %]</td>
+                            <td>[% Ticket.ResolvedTime | html %]</td>
+                            <td>[% Ticket.ClosedTime | html %]</td>
+                            <td>[% Ticket.MTRD | html %]</td>
+                            <td>[% Ticket.MTTR | html %]</td>
+                        </tr>
+                        [% END %]
+                    </tbody>
+                </table>
+
+                <!-- Bottom Pagination -->
+                <div style="display: flex; justify-content: center; align-items: center; margin-top: 15px; padding: 10px;">
+                    [% IF Data.CurrentPage > 1 %]
+                        <a href="[% Data.BaseURL %];SortBy=[% Data.SortBy | uri %];OrderBy=[% Data.OrderBy | uri %];Page=[% Data.CurrentPage - 1 %]" style="padding: 5px 10px; background: #eee; color: #000; text-decoration: none; border: 1px solid #ccc; margin-right: 5px;">← [% Translate("Previous") | html %]</a>
+                    [% END %]
+                    <span style="padding: 5px 10px;">[% Translate("Page") | html %] [% Data.CurrentPage %] / [% Data.TotalPages %]</span>
+                    [% IF Data.CurrentPage < Data.TotalPages %]
+                        <a href="[% Data.BaseURL %];SortBy=[% Data.SortBy | uri %];OrderBy=[% Data.OrderBy | uri %];Page=[% Data.CurrentPage + 1 %]" style="padding: 5px 10px; background: #eee; color: #000; text-decoration: none; border: 1px solid #ccc; margin-left: 5px;">[% Translate("Next") | html %] →</a>
+                    [% END %]
+                </div>
+                [% ELSE %]
+                <p class="Center" style="padding: 20px;">
+                    [% Translate("No tickets found matching the filter criteria.") | html %]
+                </p>
+                [% END %]
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,316 @@
+/**
+ * --
+ * Copyright (C) 2025 MSST, https://msst.com/
+ * --
+ * This software comes with ABSOLUTELY NO WARRANTY. For details, see
+ * the enclosed file COPYING for license information (GPL). If you
+ * did not receive this file, see https://www.gnu.org/licenses/gpl-3.0.txt.
+ * --
+ */
+
+/**
+ * @package     Skin "Default"
+ * @section     Zabbix Integration Configuration
+ */
+
+@media screen,projection,tv,handheld {
+
+/* Test Connection Result Styles */
+#TestConnectionResult {
+    margin-left: 10px;
+    font-weight: bold;
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+#TestConnectionResult.Success {
+    color: #ffffff;
+    background-color: #28a745;
+    border: 1px solid #1e7e34;
+}
+
+#TestConnectionResult.Error {
+    color: #ffffff;
+    background-color: #dc3545;
+    border: 1px solid #bd2130;
+}
+
+#TestConnectionResult i.fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+/* Ensure main form is always visible */
+.WidgetSimple {
+    display: block !important;
+    visibility: visible !important;
+}
+
+.WidgetSimple .Content {
+    display: block !important;
+    visibility: visible !important;
+}
+
+fieldset.TableLike {
+    display: block !important;
+    visibility: visible !important;
+}
+
+/* Form Field Styling */
+fieldset.TableLike .Field input[type="url"],
+fieldset.TableLike .Field input[type="text"],
+fieldset.TableLike .Field input[type="password"] {
+    border: 1px solid #cccccc;
+    border-radius: 3px;
+    padding: 6px 8px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    display: block;
+    visibility: visible;
+}
+
+fieldset.TableLike .Field input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+fieldset.TableLike .Field input.Error {
+    border-color: #dc3545;
+    box-shadow: 0 0 5px rgba(220, 53, 69, 0.25);
+}
+
+/* Checkbox Styling */
+fieldset.TableLike .Field input[type="checkbox"] {
+    transform: scale(1.2);
+    margin-right: 8px;
+    display: inline-block;
+    visibility: visible;
+}
+
+/* Button Styling */
+#TestConnection {
+    background: linear-gradient(135deg, #17a2b8, #138496);
+    border: 1px solid #138496;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+#TestConnection:hover:not(:disabled) {
+    background: linear-gradient(135deg, #138496, #117a8b);
+    border-color: #117a8b;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+#TestConnection:disabled {
+    background: #6c757d;
+    border-color: #6c757d;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+#TestConnection i {
+    margin-right: 5px;
+}
+
+/* Save Button Styling */
+button.Primary.CallForAction {
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+    border: 1px solid #1e7e34;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+button.Primary.CallForAction:hover:not(:disabled) {
+    background: linear-gradient(135deg, #1e7e34, #155724);
+    border-color: #155724;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+button.Primary.CallForAction:disabled {
+    background: #6c757d;
+    border-color: #6c757d;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Configuration Status Table */
+.ZabbixConfigStatus table.DataTable {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.ZabbixConfigStatus table.DataTable th,
+.ZabbixConfigStatus table.DataTable td {
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.ZabbixConfigStatus table.DataTable th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+}
+
+.ZabbixConfigStatus table.DataTable tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Status Flags */
+.Flag.Small {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.Flag.Small .Text {
+    color: #ffffff;
+}
+
+.Flag.Small.Warning {
+    background-color: #ffc107;
+}
+
+.Flag.Small.Warning .Text {
+    color: #212529;
+}
+
+/* Integration Status Flag Colors */
+.Flag.Small span.Green {
+    display: inline-block;
+    background-color: #28a745;
+    color: #ffffff;
+    padding: 2px 8px;
+    border-radius: 3px;
+}
+
+.Flag.Small span.Gray {
+    display: inline-block;
+    background-color: #6c757d;
+    color: #ffffff;
+    padding: 2px 8px;
+    border-radius: 3px;
+}
+
+/* Field Explanations */
+.FieldExplanation {
+    color: #6c757d;
+    font-size: 12px;
+    margin-top: 4px;
+    line-height: 1.4;
+}
+
+/* Validation Error Messages */
+.TooltipErrorMessage {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-top: 4px;
+    display: none;
+}
+
+.Field input.Error + .TooltipErrorMessage {
+    display: block;
+}
+
+/* Loading Animation */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Widget Headers */
+.WidgetSimple .Header h2 {
+    color: #495057;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Sidebar Styling */
+.ActionsSideBarComp .WidgetSimple .Content .ActionList li a {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.ActionsSideBarComp .WidgetSimple .Content .ActionList li a:hover {
+    background-color: #e9ecef;
+}
+
+.ActionsSideBarComp .WidgetSimple .Content .ActionList li a i {
+    margin-right: 8px;
+    width: 16px;
+    text-align: center;
+}
+
+/* Message Box Styling */
+.MessageBox {
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+}
+
+.MessageBox.Notice {
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+}
+
+.MessageBox.Error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.MessageBox p {
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    
+    .W75pc, .W50pc {
+        width: 100% !important;
+    }
+    
+    #TestConnectionResult {
+        display: block;
+        margin-left: 0;
+        margin-top: 10px;
+    }
+    
+    .LayoutFixedSidebar.SidebarFirst .SidebarColumn {
+        width: 100%;
+        float: none;
+        margin-bottom: 20px;
+    }
+    
+    .LayoutFixedSidebar.SidebarFirst .ContentColumn {
+        width: 100%;
+        float: none;
+    }
+}
+
+} /* end @media */

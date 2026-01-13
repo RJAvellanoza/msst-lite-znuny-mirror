@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Framework">
+
+    <!-- Frontend Module Registration for Event Management -->
+    <Setting Name="Frontend::Module###AgentEventManagement" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for Event Management interface.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="GroupRo">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Description" Translatable="1">View Zabbix events not yet linked to incidents</Item>
+                    <Item Key="Title" Translatable="1">Event Management</Item>
+                    <Item Key="NavBarName">Reports</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+
+    <!-- Navigation Registration (Menu item under Reports) -->
+    <Setting Name="Frontend::Navigation###AgentEventManagement###001-EventManagement" Required="0" Valid="0">
+        <Description Translatable="1">Main menu navigation for Event Management.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::MainMenu</Navigation>
+        <Value>
+            <Array>
+                <DefaultItem ValueType="FrontendNavigation">
+                    <Hash></Hash>
+                </DefaultItem>
+                <Item>
+                    <Hash>
+                        <Item Key="Group">
+                            <Array>
+                                <Item>stats</Item>
+                            </Array>
+                        </Item>
+                        <Item Key="GroupRo">
+                            <Array>
+                                <Item>stats</Item>
+                            </Array>
+                        </Item>
+                        <Item Key="Description" Translatable="1">View Zabbix events not yet linked to incidents.</Item>
+                        <Item Key="Link">Action=AgentEventManagement</Item>
+                        <Item Key="LinkOption"></Item>
+                        <Item Key="Name" Translatable="1">Event Management</Item>
+                        <Item Key="NavBar">Reports</Item>
+                        <Item Key="Prio">130</Item>
+                        <Item Key="Type"></Item>
+                    </Hash>
+                </Item>
+            </Array>
+        </Value>
+    </Setting>
+
+    <!-- Loader Registration for JavaScript and CSS -->
+    <Setting Name="Loader::Module::AgentEventManagement###002-EventManagement" Required="0" Valid="1">
+        <Description Translatable="1">Loader module registration for AgentEventManagement.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::Loader</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="CSS">
+                    <Array>
+                    </Array>
+                </Item>
+                <Item Key="JavaScript">
+                    <Array>
+                    </Array>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+</otrs_config>

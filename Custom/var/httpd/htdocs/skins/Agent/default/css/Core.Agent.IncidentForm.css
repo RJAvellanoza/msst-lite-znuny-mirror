@@ -1,0 +1,313 @@
+/**
+ * @project     MSSTLite for Znuny
+ * @copyright   Copyright (C) 2024 Athena Technologies LLC, https://athena.us
+ * @license     GNU General Public License, version 3
+ */
+
+/* Incident form specific styles */
+.IncidentForm {
+    /* Uses standard Znuny form styles */
+}
+
+/* Section headers within widgets */
+.IncidentForm h3,
+.WidgetSimple h3 {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    margin: 15px 0 10px 0;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
+}
+
+.IncidentForm h3.SpacingTop,
+.WidgetSimple h3.SpacingTop {
+    margin-top: 25px;
+}
+
+/* Work Notes History */
+.WorkNotesHistory,
+.ResolutionHistory {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-top: 15px;
+    padding: 0;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.HistoryRow {
+    border-bottom: 1px solid #e8e8e8;
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+    transition: background-color 0.2s ease;
+}
+
+.HistoryRow:hover {
+    background: #f8f9fa;
+}
+
+.HistoryRow:last-child {
+    border-bottom: none;
+}
+
+/* Work Note specific styling */
+.HistoryRow.WorkNote {
+    border-left: 4px solid #28a745;
+    background: #f8fff9;
+}
+
+.HistoryRow.WorkNote:hover {
+    background: #f0fdf4;
+}
+
+/* Incident Update specific styling */
+.HistoryRow.IncidentUpdate {
+    border-left: 4px solid #007bff;
+    background: #f8faff;
+}
+
+.HistoryRow.IncidentUpdate:hover {
+    background: #f0f7ff;
+}
+
+.HistoryHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px 8px 16px;
+    margin-bottom: 0;
+    font-size: 13px;
+    color: #666;
+    background: rgba(248, 249, 250, 0.3);
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.HistoryHeaderLeft {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.HistoryHeaderRight {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.HistoryUser {
+    font-weight: 600;
+    color: #333;
+    font-size: 13px;
+}
+
+.HistoryTime {
+    font-style: italic;
+    color: #666;
+    font-size: 12px;
+}
+
+.HistoryType {
+    background: #e9ecef;
+    color: #495057;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.HistoryRow.WorkNote .HistoryType {
+    background: #d4edda;
+    color: #155724;
+}
+
+.HistoryRow.IncidentUpdate .HistoryType {
+    background: #cce7ff;
+    color: #004085;
+}
+
+.HistoryMSI .Flag {
+    background: #ff9900;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.HistoryContent {
+    padding: 12px 16px 16px 16px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    line-height: 1.5;
+    color: #333;
+    font-size: 13px;
+    background: transparent;
+}
+
+/* Add spacing between history section and form elements */
+.WorkNotesHistory h3,
+h3 + .WorkNotesHistory h3 {
+    margin-top: 0 !important;
+    margin-bottom: 15px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 8px;
+}
+
+/* Improve empty state message */
+.WorkNotesHistory + p {
+    color: #6c757d;
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border: 1px dashed #dee2e6;
+    border-radius: 6px;
+    margin-top: 15px;
+}
+
+/* Style lists within history content */
+.HistoryContent ul {
+    list-style-type: disc !important;
+    margin: 10px 0;
+    padding-left: 30px;
+    display: block;
+}
+
+.HistoryContent ol {
+    list-style-type: decimal !important;
+    margin: 10px 0;
+    padding-left: 30px;
+    display: block;
+}
+
+.HistoryContent li {
+    margin: 5px 0;
+    list-style-position: outside;
+    display: list-item !important;
+}
+
+/* Nested lists */
+.HistoryContent ul ul {
+    list-style-type: circle;
+    margin-top: 5px;
+}
+
+.HistoryContent ul ul ul {
+    list-style-type: square;
+}
+
+/* Style other HTML elements in history content */
+.HistoryContent p {
+    margin: 10px 0;
+}
+
+.HistoryContent strong {
+    font-weight: bold;
+}
+
+.HistoryContent em {
+    font-style: italic;
+}
+
+.HistoryContent blockquote {
+    margin: 10px 0;
+    padding-left: 15px;
+    border-left: 3px solid #ddd;
+    color: #666;
+}
+
+/* Inline label for checkboxes */
+.InlineLabel {
+    display: inline;
+    margin-left: 5px;
+    font-weight: normal;
+}
+
+/* Fix textarea sizing in RichTextField */
+.RichTextField textarea {
+    width: 100% !important;
+    box-sizing: border-box;
+}
+
+/* Category columns layout */
+.CategoryColumnsLayout {
+    display: flex;
+    gap: 20px;
+}
+
+.CategoryColumn {
+    flex: 1;
+    min-width: 0; /* Allow flexbox shrinking */
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+    .CategoryColumnsLayout {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+/* Fix dropdown positioning issues */
+.InputField_Container {
+    position: relative !important;
+}
+
+.InputField_Container .InputField_ListContainer {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000 !important;
+    background: white !important;
+    border: 1px solid #ccc !important;
+    border-top: none !important;
+    border-radius: 0 0 3px 3px !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+    max-height: 200px !important;
+    overflow-y: auto !important;
+}
+
+.InputField_Container .InputField_ListContainer li {
+    padding: 8px 12px !important;
+    cursor: pointer !important;
+    border-bottom: 1px solid #eee !important;
+}
+
+.InputField_Container .InputField_ListContainer li:hover {
+    background-color: #f0f0f0 !important;
+}
+
+.InputField_Container .InputField_ListContainer li.InputField_ListItem.Selected {
+    background-color: #0074D9 !important;
+    color: white !important;
+}
+
+/* Dashboard customizations - hide filter tabs */
+.DashboardActions .Tab.Actions {
+    display: none !important;
+}
+
+/* Hide filter tabs in incident widgets */
+#Dashboard0150-MyIncidents .DashboardActions,
+#Dashboard0151-UnassignedIncidents .DashboardActions {
+    display: none !important;
+}
+
+/* Hide the entire filter tab container for all dashboard widgets */
+.WidgetSimple .DashboardActions {
+    display: none !important;
+}

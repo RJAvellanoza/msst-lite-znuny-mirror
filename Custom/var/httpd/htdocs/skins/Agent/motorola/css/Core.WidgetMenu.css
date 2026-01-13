@@ -1,0 +1,18 @@
+/**
+ * Motorola Solutions Skin - WidgetMenu Styling
+ */
+
+
+@media screen,projection,tv,handheld {
+
+/**
+ * @subsection  Control Row Tabs
+ */
+
+.ControlRow li.Active > a,
+.ControlRow li.Active:hover > a,
+.ControlRow li.Active:active > a {
+   color: #fff !important;
+}
+
+} /* end @media */

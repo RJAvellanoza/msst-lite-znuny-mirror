@@ -1,0 +1,97 @@
+# --
+# Copyright (C) 2025 MSST, https://msst.com/
+# --
+# This software comes with ABSOLUTELY NO WARRANTY.
+# --
+# Shared sidebar for Event Reports pages
+# Include with: [% INCLUDE "AgentEventReportsSidebar.tt" ActiveSection = "EventSubmission" %]
+
+<h1>[% Translate("Event Reports") | html %]</h1>
+<div class="SidebarColumn">
+    <div class="WidgetSimple">
+        <div class="Header">
+            <h2>[% Translate("Navigation") | html %]</h2>
+        </div>
+        <div class="Content" style="padding: 0;">
+            <style>
+                .event-sidebar-nav {
+                    list-style: none;
+                    margin: 0;
+                    padding: 0;
+                }
+                .event-sidebar-nav li {
+                    margin: 0;
+                    border-bottom: 1px solid #e8e8e8;
+                }
+                .event-sidebar-nav li:last-child {
+                    border-bottom: none;
+                }
+                .event-sidebar-nav li a {
+                    display: block;
+                    padding: 12px 15px;
+                    color: #333;
+                    text-decoration: none;
+                    font-size: 13px;
+                    transition: all 0.2s ease;
+                    border-left: 3px solid transparent;
+                }
+                .event-sidebar-nav li a:hover {
+                    background: #f5f5f5;
+                    color: #000;
+                    border-left-color: #ccc;
+                }
+                .event-sidebar-nav li.Active a {
+                    background: #e8f4fc;
+                    color: #004085;
+                    font-weight: bold;
+                    border-left-color: #004085;
+                }
+                .event-sidebar-nav li a i {
+                    margin-right: 8px;
+                    width: 16px;
+                    text-align: center;
+                    color: #666;
+                }
+                .event-sidebar-nav li.Active a i {
+                    color: #004085;
+                }
+            </style>
+            <ul class="event-sidebar-nav">
+                <li class="[% IF ActiveSection == 'EventSubmission' || !ActiveSection %]Active[% END %]">
+                    <a href="[% Env("Baselink") %]Action=AgentEventReports;Section=EventSubmission">
+                        <i class="fa fa-exchange"></i>
+                        [% Translate("Event Submission") | html %]
+                    </a>
+                </li>
+                <!-- Future sections can be added here:
+                <li class="[% IF ActiveSection == 'EventResolution' %]Active[% END %]">
+                    <a href="[% Env("Baselink") %]Action=AgentEventReports;Section=EventResolution">
+                        <i class="fa fa-check-circle"></i>
+                        [% Translate("Event Resolution") | html %]
+                    </a>
+                </li>
+                <li class="[% IF ActiveSection == 'EventsByHost' %]Active[% END %]">
+                    <a href="[% Env("Baselink") %]Action=AgentEventReports;Section=EventsByHost">
+                        <i class="fa fa-server"></i>
+                        [% Translate("Events by Host") | html %]
+                    </a>
+                </li>
+                -->
+            </ul>
+        </div>
+    </div>
+    <div class="WidgetSimple">
+        <div class="Header">
+            <h2>[% Translate("Information") | html %]</h2>
+        </div>
+        <div class="Content">
+            <p style="font-size: 12px; color: #666;">
+                This report shows events synced from Zabbix and whether they resulted in incident tickets in Znuny.
+            </p>
+            <p style="font-size: 12px; color: #666; margin-top: 10px;">
+                <strong>With Incident:</strong> Event has a corresponding Znuny ticket<br>
+                <strong>Without Incident:</strong> Event was not converted to a ticket
+            </p>
+        </div>
+    </div>
+</div>

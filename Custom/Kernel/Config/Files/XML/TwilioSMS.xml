@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Framework">
+    
+    <!-- Navigation Module Registration -->
+    <Setting Name="Frontend::NavigationModule###AdminSMSNotification" Required="0" Valid="1">
+        <Description Translatable="1">Admin area navigation for the SMS notification interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration::AdminOverview</Navigation>
+        <Value>
+            <Hash>
+                <!-- Group permissions managed in ZZZZZNOCAdminNavigation.pm -->
+                <Item Key="Module">Kernel::Output::HTML::NavBar::ModuleAdmin</Item>
+                <Item Key="Name" Translatable="1">SMS Notification</Item>
+                <Item Key="Block">MSSTLite</Item>
+                <Item Key="Description" Translatable="1">Configure SMS notification settings for Twilio.</Item>
+                <Item Key="IconBig">fa-mobile</Item>
+                <Item Key="IconSmall">fa-mobile</Item>
+                <Item Key="Prio">910</Item>
+            </Hash>
+        </Value>
+    </Setting>
+    
+    <!-- Frontend Module Registration -->
+    <Setting Name="Frontend::Module###AdminSMSNotification" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for the SMS notification configuration admin interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <!-- Group permissions managed in ZZZZZNOCAdminNavigation.pm -->
+                    <Item Key="Description" Translatable="1">Configure SMS notification settings for Twilio.</Item>
+                    <Item Key="Title" Translatable="1">SMS Notification</Item>
+                    <Item Key="NavBarName">Admin</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+    
+    <!-- SMS Configuration Settings -->
+    <Setting Name="SMSNotification::TwilioFromNumber" Required="0" Valid="1">
+        <Description Translatable="1">Twilio phone number to send SMS from (E.164 format).</Description>
+        <Navigation>Core::SMS::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="">+14845598808</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="SMSNotification::DefaultRecipients" Required="0" Valid="1">
+        <Description Translatable="1">Default SMS recipients phone numbers (comma-separated, E.164 format).</Description>
+        <Navigation>Core::SMS::Config</Navigation>
+        <Value>
+            <Item ValueType="Textarea" ValueRegex="">+14845598808</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="SMSNotification::TwilioAccountSID" Required="0" Valid="1">
+        <Description Translatable="1">Twilio Account SID for SMS notifications.</Description>
+        <Navigation>Core::SMS::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex=""></Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="SMSNotification::TwilioAuthToken" Required="0" Valid="1">
+        <Description Translatable="1">Twilio Auth Token for SMS notifications.</Description>
+        <Navigation>Core::SMS::Config</Navigation>
+        <Value>
+            <Item ValueType="Password" ValueRegex=""></Item>
+        </Value>
+    </Setting>
+    
+    <!-- Event Module Registration -->
+    <Setting Name="Ticket::EventModulePost###9500-SMSNotification" Required="0" Valid="1">
+        <Description Translatable="1">Send SMS notifications for ticket events.</Description>
+        <Navigation>Core::Event::Ticket</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Module">Kernel::System::Ticket::Event::SMSNotification</Item>
+                <Item Key="Event">(TicketCreate|TicketStateUpdate|TicketOwnerUpdate)</Item>
+                <Item Key="Transaction">1</Item>
+            </Hash>
+        </Value>
+    </Setting>
+    
+    <!-- Priority Settings -->
+    <Setting Name="SMSNotification::Priority::1::Enabled" Required="0" Valid="1">
+        <Description Translatable="1">Enable SMS notifications for P1-Critical priority tickets.</Description>
+        <Navigation>Core::SMS::Priority</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">0</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="SMSNotification::Priority::2::Enabled" Required="0" Valid="1">
+        <Description Translatable="1">Enable SMS notifications for P2-High priority tickets.</Description>
+        <Navigation>Core::SMS::Priority</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">0</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="SMSNotification::Priority::3::Enabled" Required="0" Valid="1">
+        <Description Translatable="1">Enable SMS notifications for P3-Medium priority tickets.</Description>
+        <Navigation>Core::SMS::Priority</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">1</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="SMSNotification::Priority::4::Enabled" Required="0" Valid="1">
+        <Description Translatable="1">Enable SMS notifications for P4-Low priority tickets.</Description>
+        <Navigation>Core::SMS::Priority</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">1</Item>
+        </Value>
+    </Setting>
+    
+    <!-- Note: Priority 5 is no longer used with the new P1-P4 priority system -->
+    <Setting Name="SMSNotification::Priority::5::Enabled" Required="0" Valid="0">
+        <Description Translatable="1">DEPRECATED: Priority 5 - Not used with P1-P4 priority system.</Description>
+        <Navigation>Core::SMS::Priority</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">1</Item>
+        </Value>
+    </Setting>
+    
+    <!-- User Preferences -->
+    <Setting Name="PreferencesGroups###UserMobile" Required="0" Valid="1">
+        <Description Translatable="1">Parameters for the UserMobile preference in the user preferences.</Description>
+        <Navigation>Frontend::Agent::Preferences</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Module">Kernel::Output::HTML::Preferences::Generic</Item>
+                <Item Key="Label" Translatable="1">Mobile Phone Number</Item>
+                <Item Key="Desc" Translatable="1">Your mobile phone number for SMS notifications (E.164 format, e.g., +12345678900).</Item>
+                <Item Key="Key" Translatable="1">Mobile Phone</Item>
+                <Item Key="Block">UserProfile</Item>
+                <Item Key="Data">[% Env("UserMobile") %]</Item>
+                <Item Key="PrefKey">UserMobile</Item>
+                <Item Key="Prio">7000</Item>
+                <Item Key="ValidateRegex">^(\+[1-9]\d{1,14})?$</Item>
+                <Item Key="ValidateRegexMessage" Translatable="1">Please enter a valid phone number in E.164 format (e.g., +12345678900).</Item>
+                <Item Key="Active">1</Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Admin Groups for SMS Configuration -->
+    <Setting Name="SMSNotification::AdminGroups" Required="1" Valid="1">
+        <Description Translatable="1">Groups that can manage SMS notifications.</Description>
+        <Navigation>Core::MSSTLite::SMSNotification</Navigation>
+        <Value>
+            <Array>
+                <Item>admin</Item>
+                <Item>MSIAdmin</Item>
+                <Item>NOCAdmin</Item>
+            </Array>
+        </Value>
+    </Setting>
+    
+    <Setting Name="CustomerPreferencesGroups###UserMobile" Required="0" Valid="1">
+        <Description Translatable="1">Parameters for the UserMobile preference in the customer preferences.</Description>
+        <Navigation>Frontend::Customer::Preferences</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Module">Kernel::Output::HTML::Preferences::Generic</Item>
+                <Item Key="Label" Translatable="1">Mobile Phone Number</Item>
+                <Item Key="Desc" Translatable="1">Your mobile phone number for SMS notifications (E.164 format, e.g., +12345678900).</Item>
+                <Item Key="Key" Translatable="1">Mobile Phone</Item>
+                <Item Key="Block">UserProfile</Item>
+                <Item Key="Data">[% Env("UserMobile") %]</Item>
+                <Item Key="PrefKey">UserMobile</Item>
+                <Item Key="Prio">7000</Item>
+                <Item Key="ValidateRegex">^(\+[1-9]\d{1,14})?$</Item>
+                <Item Key="ValidateRegexMessage" Translatable="1">Please enter a valid phone number in E.164 format (e.g., +12345678900).</Item>
+                <Item Key="Active">1</Item>
+            </Hash>
+        </Value>
+    </Setting>
+    
+</otrs_config>

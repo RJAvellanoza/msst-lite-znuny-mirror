@@ -1,0 +1,2340 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<otrs_package version="1.0">
+    <Name>MSSTLite</Name>
+    <Version>2.0.389</Version>
+    <Framework>6.5.x</Framework>
+    <Framework>6.5.1</Framework>
+    <Framework>6.5.2</Framework>
+    <Framework>6.5.3</Framework>
+    <Framework>6.5.4</Framework>
+    <Framework>6.5.5</Framework>
+    <Framework>6.5.6</Framework>
+    <Framework>6.5.7</Framework>
+    <Framework>6.5.8</Framework>
+    <Framework>6.5.9</Framework>
+    <Framework>6.5.10</Framework>
+    <Framework>6.5.11</Framework>
+    <Framework>6.5.12</Framework>
+    <Framework>6.5.13</Framework>
+    <Framework>6.5.14</Framework>
+    <Framework>6.5.15</Framework>
+    <Vendor>MSST</Vendor>
+    <URL>https://msst.com/</URL>
+    <License>GNU GENERAL PUBLIC LICENSE Version 3</License>
+    <Description Lang="en">LSMP License Management Module for Znuny - Enhanced Database Management Edition with Incident Auto-Close</Description>
+    <Filelist>
+        <!-- Configuration Files -->
+        <File Permission="644" Location="Kernel/Config/Files/ZZZAdminLicense.pm"/>
+        <File Permission="644" Location="Kernel/Config/Files/ZZZLicenseNotification.pm"/>
+        <File Permission="644" Location="Kernel/Config/Files/ZZZSMTPNotification.pm"/>
+        <File Permission="644" Location="Kernel/Config/Files/ZZZZTicketPrefixOverride.pm"/>
+        <File Permission="644" Location="Kernel/Config/Files/ZZZZTicketTypeDefault.pm"/>
+        <File Permission="644" Location="Kernel/Config/Files/ZZZZSMTPAutoSync.pm"/>
+        <File Permission="644" Location="Kernel/Config/Files/ZZZZEventModules.pm"/>
+        <File Permission="644" Location="Kernel/Config/Files/ZZZZZNOCAdminNavigation.pm"/>
+        <File Permission="644" Location="Kernel/Config/Files/ZZZZIncidentSearchDynamicFields.pm"/>
+        <File Permission="644" Location="Kernel/Config/Files/ZZZZMSSTLiteSearchTemplate.pm"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/MSSTLiteVersion.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/LicenseCheckV2.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/AdminAddLicense.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/LicenseNotification.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/SMTPNotification.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/TwilioSMS.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/AdminExportImportConfig.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/MSISupportRemoteAccessIntegration.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/HideMenusForRoles.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/IncidentModule.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/NOCAdminAccess.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/ZZZMSSTLiteDashboard.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/ZZZMSSTLiteIncidentDashboardWidgets.pm"/>
+        <File Permission="644" Location="Kernel/Language/en_IncidentDashboard.pm"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/ZZZDisableTicketMenuItems.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/CustomerLicenseView.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/MSSTLiteOverviewCustomizations.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/ActiveTicketsAssignment.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/ReportTickets.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/EscalationReports.xml"/>
+
+        <!-- Frontend Modules -->
+        <File Permission="644" Location="Kernel/Modules/AdminAddLicense.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AdminSMTPNotification.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AdminSMSNotification.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AdminUserNOC.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AdminMSISupportRemoteAccessConfiguration.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AdminExportImportConfig.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentLicenseNotificationDismiss.pm"/>
+        <File Permission="644" Location="Kernel/Modules/PreApplicationLicenseCheck.pm"/>
+        <File Permission="644" Location="Kernel/Modules/CustomerLicenseView.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentActiveTicketsAssignment.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentActiveTicketsBacklog.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentAverageBacklog.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentMTRD.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentMTRDBacklog.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentMTTR.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentEscalatedActiveTicket.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentEscalatedActiveTicketBreakdown.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentEscalatedClosedTicket.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentTicketResolution.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentReportTickets.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentEscalationReportTickets.pm"/>
+
+        <!-- Backend System Module -->
+        <File Permission="644" Location="Kernel/System/AdminAddLicense.pm"/>
+        <File Permission="644" Location="Kernel/System/SMTPDirect.pm"/>
+        <File Permission="644" Location="Kernel/System/EncryptionKey.pm"/>
+        <File Permission="644" Location="Kernel/System/ExportImportConfig.pm"/>
+        <File Permission="644" Location="Kernel/System/TwilioSMS.pm"/>
+        <File Permission="644" Location="Kernel/System/Proxmox.pm"/>
+        <File Permission="644" Location="Kernel/System/DynamicFieldSync.pm"/>
+
+        <!-- Output Modules -->
+        <File Permission="644" Location="Kernel/Output/HTML/FilterContent/LicenseExpirationNotification.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/FilterContent/MSSTLiteVersionFooter.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Notification/AgentTimeZoneCheck.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Notification/LicenseStatus.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Preferences/UserDetails.pm"/>
+        
+        <!-- Templates -->
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AdminAddLicense.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AdminSMTPNotification.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AdminSMSNotification.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/LicenseExpirationNotification.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AdminUser.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AdminUserNOC.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AdminMSISupportRemoteAccessConfiguration.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/CustomerLicenseView.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AdminExportImportConfig.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentTicketSearch.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentPreferences.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentActiveTicketsAssignment.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentAverageBacklog.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentMTRD.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentMTRDBacklog.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentMTTR.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentEscalatedActiveTicket.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentEscalatedActiveTicketBreakdown.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentEscalatedClosedTicket.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentEscalationReportsSidebar.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentTicketResolution.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentReportTickets.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentEscalationReportTickets.tt"/>
+
+        <!-- Dashboard Modules -->
+        <File Permission="644" Location="Kernel/Output/HTML/Dashboard/MyLastChangedTickets.pm"/>
+        
+        <!-- Event Modules -->
+        <File Permission="644" Location="Kernel/System/Ticket/Event/SMSNotification.pm"/>
+        <File Permission="644" Location="Kernel/System/Ticket/Event/SMTPNotification.pm"/>
+        
+        <!-- GenericInterface License Check Module -->
+        <File Permission="644" Location="Kernel/GenericInterface/Provider.pm"/>
+        
+        
+        <!-- Incident API GenericInterface Operations -->
+        <File Permission="644" Location="Kernel/GenericInterface/Operation/Incident/IncidentCreate.pm"/>
+        <File Permission="644" Location="Kernel/GenericInterface/Operation/Incident/IncidentUpdate.pm"/>
+        <File Permission="644" Location="Kernel/GenericInterface/Operation/Incident/IncidentGet.pm"/>
+        
+        <!-- Package Setup -->
+        <File Permission="644" Location="var/packagesetup/MSSTLite.pm"/>
+        <File Permission="644" Location="var/packagesetup/MSSTLiteDynamicFields.pm"/>
+        <File Permission="644" Location="var/packagesetup/MSSTLiteIncidentAPI.pm"/>
+        <File Permission="644" Location="var/packagesetup/MSSTLiteGenericAgent.pm"/>
+        <File Permission="644" Location="var/packagesetup/MSSTLiteZabbix.pm"/>
+        <File Permission="644" Location="var/packagesetup/MSSTLiteProxmox.pm"/>
+        <File Permission="644" Location="var/packagesetup/MSSTLiteApplicationLogs.pm"/>
+        <File Permission="644" Location="var/packagesetup/MSSTLiteUserManager.pm"/>
+
+        <!-- Database Scripts -->
+        <File Permission="644" Location="bin/sysconfig-backup-trigger.sql"/>
+
+        <!-- Webservices -->
+        <File Permission="644" Location="var/webservices/TicketRestAPI.yml"/>
+        <File Permission="644" Location="var/webservices/IncidentAPI.yml"/>
+        
+        <!-- Incident Module Files -->
+        <File Permission="644" Location="Kernel/Config/Files/XML/Custom.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/CustomTicketPrefix.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/TicketRestAPI.xml"/>
+        <File Permission="644" Location="Kernel/Modules/AdminTicketPrefix.pm"/>
+        <File Permission="644" Location="Kernel/System/InitialCounter.pm"/>
+        <File Permission="644" Location="Kernel/System/Ticket/Number/AutoIncrementWithPrefix.pm"/>
+        <File Permission="644" Location="Kernel/System/TicketCreateOverride.pm"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/TicketPrefixConfig.xml"/>
+        <File Permission="644" Location="Kernel/System/TicketPrefix.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AdminTicketPrefix.tt"/>
+        
+        <!-- Incident Update Module Files -->
+        <File Permission="644" Location="Kernel/Modules/AgentIncidentNote.pm"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/IncidentUpdate.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/IncidentACL.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/IncidentTypes.xml"/>
+        <File Permission="644" Location="Kernel/System/Ticket/Event/IncidentLockManager.pm"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/IncidentLockManager.xml"/>
+        <File Permission="644" Location="Kernel/Output/HTML/FilterContent/HideCustomerVisibility.pm"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/HideCustomerVisibility.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/MinCounterSizeOverride.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/HideOwnerToolbar.xml"/>
+        <File Permission="644" Location="var/httpd/htdocs/skins/Agent/default/css/Core.HideOwnerToolbar.css"/>
+
+        <!-- Incident Module -->
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentIncidentList.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentIncidentForm.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentDashboardTicketGeneric.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/HTMLHead.tt"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/IncidentModule.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/DashboardMSSTLite.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/ZZZIncidentModule.pm"/>
+        <File Permission="644" Location="Kernel/System/Incident.pm"/>
+        <File Permission="644" Location="Kernel/System/IncidentCategory.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentIncidentForm.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentIncidentList.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentTicketZoom.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentTicketQueue.pm"/>
+        <File Permission="644" Location="var/httpd/htdocs/js/Core.Agent.IncidentForm.js"/>
+        <File Permission="644" Location="var/httpd/htdocs/js/Core.Agent.IncidentReportCharts.js"/>
+        <File Permission="644" Location="var/httpd/htdocs/js/Core.Agent.MSSTLiteTicketSearch.js"/>
+        <File Permission="644" Location="var/httpd/htdocs/js/Core.Agent.OperationalReports.js"/>
+        <File Permission="644" Location="var/httpd/htdocs/skins/Agent/default/css/Core.Agent.IncidentForm.css"/>
+        <File Permission="644" Location="var/httpd/htdocs/skins/Agent/default/css/Core.Agent.Dashboard.MSSTLite.css"/>
+        <File Permission="644" Location="var/httpd/htdocs/skins/Agent/default/css/MSSTLite.OverviewCustomizations.css"/>
+        <File Permission="755" Location="bin/ImportIncidentCategories.pl"/>
+        <File Permission="755" Location="bin/change_system_passwords.sh"/>
+        <File Permission="644" Location="var/categories/LSMP New Categories (Subset of ServiceNow Global Categories) - All Prod Cats.csv"/>
+        <File Permission="644" Location="var/categories/LSMP New Categories (Subset of ServiceNow Global Categories) - All Operational Cats.csv"/>
+        <File Permission="644" Location="var/categories/LSMP New Categories (Subset of ServiceNow Global Categories) - All Resolution Cats.csv"/>
+        <File Permission="644" Location="var/categories/[LSMP] Prod Cat Mapping by Device Type - Master Mapping.csv"/>
+
+        <!-- UI/UX -->
+        <File Permission="755" Location="bin/check-skins.pl"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/MotorolaSkin.xml"/>
+        <File Permission="644" Location="var/httpd/htdocs/skins/Agent/motorola/css/Core.Default.css"/>
+        <File Permission="644" Location="var/httpd/htdocs/skins/Agent/motorola/css/Core.Footer.css"/>
+        <File Permission="644" Location="var/httpd/htdocs/skins/Agent/motorola/css/Core.Form.css"/>
+        <File Permission="644" Location="var/httpd/htdocs/skins/Agent/motorola/css/Core.Header.css"/>
+        <File Permission="644" Location="var/httpd/htdocs/skins/Agent/motorola/css/Core.Table.css"/>
+        <File Permission="644" Location="var/httpd/htdocs/skins/Agent/motorola/css/Core.Widget.css"/>
+        <File Permission="644" Location="var/httpd/htdocs/skins/Agent/motorola/css/Core.WidgetMenu.css"/>
+        <File Permission="644" Location="var/httpd/htdocs/skins/Agent/motorola/fonts/roboto.css"/>
+        <File Permission="644" Location="var/httpd/htdocs/skins/Agent/motorola/img/product.ico"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/Footer.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/HTMLHead.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/Login.tt"/>
+        <File Permission="644" Location="var/httpd/htdocs/skins/Agent/motorola/img/logo.png"/>
+        <File Permission="644" Location="var/httpd/htdocs/skins/Agent/motorola/img/login-logo.png"/>
+        <File Permission="644" Location="var/settings/setting_login-logo.yaml"/>
+        
+        <!-- Custom NOC Dashboard Files -->
+        <File Permission="644" Location="Kernel/System/GenericAgent/ProductCategoryLookup.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentDashboard.pm"/>
+        <File Permission="644" Location="Kernel/Modules/NOCDashboard.pm"/>
+        
+        <!-- Zabbix Integration Files -->
+        <File Permission="644" Location="Kernel/Config/Files/XML/ZabbixIntegration.xml"/>
+        <File Permission="644" Location="Kernel/System/ZabbixConfig.pm"/>
+        <File Permission="644" Location="Kernel/System/ZabbixAPI.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AdminZabbixConfiguration.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AdminZabbixConfiguration.tt"/>
+        <File Permission="644" Location="var/httpd/htdocs/js/Core.Agent.Admin.ZabbixConfiguration.js"/>
+        <File Permission="644" Location="var/httpd/htdocs/skins/Agent/default/css/Core.Agent.Admin.ZabbixConfiguration.css"/>
+        <File Permission="644" Location="var/httpd/htdocs/skins/Agent/default/css/Core.Agent.Admin.ExportImportConfig.css"/>
+
+        <!-- Event Management Files -->
+        <File Permission="644" Location="Kernel/Config/Files/XML/EventManagement.xml"/>
+        <File Permission="644" Location="Kernel/Modules/AgentEventManagement.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentEventManagement.tt"/>
+
+        <!-- Application Logs UI Files -->
+        <File Permission="644" Location="Kernel/System/ApplicationLogsConfig.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AdminApplicationLogs.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AdminApplicationLogs.tt"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/AdminApplicationLogs.xml"/>
+        <File Permission="644" Location="var/httpd/htdocs/js/Core.Agent.Admin.ApplicationLogs.js"/>
+        
+        
+        <File Permission="644" Location="Kernel/Output/HTML/FilterContent/HideAdminLinks.pm"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/HideAdminLinks.xml"/>
+        
+        <File Permission="644" Location="Kernel/Output/HTML/FilterContent/AdminAccessControl.pm"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/AdminAccessControl.xml"/>
+        <File Permission="644" Location="Kernel/Modules/PreApplicationPersonalPreferencesGate.pm"/>
+
+        <!-- Custom Preference Modules for MSSTLITE-225 -->
+        <File Permission="644" Location="Kernel/Output/HTML/Preferences/Skin.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Preferences/Generic.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Preferences/Language.pm"/>
+
+        <!-- Custom Configuration for MSSTLITE-225 -->
+        <File Permission="644" Location="Kernel/Config/Files/XML/ZZZZPersonalPreferencesAccess.xml"/>
+
+        <!-- Custom Filter and Module for MSSTLITE-225 -->
+        <File Permission="644" Location="Kernel/Output/HTML/FilterContent/HidePersonalPreferences.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Preferences/LastViewsTypes.pm"/>
+        
+        <!-- Disable PreSort by Priority for proper column sorting -->
+        <File Permission="644" Location="Kernel/Config/Files/XML/ZZZDisablePreSort.xml"/>
+
+        <!-- Escalation View & Bulk Update (R2.0 Features) -->
+        <File Permission="644" Location="Kernel/Output/HTML/FilterContent/HideEscalationViewSettings.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/FilterContent/HideStatisticsMenu.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/FilterContent/EscalationViewBulkUpdate.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/FilterContent/FixColumnSettingsRedirect.pm"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/ZZZMSSTLiteEscalationView.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/EscalationViewBulkUpdate.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/XML/EscalationViewUnlinkTickets.xml"/>
+        <File Permission="644" Location="Kernel/Config/Files/ZZZZOutputFilters.pm"/>
+        <File Permission="644" Location="Kernel/Config/Files/ZZZZZEscalationViewConditional.pm"/>
+        <File Permission="644" Location="Kernel/Config/Files/ZZZZZZReportsMenuPermissions.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentEscalationViewBulkUpdate.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentEscalationViewUnlinkTickets.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentTicketEscalationView.pm"/>
+        <File Permission="644" Location="Kernel/Modules/PreApplicationEscalationViewCheck.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Dashboard/EscalatedTickets.pm"/>
+        <File Permission="644" Location="var/httpd/htdocs/js/Core.Agent.EscalationView.BulkUpdate.js"/>
+        <File Permission="644" Location="var/httpd/htdocs/skins/Agent/default/css/Core.Agent.EscalationView.BulkUpdate.css"/>
+
+        <!-- Easy MSI Escalation Integration (R2.0 Features) -->
+        <File Permission="644" Location="Kernel/Config/Files/XML/EBondingIntegration.xml"/>
+        <File Permission="644" Location="Kernel/System/EBonding.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AdminEBondingConfiguration.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AdminEBondingConfiguration.tt"/>
+        <File Permission="644" Location="var/httpd/htdocs/js/Core.Agent.Admin.EBondingConfiguration.js"/>
+        <File Permission="644" Location="var/packagesetup/MSSTLiteEBonding.pm"/>
+
+        <!-- Incident Reporting (R2.0 Features) -->
+        <File Permission="644" Location="Kernel/Config/Files/XML/IncidentReporting.xml"/>
+        <File Permission="644" Location="Kernel/System/IncidentReporting.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentIncidentReport.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentIncidentReport.tt"/>
+        <File Permission="644" Location="var/httpd/htdocs/js/Core.Agent.IncidentReport.js"/>
+        <File Permission="644" Location="var/packagesetup/MSSTLiteIncidentReporting.pm"/>
+
+        <!-- Operational KPIs & Reports (R2.0 Features) -->
+        <File Permission="644" Location="Kernel/Config/Files/XML/OperationalKPIs.xml"/>
+        <File Permission="644" Location="Kernel/System/OperationalKPIs.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentOperationalReports.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentOperationalKPIsReport.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentMTTRReport.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentMTRDReport.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentHistoricalTrends.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentActiveTickets.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentOperationalReports.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentOperationalKPIsReport.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentMTTRReport.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentMTRDReport.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentHistoricalTrends.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentActiveTickets.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentActiveTicketsBacklog.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentOperationalReportsSidebar.tt"/>
+        <File Permission="644" Location="var/httpd/htdocs/js/Chart.min.js"/>
+        <File Permission="644" Location="var/httpd/htdocs/js/Core.Agent.OperationalKPIsReport.js"/>
+        <File Permission="644" Location="var/packagesetup/MSSTLiteOperationalKPIs.pm"/>
+
+        <!-- Incident Reports (R2.0 Features) -->
+        <File Permission="644" Location="Kernel/Config/Files/XML/IncidentReports.xml"/>
+
+        <!-- Event Reports -->
+        <File Permission="644" Location="Kernel/Config/Files/XML/EventReports.xml"/>
+        <File Permission="644" Location="Kernel/System/EventReportSync.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentEventReports.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentEventReportsList.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentEventReports.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentEventReportsList.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentEventReportsSidebar.tt"/>
+        <File Permission="644" Location="Kernel/System/IncidentKPIs.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentIncidentReports.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentIncidentReports.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentIncidentReportsClosure.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentIncidentReportsClosureByProductCat3.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentIncidentReportsClosureByCI.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentIncidentReportsSidebar.tt"/>
+
+        <!-- Dashboard Widgets (R2.0 Features) -->
+        <File Permission="644" Location="Kernel/Output/HTML/Dashboard/MTRDSummary.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Dashboard/UnassignedIncidents.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Dashboard/IncidentTrends.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Dashboard/MTTRSummary.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentDashboardMTRDSummary.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentDashboardUnassignedIncidents.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentDashboardIncidentTrends.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentDashboardMTTRSummary.tt"/>
+
+    </Filelist>
+    
+    <!-- Required Perl modules -->
+    <ModuleRequired>Crypt::CBC</ModuleRequired>
+    <ModuleRequired>Crypt::Rijndael</ModuleRequired>
+    <ModuleRequired>Net::SMTP</ModuleRequired>
+    <ModuleRequired>Net::SMTP::SSL</ModuleRequired>
+    <ModuleRequired>XML::LibXSLT</ModuleRequired>
+    
+    <!-- Database Installation -->
+    <DatabaseInstall>
+        <!-- Core MSSTLite Tables -->
+        <TableCreate Name="license">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT"/>
+            <Column Name="UID" Required="true" Size="250" Type="VARCHAR"/>
+            <Column Name="contractCompany" Required="true" Size="250" Type="VARCHAR"/>
+            <Column Name="endCustomer" Required="true" Size="250" Type="VARCHAR"/>
+            <Column Name="mcn" Required="true" Size="250" Type="VARCHAR"/>
+            <Column Name="macAddress" Required="true" Size="250" Type="VARCHAR"/>
+            <Column Name="startDate" Required="true" Type="DATE"/>
+            <Column Name="endDate" Required="true" Type="DATE"/>
+            <Column Name="systemTechnology" Required="false" Size="250" Type="VARCHAR"/>
+            <Column Name="lsmpSiteID" Required="false" Size="250" Type="VARCHAR"/>
+            <Column Name="content_type" Required="true" Size="250" Type="VARCHAR"/>
+            <Column Name="content" Required="true" Type="LONGBLOB"/>
+            <Column Name="filename" Required="true" Size="250" Type="VARCHAR"/>
+            <Column Name="create_time" Required="true" Type="DATE"/>
+            <Column Name="create_by" Required="true" Type="INTEGER"/>
+            <Index Name="license_uid">
+                <IndexColumn Name="UID"/>
+            </Index>
+            <Index Name="license_dates">
+                <IndexColumn Name="startDate"/>
+                <IndexColumn Name="endDate"/>
+            </Index>
+        </TableCreate>
+        
+        <TableCreate Name="encryption_keys">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT"/>
+            <Column Name="key_name" Required="true" Size="100" Type="VARCHAR"/>
+            <Column Name="key_value" Required="true" Type="LONGBLOB"/>
+            <Column Name="created_time" Required="true" Type="DATE"/>
+            <Column Name="created_by" Required="true" Type="INTEGER"/>
+            <Unique Name="encryption_keys_key_name">
+                <UniqueColumn Name="key_name"/>
+            </Unique>
+        </TableCreate>
+        
+        <TableCreate Name="ticket_prefix">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT"/>
+            <Column Name="type" Required="true" Type="INTEGER"/>
+            <Column Name="prefix" Required="true" Size="200" Type="VARCHAR"/>
+            <Column Name="valid_id" Required="true" Type="INTEGER"/>
+            <Column Name="create_time" Required="true" Type="DATE"/>
+            <Column Name="create_by" Required="true" Type="INTEGER"/>
+            <Index Name="ticket_prefix_type">
+                <IndexColumn Name="type"/>
+            </Index>
+            <Unique Name="ticket_prefix_type_unique">
+                <UniqueColumn Name="type"/>
+            </Unique>
+        </TableCreate>
+        
+        <TableCreate Name="ticket_initial_counter">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT"/>
+            <Column Name="counter" Required="true" Size="200" Type="VARCHAR"/>
+            <Column Name="create_time" Required="true" Type="DATE"/>
+            <Column Name="create_by" Required="true" Type="INTEGER"/>
+        </TableCreate>
+        
+        <!-- Migration Tracking Table -->
+        <TableCreate Name="msst_migrations">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT"/>
+            <Column Name="migration_name" Required="true" Size="255" Type="VARCHAR"/>
+            <Column Name="executed_at" Required="true" Type="DATE"/>
+            <Unique Name="msst_migrations_name">
+                <UniqueColumn Name="migration_name"/>
+            </Unique>
+        </TableCreate>
+        
+        <!-- Incident Management Tables -->
+        <TableCreate Name="incident_management">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT"/>
+            <Column Name="ticket_id" Required="true" Type="INTEGER"/>
+            <Column Name="incident_number" Required="true" Size="20" Type="VARCHAR"/>
+            <Column Name="created_time" Required="true" Type="DATE"/>
+            <Column Name="created_by" Required="true" Type="INTEGER"/>
+            <Unique Name="incident_number_unique">
+                <UniqueColumn Name="incident_number"/>
+            </Unique>
+            <Index Name="incident_ticket_id">
+                <IndexColumn Name="ticket_id"/>
+            </Index>
+        </TableCreate>
+        
+        <TableCreate Name="incident_work_notes">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT"/>
+            <Column Name="ticket_id" Required="true" Type="INTEGER"/>
+            <Column Name="note_text" Required="true" Type="LONGBLOB"/>
+            <Column Name="include_in_msi" Required="true" Default="0" Type="SMALLINT"/>
+            <Column Name="created_time" Required="true" Type="DATE"/>
+            <Column Name="created_by" Required="true" Type="INTEGER"/>
+            <Column Name="created_by_name" Required="false" Size="200" Type="VARCHAR"/>
+            <Index Name="work_notes_ticket_id">
+                <IndexColumn Name="ticket_id"/>
+            </Index>
+        </TableCreate>
+        
+        <TableCreate Name="incident_resolution_notes">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT"/>
+            <Column Name="ticket_id" Required="true" Type="INTEGER"/>
+            <Column Name="resolution_cat1" Required="false" Size="200" Type="VARCHAR"/>
+            <Column Name="resolution_cat2" Required="false" Size="200" Type="VARCHAR"/>
+            <Column Name="resolution_cat3" Required="false" Size="200" Type="VARCHAR"/>
+            <Column Name="resolution_code" Required="false" Size="50" Type="VARCHAR"/>
+            <Column Name="resolution_notes" Required="false" Type="LONGBLOB"/>
+            <Column Name="created_time" Required="true" Type="DATE"/>
+            <Column Name="created_by" Required="true" Type="INTEGER"/>
+            <Column Name="created_by_name" Required="false" Size="200" Type="VARCHAR"/>
+            <Index Name="resolution_notes_ticket_id">
+                <IndexColumn Name="ticket_id"/>
+            </Index>
+        </TableCreate>
+        
+        <!-- Incident Category Tables -->
+        <TableCreate Name="incident_product_category">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT"/>
+            <Column Name="tier1" Required="false" Size="200" Type="VARCHAR"/>
+            <Column Name="tier2" Required="false" Size="200" Type="VARCHAR"/>
+            <Column Name="tier3" Required="false" Size="200" Type="VARCHAR"/>
+            <Column Name="tier4" Required="false" Size="200" Type="VARCHAR"/>
+            <Column Name="valid_id" Required="true" Default="1" Type="SMALLINT"/>
+            <Column Name="create_time" Required="true" Type="DATE"/>
+            <Column Name="create_by" Required="true" Type="INTEGER"/>
+            <Column Name="change_time" Required="true" Type="DATE"/>
+            <Column Name="change_by" Required="true" Type="INTEGER"/>
+            <Index Name="idx_incident_product_cat_tier1">
+                <IndexColumn Name="tier1"/>
+            </Index>
+            <Index Name="idx_incident_product_cat_tier2">
+                <IndexColumn Name="tier2"/>
+            </Index>
+            <Index Name="idx_incident_product_cat_valid">
+                <IndexColumn Name="valid_id"/>
+            </Index>
+        </TableCreate>
+        
+        <TableCreate Name="incident_operational_category">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT"/>
+            <Column Name="tier1" Required="false" Size="200" Type="VARCHAR"/>
+            <Column Name="tier2" Required="false" Size="200" Type="VARCHAR"/>
+            <Column Name="tier3" Required="false" Size="200" Type="VARCHAR"/>
+            <Column Name="valid_id" Required="true" Default="1" Type="SMALLINT"/>
+            <Column Name="create_time" Required="true" Type="DATE"/>
+            <Column Name="create_by" Required="true" Type="INTEGER"/>
+            <Column Name="change_time" Required="true" Type="DATE"/>
+            <Column Name="change_by" Required="true" Type="INTEGER"/>
+            <Index Name="idx_incident_operational_cat_tier1">
+                <IndexColumn Name="tier1"/>
+            </Index>
+            <Index Name="idx_incident_operational_cat_tier2">
+                <IndexColumn Name="tier2"/>
+            </Index>
+            <Index Name="idx_incident_operational_cat_valid">
+                <IndexColumn Name="valid_id"/>
+            </Index>
+        </TableCreate>
+        
+        <TableCreate Name="incident_resolution_category">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT"/>
+            <Column Name="tier1" Required="false" Size="200" Type="VARCHAR"/>
+            <Column Name="tier2" Required="false" Size="200" Type="VARCHAR"/>
+            <Column Name="tier3" Required="false" Size="200" Type="VARCHAR"/>
+            <Column Name="valid_id" Required="true" Default="1" Type="SMALLINT"/>
+            <Column Name="create_time" Required="true" Type="DATE"/>
+            <Column Name="create_by" Required="true" Type="INTEGER"/>
+            <Column Name="change_time" Required="true" Type="DATE"/>
+            <Column Name="change_by" Required="true" Type="INTEGER"/>
+            <Index Name="idx_incident_resolution_cat_tier1">
+                <IndexColumn Name="tier1"/>
+            </Index>
+            <Index Name="idx_incident_resolution_cat_tier2">
+                <IndexColumn Name="tier2"/>
+            </Index>
+            <Index Name="idx_incident_resolution_cat_valid">
+                <IndexColumn Name="valid_id"/>
+            </Index>
+        </TableCreate>
+        
+        <!-- Zabbix Integration Tables -->
+        <TableCreate Name="zabbix_config">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="INTEGER"/>
+            <Column Name="config_key" Required="true" Size="100" Type="VARCHAR"/>
+            <Column Name="config_value" Required="false" Type="TEXT"/>
+            <Column Name="encrypted" Required="true" Default="0" Type="SMALLINT"/>
+            <Column Name="create_time" Required="true" Type="DATE"/>
+            <Column Name="create_by" Required="true" Type="INTEGER"/>
+            <Column Name="change_time" Required="true" Type="DATE"/>
+            <Column Name="change_by" Required="true" Type="INTEGER"/>
+            <Unique Name="zabbix_config_key">
+                <UniqueColumn Name="config_key"/>
+            </Unique>
+        </TableCreate>
+        
+        <TableCreate Name="zabbix_ticket_mapping">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="INTEGER"/>
+            <Column Name="ticket_id" Required="true" Type="INTEGER"/>
+            <Column Name="zabbix_event_id" Required="true" Size="100" Type="VARCHAR"/>
+            <Column Name="zabbix_host" Required="false" Size="255" Type="VARCHAR"/>
+            <Column Name="zabbix_trigger_id" Required="false" Size="100" Type="VARCHAR"/>
+            <Column Name="created_by_zabbix" Required="true" Default="0" Type="SMALLINT"/>
+            <Column Name="event_acknowledged" Required="true" Default="0" Type="SMALLINT"/>
+            <Column Name="acknowledge_time" Required="false" Type="DATE"/>
+            <Column Name="create_time" Required="true" Type="DATE"/>
+            <Column Name="create_by" Required="true" Type="INTEGER"/>
+            <Unique Name="zabbix_ticket_mapping_ticket_id">
+                <UniqueColumn Name="ticket_id"/>
+            </Unique>
+            <Index Name="zabbix_ticket_mapping_event_id">
+                <IndexColumn Name="zabbix_event_id"/>
+            </Index>
+            <ForeignKey ForeignTable="ticket">
+                <Reference Local="ticket_id" Foreign="id"/>
+            </ForeignKey>
+        </TableCreate>
+        
+        <TableCreate Name="zabbix_audit_log">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="INTEGER"/>
+            <Column Name="ticket_id" Required="false" Type="INTEGER"/>
+            <Column Name="action" Required="true" Size="100" Type="VARCHAR"/>
+            <Column Name="request_data" Required="false" Type="TEXT"/>
+            <Column Name="response_data" Required="false" Type="TEXT"/>
+            <Column Name="success" Required="true" Default="0" Type="SMALLINT"/>
+            <Column Name="error_message" Required="false" Type="TEXT"/>
+            <Column Name="create_time" Required="true" Type="DATE"/>
+            <Index Name="zabbix_audit_log_ticket_id">
+                <IndexColumn Name="ticket_id"/>
+            </Index>
+            <Index Name="zabbix_audit_log_action">
+                <IndexColumn Name="action"/>
+            </Index>
+            <Index Name="zabbix_audit_log_create_time">
+                <IndexColumn Name="create_time"/>
+            </Index>
+        </TableCreate>
+
+        <!-- Backup History Table for Export/Import Configuration -->
+        <TableCreate Name="msst_backup_history">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT"/>
+            <Column Name="backup_id" Required="true" Size="50" Type="VARCHAR"/>
+            <Column Name="backup_name" Required="false" Size="255" Type="VARCHAR"/>
+            <Column Name="filename" Required="true" Size="255" Type="VARCHAR"/>
+            <Column Name="filepath" Required="true" Size="500" Type="VARCHAR"/>
+            <Column Name="backup_type" Required="true" Size="50" Type="VARCHAR"/>
+            <Column Name="backup_size" Required="true" Type="BIGINT"/>
+            <Column Name="components" Required="false" Type="TEXT"/>
+            <Column Name="description" Required="false" Type="TEXT"/>
+            <Column Name="status" Required="true" Size="50" Type="VARCHAR" Default="completed"/>
+            <Column Name="created_by" Required="true" Type="INTEGER"/>
+            <Column Name="created_time" Required="true" Type="DATE"/>
+            <Column Name="is_protected" Required="true" Default="0" Type="SMALLINT"/>
+            <Column Name="metadata" Required="false" Type="TEXT"/>
+            <Column Name="checksum" Required="true" Size="64" Type="VARCHAR"/>
+            <Column Name="encryption_key_id" Required="false" Size="100" Type="VARCHAR"/>
+            <Column Name="encryption_key_version" Required="false" Type="INTEGER"/>
+            <Unique Name="msst_backup_history_backup_id">
+                <UniqueColumn Name="backup_id"/>
+            </Unique>
+            <Index Name="msst_backup_history_created_time">
+                <IndexColumn Name="created_time"/>
+            </Index>
+            <Index Name="msst_backup_history_backup_type">
+                <IndexColumn Name="backup_type"/>
+            </Index>
+            <Index Name="msst_backup_history_backup_name">
+                <IndexColumn Name="backup_name"/>
+            </Index>
+            <Index Name="msst_backup_history_status">
+                <IndexColumn Name="status"/>
+            </Index>
+            <ForeignKey ForeignTable="users">
+                <Reference Local="created_by" Foreign="id"/>
+            </ForeignKey>
+        </TableCreate>
+        
+        <!-- Encryption Keys Table -->
+        <TableCreate Name="msst_encryption_keys">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT"/>
+            <Column Name="key_id" Required="true" Size="100" Type="VARCHAR"/>
+            <Column Name="encrypted_key" Required="true" Type="TEXT"/>
+            <Column Name="key_version" Required="true" Type="INTEGER"/>
+            <Column Name="is_active" Required="true" Default="1" Type="SMALLINT"/>
+            <Column Name="created_time" Required="true" Type="DATE"/>
+            <Column Name="deactivated_time" Required="false" Type="DATE"/>
+            <Unique Name="msst_encryption_keys_key_id">
+                <UniqueColumn Name="key_id"/>
+            </Unique>
+            <Index Name="msst_encryption_keys_version">
+                <IndexColumn Name="key_version"/>
+            </Index>
+            <Index Name="msst_encryption_keys_active">
+                <IndexColumn Name="is_active"/>
+            </Index>
+        </TableCreate>
+        
+        <!-- Key Rotation Log Table -->
+        <TableCreate Name="msst_key_rotation_log">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT"/>
+            <Column Name="rotation_time" Required="true" Type="DATE"/>
+            <Column Name="old_version" Required="true" Type="INTEGER"/>
+            <Column Name="new_version" Required="true" Type="INTEGER"/>
+            <Column Name="rotated_by" Required="true" Type="INTEGER"/>
+            <Column Name="reason" Required="false" Size="500" Type="VARCHAR"/>
+            <Index Name="msst_key_rotation_log_time">
+                <IndexColumn Name="rotation_time"/>
+            </Index>
+            <ForeignKey ForeignTable="users">
+                <Reference Local="rotated_by" Foreign="id"/>
+            </ForeignKey>
+        </TableCreate>
+        
+        <!-- Backup Audit Log Table -->
+        <TableCreate Name="msst_backup_audit_log">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT"/>
+            <Column Name="action" Required="true" Size="50" Type="VARCHAR"/>
+            <Column Name="user_id" Required="true" Type="INTEGER"/>
+            <Column Name="object_id" Required="false" Size="100" Type="VARCHAR"/>
+            <Column Name="message" Required="true" Type="TEXT"/>
+            <Column Name="result" Required="true" Size="50" Type="VARCHAR"/>
+            <Column Name="ip_address" Required="false" Size="45" Type="VARCHAR"/>
+            <Column Name="user_agent" Required="false" Size="500" Type="VARCHAR"/>
+            <Column Name="create_time" Required="true" Type="DATE"/>
+            <Index Name="msst_backup_audit_log_time">
+                <IndexColumn Name="create_time"/>
+            </Index>
+            <Index Name="msst_backup_audit_log_action">
+                <IndexColumn Name="action"/>
+            </Index>
+            <Index Name="msst_backup_audit_log_user">
+                <IndexColumn Name="user_id"/>
+            </Index>
+            <ForeignKey ForeignTable="users">
+                <Reference Local="user_id" Foreign="id"/>
+            </ForeignKey>
+        </TableCreate>
+        
+        <!-- Application Logs Configuration Table -->
+        <TableCreate Name="application_logs_config">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="INTEGER"/>
+            <Column Name="config_key" Required="true" Size="100" Type="VARCHAR"/>
+            <Column Name="config_value" Required="false" Type="TEXT"/>
+            <Column Name="encrypted" Required="true" Default="0" Type="SMALLINT"/>
+            <Column Name="create_time" Required="true" Type="DATE"/>
+            <Column Name="create_by" Required="true" Type="INTEGER"/>
+            <Column Name="change_time" Required="true" Type="DATE"/>
+            <Column Name="change_by" Required="true" Type="INTEGER"/>
+            <Unique Name="application_logs_config_key">
+                <UniqueColumn Name="config_key"/>
+            </Unique>
+        </TableCreate>
+
+        <!-- Bulk Update Cooldown Table (MSSTLITE-345) -->
+        <TableCreate Name="bulk_update_cooldown">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT"/>
+            <Column Name="ticket_id" Required="true" Type="INTEGER"/>
+            <Column Name="cooldown_until" Required="true" Type="DATE"/>
+            <Column Name="create_time" Required="true" Type="DATE"/>
+            <Column Name="update_time" Required="true" Type="DATE"/>
+            <Unique Name="bulk_update_cooldown_ticket">
+                <UniqueColumn Name="ticket_id"/>
+            </Unique>
+            <Index Name="idx_cooldown_ticket">
+                <IndexColumn Name="ticket_id"/>
+            </Index>
+            <Index Name="idx_cooldown_until">
+                <IndexColumn Name="cooldown_until"/>
+            </Index>
+            <Index Name="idx_create_time">
+                <IndexColumn Name="create_time"/>
+            </Index>
+        </TableCreate>
+
+        <!-- Initialize Zabbix Configuration with default values -->
+        <Insert Table="zabbix_config">
+            <Data Key="config_key">Enabled</Data>
+            <Data Key="config_value">0</Data>
+            <Data Key="encrypted">0</Data>
+            <Data Key="change_by">1</Data>
+            <Data Key="create_time" Type="DATE">current_timestamp</Data>
+            <Data Key="change_time" Type="DATE">current_timestamp</Data>
+        </Insert>
+        <Insert Table="zabbix_config">
+            <Data Key="config_key">APIURL</Data>
+            <Data Key="config_value"></Data>
+            <Data Key="encrypted">0</Data>
+            <Data Key="change_by">1</Data>
+            <Data Key="create_time" Type="DATE">current_timestamp</Data>
+            <Data Key="change_time" Type="DATE">current_timestamp</Data>
+        </Insert>
+        <Insert Table="zabbix_config">
+            <Data Key="config_key">APIUser</Data>
+            <Data Key="config_value"></Data>
+            <Data Key="encrypted">0</Data>
+            <Data Key="change_by">1</Data>
+            <Data Key="create_time" Type="DATE">current_timestamp</Data>
+            <Data Key="change_time" Type="DATE">current_timestamp</Data>
+        </Insert>
+        <Insert Table="zabbix_config">
+            <Data Key="config_key">APIPassword</Data>
+            <Data Key="config_value"></Data>
+            <Data Key="encrypted">1</Data>
+            <Data Key="change_by">1</Data>
+            <Data Key="create_time" Type="DATE">current_timestamp</Data>
+            <Data Key="change_time" Type="DATE">current_timestamp</Data>
+        </Insert>
+        <Insert Table="zabbix_config">
+            <Data Key="config_key">TriggerStates</Data>
+            <Data Key="config_value">resolved,closed,cancelled</Data>
+            <Data Key="encrypted">0</Data>
+            <Data Key="change_by">1</Data>
+            <Data Key="create_time" Type="DATE">current_timestamp</Data>
+            <Data Key="change_time" Type="DATE">current_timestamp</Data>
+        </Insert>
+
+
+        <!-- Initialize Application Logs Configuration with default values -->
+        <Insert Table="application_logs_config">
+            <Data Key="config_key">ZabbixSSHHost</Data>
+            <Data Key="config_value">zabbix-container</Data>
+            <Data Key="encrypted">0</Data>
+            <Data Key="create_by">1</Data>
+            <Data Key="change_by">1</Data>
+            <Data Key="create_time" Type="DATE">current_timestamp</Data>
+            <Data Key="change_time" Type="DATE">current_timestamp</Data>
+        </Insert>
+        <Insert Table="application_logs_config">
+            <Data Key="config_key">ZabbixSSHUser</Data>
+            <Data Key="config_value">zabbix</Data>
+            <Data Key="encrypted">0</Data>
+            <Data Key="create_by">1</Data>
+            <Data Key="change_by">1</Data>
+            <Data Key="create_time" Type="DATE">current_timestamp</Data>
+            <Data Key="change_time" Type="DATE">current_timestamp</Data>
+        </Insert>
+        <Insert Table="application_logs_config">
+            <Data Key="config_key">ZabbixSSHPass</Data>
+            <Data Key="config_value"></Data>
+            <Data Key="encrypted">0</Data>
+            <Data Key="create_by">1</Data>
+            <Data Key="change_by">1</Data>
+            <Data Key="create_time" Type="DATE">current_timestamp</Data>
+            <Data Key="change_time" Type="DATE">current_timestamp</Data>
+        </Insert>
+        <Insert Table="application_logs_config">
+            <Data Key="config_key">ZabbixLogPaths</Data>
+            <Data Key="config_value">/var/log/zabbix/*.log,/var/log/zabbix-server/*.log,/var/log/syslog</Data>
+            <Data Key="encrypted">0</Data>
+            <Data Key="create_by">1</Data>
+            <Data Key="change_by">1</Data>
+            <Data Key="create_time" Type="DATE">current_timestamp</Data>
+            <Data Key="change_time" Type="DATE">current_timestamp</Data>
+        </Insert>
+        <Insert Table="application_logs_config">
+            <Data Key="config_key">ProxmoxSSHHost</Data>
+            <Data Key="config_value">proxmox-host</Data>
+            <Data Key="encrypted">0</Data>
+            <Data Key="create_by">1</Data>
+            <Data Key="change_by">1</Data>
+            <Data Key="create_time" Type="DATE">current_timestamp</Data>
+            <Data Key="change_time" Type="DATE">current_timestamp</Data>
+        </Insert>
+        <Insert Table="application_logs_config">
+            <Data Key="config_key">ProxmoxSSHUser</Data>
+            <Data Key="config_value">root</Data>
+            <Data Key="encrypted">0</Data>
+            <Data Key="create_by">1</Data>
+            <Data Key="change_by">1</Data>
+            <Data Key="create_time" Type="DATE">current_timestamp</Data>
+            <Data Key="change_time" Type="DATE">current_timestamp</Data>
+        </Insert>
+        <Insert Table="application_logs_config">
+            <Data Key="config_key">ProxmoxSSHPass</Data>
+            <Data Key="config_value"></Data>
+            <Data Key="encrypted">0</Data>
+            <Data Key="create_by">1</Data>
+            <Data Key="change_by">1</Data>
+            <Data Key="create_time" Type="DATE">current_timestamp</Data>
+            <Data Key="change_time" Type="DATE">current_timestamp</Data>
+        </Insert>
+        <Insert Table="application_logs_config">
+            <Data Key="config_key">ProxmoxLogPaths</Data>
+            <Data Key="config_value">/var/log/pve/tasks/active,/var/log/pve-firewall.log,/var/log/pveproxy/access.log,/var/log/pveam.log</Data>
+            <Data Key="encrypted">0</Data>
+            <Data Key="create_by">1</Data>
+            <Data Key="change_by">1</Data>
+            <Data Key="create_time" Type="DATE">current_timestamp</Data>
+            <Data Key="change_time" Type="DATE">current_timestamp</Data>
+        </Insert>
+
+        <!-- Configuration Backup Table (survives uninstall/reinstall) -->
+        <TableCreate Name="msst_config_backup">
+            <Column Name="setting_name" Required="true" Size="250" Type="VARCHAR"/>
+            <Column Name="setting_value" Required="true" Type="TEXT"/>
+            <Column Name="backup_time" Required="false" Type="DATE"/>
+            <Unique Name="msst_config_backup_setting_name">
+                <UniqueColumn Name="setting_name"/>
+            </Unique>
+        </TableCreate>
+
+        <!-- EBonding ServiceNow API Log Table -->
+        <TableCreate Name="ebonding_api_log">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT"/>
+            <Column Name="create_time" Required="true" Type="DATE"/>
+            <Column Name="incident_id" Required="false" Type="INTEGER"/>
+            <Column Name="incident_number" Required="false" Size="50" Type="VARCHAR"/>
+            <Column Name="action" Required="true" Size="50" Type="VARCHAR"/>
+            <Column Name="request_url" Required="false" Size="500" Type="VARCHAR"/>
+            <Column Name="success" Required="true" Type="SMALLINT"/>
+            <Column Name="msi_ticket_number" Required="false" Size="50" Type="VARCHAR"/>
+            <Column Name="error_message" Required="false" Size="1000" Type="VARCHAR"/>
+            <Column Name="response_status_code" Required="false" Type="INTEGER"/>
+            <Column Name="request_payload" Required="false" Size="10000" Type="VARCHAR"/>
+            <Column Name="response_payload" Required="false" Size="10000" Type="VARCHAR"/>
+            <Column Name="create_by" Required="false" Type="INTEGER"/>
+            <Index Name="ebonding_api_log_create_time">
+                <IndexColumn Name="create_time"/>
+            </Index>
+            <Index Name="ebonding_api_log_incident_number">
+                <IndexColumn Name="incident_number"/>
+            </Index>
+        </TableCreate>
+
+        <!-- MSI Work Notes Table - Stores work notes pulled from ServiceNow -->
+        <TableCreate Name="msi_work_notes">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT"/>
+            <Column Name="ticket_id" Required="true" Type="INTEGER"/>
+            <Column Name="msi_sys_id" Required="true" Size="100" Type="VARCHAR"/>
+            <Column Name="element_id" Required="false" Size="100" Type="VARCHAR"/>
+            <Column Name="element_type" Required="false" Size="50" Type="VARCHAR"/>
+            <Column Name="note_text" Required="true" Type="LONGBLOB"/>
+            <Column Name="created_by" Required="false" Size="200" Type="VARCHAR"/>
+            <Column Name="updated_by" Required="false" Size="200" Type="VARCHAR"/>
+            <Column Name="created_time" Required="false" Type="DATE"/>
+            <Column Name="updated_time" Required="false" Type="DATE"/>
+            <Column Name="synced_time" Required="true" Type="DATE"/>
+            <Unique Name="msi_work_notes_sys_id">
+                <UniqueColumn Name="msi_sys_id"/>
+            </Unique>
+            <Index Name="msi_work_notes_ticket_id">
+                <IndexColumn Name="ticket_id"/>
+            </Index>
+        </TableCreate>
+
+        <!-- Add element_type column if table already exists -->
+        <TableAlter Name="msi_work_notes">
+            <ColumnAdd Name="element_type" Required="false" Size="50" Type="VARCHAR"/>
+        </TableAlter>
+
+        <!-- Zabbix Event Cache Table - Stores events for reporting -->
+        <TableCreate Name="zabbix_event_cache">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT"/>
+            <Column Name="alarm_id" Required="true" Size="50" Type="VARCHAR"/>
+            <Column Name="trigger_id" Required="false" Size="50" Type="VARCHAR"/>
+            <Column Name="event_clock" Required="true" Type="DATE"/>
+            <Column Name="r_clock" Required="false" Type="DATE"/>
+            <Column Name="severity" Required="true" Default="0" Type="SMALLINT"/>
+            <Column Name="acknowledged" Required="true" Default="0" Type="SMALLINT"/>
+            <Column Name="host_id" Required="false" Size="50" Type="VARCHAR"/>
+            <Column Name="host_name" Required="false" Size="255" Type="VARCHAR"/>
+            <Column Name="event_name" Required="false" Type="TEXT"/>
+            <Column Name="has_incident" Required="true" Default="0" Type="SMALLINT"/>
+            <Column Name="incident_number" Required="false" Size="50" Type="VARCHAR"/>
+            <Column Name="sync_time" Required="true" Type="DATE"/>
+            <Unique Name="zabbix_event_cache_alarm_id">
+                <UniqueColumn Name="alarm_id"/>
+            </Unique>
+            <Index Name="zabbix_event_cache_event_clock">
+                <IndexColumn Name="event_clock"/>
+            </Index>
+            <Index Name="zabbix_event_cache_has_incident">
+                <IndexColumn Name="has_incident"/>
+            </Index>
+            <Index Name="zabbix_event_cache_severity">
+                <IndexColumn Name="severity"/>
+            </Index>
+            <Index Name="zabbix_event_cache_host_name">
+                <IndexColumn Name="host_name"/>
+            </Index>
+            <Index Name="zabbix_event_cache_sync_time">
+                <IndexColumn Name="sync_time"/>
+            </Index>
+        </TableCreate>
+
+        <!-- Install trigger function for automatic SMS/SMTP config backup -->
+        <TableAlter Name="sysconfig_modified">
+            <!-- Trigger installed via CodeInstall due to SOPM limitations -->
+        </TableAlter>
+    </DatabaseInstall>
+    
+    <!-- Database Upgrade -->
+    <DatabaseUpgrade Type="post">
+        <TableDrop Name="bulk_update_cooldown"/>
+    </DatabaseUpgrade>
+
+    <!-- Database Uninstall -->
+    <DatabaseUninstall>
+        <!-- Tables are preserved during uninstall to retain data -->
+    </DatabaseUninstall>
+    
+    <!-- Package Setup -->
+    <PackageSetup>var::packagesetup::MSSTLite</PackageSetup>
+    
+    <!-- Code Installation -->
+    <CodeInstall Type="post"><![CDATA[
+        # Create Custom directory structure for Provider.pm
+        my $Home = $Kernel::OM->Get('Kernel::Config')->Get('Home');
+        my $CustomDir = "$Home/Custom/Kernel/GenericInterface";
+        
+        # Create directory if it doesn't exist
+        if (!-d $CustomDir) {
+            require File::Path;
+            File::Path::make_path($CustomDir, { mode => 0755 });
+            
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'notice',
+                Message  => "MSSTLite: Created directory $CustomDir for Provider.pm",
+            );
+        }
+        
+        # Install database trigger for automatic SMS/SMTP config backup
+        # This trigger backs up settings IMMEDIATELY when they change, before any uninstall can delete them
+        eval {
+            my $LogObject = $Kernel::OM->Get('Kernel::System::Log');
+
+            # Execute trigger SQL file directly using psql
+            # This avoids parsing issues with function bodies containing semicolons
+            my $TriggerFile = "$Home/bin/sysconfig-backup-trigger.sql";
+
+            # Get database credentials from config
+            my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
+            my $DBUser = $ConfigObject->Get('DatabaseUser') || 'otrs';
+            my $DBPassword = $ConfigObject->Get('DatabasePw') || '';
+            my $DBName = $ConfigObject->Get('Database') || 'otrs';
+            my $DBHost = $ConfigObject->Get('DatabaseHost') || 'localhost';
+
+            # Execute SQL file using psql
+            my $Command = sprintf(
+                'PGPASSWORD=%s psql -U %s -d %s -h %s -f %s 2>&1',
+                $DBPassword,
+                $DBUser,
+                $DBName,
+                $DBHost,
+                $TriggerFile
+            );
+
+            my $Output = `$Command`;
+            my $ExitCode = $? >> 8;
+
+            if ($ExitCode != 0) {
+                die "psql execution failed (exit code $ExitCode): $Output";
+            }
+
+            $LogObject->Log(
+                Priority => 'notice',
+                Message  => 'MSSTLite: Successfully installed automatic SMS/SMTP config backup trigger',
+            );
+        };
+
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "MSSTLite: Error installing config backup trigger: $@",
+            );
+        }
+
+        # Delete cache
+        $Kernel::OM->Get('Kernel::System::Cache')->CleanUp();
+
+        # FIRST: Create queues, states, and priorities BEFORE creating users
+        # This ensures the Support Group queue exists when NOC users are created
+        eval {
+            require var::packagesetup::MSSTLite;
+            my $PackageSetup = var::packagesetup::MSSTLite->new();
+            $PackageSetup->CodeInstall();
+            
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'notice',
+                Message  => 'MSSTLite: Successfully created states, priorities, and queues (including Support Group queue)',
+            );
+        };
+        
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "MSSTLite: Error executing PackageSetup: $@",
+            );
+        }
+        
+        # THEN: Initialize default groups and users (after queue exists)
+        eval {
+            my $UserManager = $Kernel::OM->Get('var::packagesetup::MSSTLiteUserManager');
+            
+            if ($UserManager) {
+                # Initialize default groups
+                $UserManager->InitializeDefaultGroups();
+                
+                # Initialize default users - NOW the Support Group queue exists!
+                $UserManager->InitializeDefaultUsers();
+                
+                $Kernel::OM->Get('Kernel::System::Log')->Log(
+                    Priority => 'notice',
+                    Message  => 'MSSTLite: Successfully initialized default groups and users via MSSTLiteUserManager',
+                );
+            } else {
+                $Kernel::OM->Get('Kernel::System::Log')->Log(
+                    Priority => 'error',
+                    Message  => 'MSSTLite: Could not load MSSTLiteUserManager module',
+                );
+            }
+        };
+        
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "MSSTLite: Error during user/group initialization: $@",
+            );
+        }
+        
+        # Configure EditAnotherUsersPreferencesGroup to allow Customer Admins to edit NOC Users
+        eval {
+            my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
+            
+            my $ExclusiveLockGUID = $SysConfigObject->SettingLock(
+                Name     => 'EditAnotherUsersPreferencesGroup',
+                UserID   => 1,
+                Force    => 1,
+            );
+            
+            if ($ExclusiveLockGUID) {
+                my $Success = $SysConfigObject->SettingUpdate(
+                    Name              => 'EditAnotherUsersPreferencesGroup',
+                    EffectiveValue    => 'customer_admin',
+                    ExclusiveLockGUID => $ExclusiveLockGUID,
+                    UserID            => 1,
+                );
+                
+                if ($Success) {
+                    $Kernel::OM->Get('Kernel::System::Log')->Log(
+                        Priority => 'notice',
+                        Message  => 'MSSTLite: Successfully configured EditAnotherUsersPreferencesGroup to customer_admin',
+                    );
+                } else {
+                    $Kernel::OM->Get('Kernel::System::Log')->Log(
+                        Priority => 'error',
+                        Message  => 'MSSTLite: Failed to configure EditAnotherUsersPreferencesGroup',
+                    );
+                }
+            }
+        };
+        
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "MSSTLite: Error configuring EditAnotherUsersPreferencesGroup: $@",
+            );
+        }
+        
+        # Create default customer if it doesn't exist
+        eval {
+            my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+
+            # Check if 'default' customer exists (but continue even if check fails)
+            my $Exists = 0;
+            my $PrepareResult = $DBObject->Prepare(
+                SQL => 'SELECT id FROM customer_user WHERE login = ?',
+                Bind => [ \'default' ],
+            );
+
+            if ($PrepareResult) {
+                my @Row = $DBObject->FetchrowArray();
+                $Exists = 1 if @Row;
+            }
+            else {
+                $Kernel::OM->Get('Kernel::System::Log')->Log(
+                    Priority => 'warning',
+                    Message  => 'MSSTLite: Could not check if default customer exists, will attempt to create anyway',
+                );
+            }
+
+            if (!$Exists) {
+                # Create the default customer using direct DB insert
+                my $Success = $DBObject->Do(
+                    SQL => 'INSERT INTO customer_user (login, email, customer_id, pw, title, first_name, last_name, phone, fax, mobile, street, zip, city, country, comments, valid_id, create_time, create_by, change_time, change_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, current_timestamp, ?, current_timestamp, ?)',
+                    Bind => [
+                        \'default',
+                        \'markryan.orosa@motorolasolutions.com', 
+                        \'default',
+                        \'',  # pw
+                        \'',  # title
+                        \'MSST',  # first_name
+                        \'Default', # last_name
+                        \'',  # phone
+                        \'',  # fax
+                        \'',  # mobile
+                        \'',  # street
+                        \'',  # zip
+                        \'',  # city
+                        \'',  # country
+                        \'',  # comments
+                        \1,   # valid_id
+                        \1,   # create_by
+                        \1,   # change_by
+                    ],
+                );
+                
+                if ($Success) {
+                    $Kernel::OM->Get('Kernel::System::Log')->Log(
+                        Priority => 'notice',
+                        Message  => 'MSSTLite: Created default customer successfully',
+                    );
+                }
+                else {
+                    $Kernel::OM->Get('Kernel::System::Log')->Log(
+                        Priority => 'error',
+                        Message  => 'MSSTLite: Failed to create default customer',
+                    );
+                }
+            }
+        };
+        
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "MSSTLite: Error creating default customer: $@",
+            );
+        }
+        
+        # Set up cache configuration first
+        eval {
+            my $CacheObject = $Kernel::OM->Get('Kernel::System::Cache');
+            $CacheObject->Configure(
+                CacheInMemory => 1,
+            );
+        };
+        
+        # NOTE: PackageSetup->CodeInstall() has already been called above (before user creation)
+        # to ensure the Support Group queue exists when NOC users are created
+        
+        # Deploy configuration after entities have been created by PackageSetup
+        eval {
+            my $CacheObject = $Kernel::OM->Get('Kernel::System::Cache');
+            my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
+
+            $SysConfigObject->ConfigurationXML2DB(
+                UserID => 1,
+                NoValidation => 1,
+            );
+
+            my $ExclusiveLockGUID = $SysConfigObject->SettingLock(
+                LockAll => 1,
+                Force   => 1,
+                UserID  => 1,
+            );
+            
+            $SysConfigObject->ConfigurationDeploy(
+                Comments      => "MSSTLite package installation",
+                AllSettings   => 1,
+                NoValidation  => 1,
+                UserID        => 1,
+                ExclusiveLockGUID => $ExclusiveLockGUID,
+            );
+
+            $CacheObject->Configure(
+                CacheInMemory => 0,
+            );
+        };
+        
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'notice',
+                Message  => 'MSSTLite: Could not auto-deploy configuration. Please run bin/otrs.Console.pl Maint::Config::Rebuild manually',
+            );
+        }
+
+        # Restore SMS/SMTP configuration from automatic trigger backup
+        # Note: Backup is now handled by database trigger (see bin/sysconfig-backup-trigger.sql)
+        # The trigger automatically backs up settings when they change or are deleted
+        eval {
+            my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+            my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
+            my $LogObject = $Kernel::OM->Get('Kernel::System::Log');
+            my $YAMLObject = $Kernel::OM->Get('Kernel::System::YAML');
+
+            # List of all SMS/SMTP settings to restore
+            my @SettingNames = qw(
+                SMSNotification::TwilioAccountSID
+                SMSNotification::TwilioAuthToken
+                SMSNotification::TwilioFromNumber
+                SMSNotification::DefaultRecipients
+                SMSNotification::Priority::1::Enabled
+                SMSNotification::Priority::2::Enabled
+                SMSNotification::Priority::3::Enabled
+                SMSNotification::Priority::4::Enabled
+                SMTPNotification::Host
+                SMTPNotification::Port
+                SMTPNotification::AuthUser
+                SMTPNotification::AuthPassword
+                SMTPNotification::From
+                SMTPNotification::Recipients
+                SMTPNotification::Encryption
+                SMTPNotification::Module
+                SMTPNotification::Priority::1
+                SMTPNotification::Priority::2
+                SMTPNotification::Priority::3
+                SMTPNotification::Priority::4
+            );
+
+            # Restore from backup table (populated by trigger before uninstall deleted settings)
+            my $RestoreCount = 0;
+            for my $SettingName (@SettingNames) {
+                $DBObject->Prepare(
+                    SQL   => 'SELECT setting_value FROM msst_config_backup WHERE setting_name = ?',
+                    Bind  => [ \$SettingName ],
+                    Limit => 1,
+                );
+
+                my $SettingValue;
+                while (my @Row = $DBObject->FetchrowArray()) {
+                    $SettingValue = $Row[0];
+                }
+
+                if ($SettingValue) {
+                    # effective_value is stored as YAML text, need to deserialize it
+                    my $DeserializedValue = $YAMLObject->Load( Data => $SettingValue );
+
+                    if ($DeserializedValue) {
+                        my $ExclusiveLockGUID = $SysConfigObject->SettingLock(
+                            Name   => $SettingName,
+                            UserID => 1,
+                            Force  => 1,
+                        );
+
+                        if ($ExclusiveLockGUID) {
+                            my $Success = $SysConfigObject->SettingUpdate(
+                                Name              => $SettingName,
+                                EffectiveValue    => $DeserializedValue,
+                                ExclusiveLockGUID => $ExclusiveLockGUID,
+                                UserID            => 1,
+                            );
+
+                            if ($Success) {
+                                $RestoreCount++;
+                                $LogObject->Log(
+                                    Priority => 'debug',
+                                    Message  => "MSSTLite: Restored $SettingName from trigger backup",
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+
+            if ($RestoreCount > 0) {
+                $LogObject->Log(
+                    Priority => 'notice',
+                    Message  => "MSSTLite: Restored $RestoreCount SMS/SMTP settings from automatic trigger backup",
+                );
+            } else {
+                $LogObject->Log(
+                    Priority => 'info',
+                    Message  => "MSSTLite: No SMS/SMTP settings found in backup table (first install or no previous configuration)",
+                );
+            }
+        };
+
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "MSSTLite: Error restoring SMS/SMTP configuration from backup: $@",
+            );
+        }
+
+        # Force ticket number generator setting
+        eval {
+            my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
+            
+            my $ExclusiveLockGUID = $SysConfigObject->SettingLock(
+                Name     => 'Ticket::NumberGenerator',
+                UserID   => 1,
+                Force    => 1,
+            );
+            
+            my $Success = $SysConfigObject->SettingUpdate(
+                Name              => 'Ticket::NumberGenerator',
+                EffectiveValue    => 'Kernel::System::Ticket::Number::AutoIncrementWithPrefix',
+                ExclusiveLockGUID => $ExclusiveLockGUID,
+                UserID            => 1,
+            );
+            
+            if ($Success) {
+                $Kernel::OM->Get('Kernel::System::Log')->Log(
+                    Priority => 'notice',
+                    Message  => 'MSSTLite: Successfully configured ticket number generator with prefix support',
+                );
+            }
+        };
+        
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "MSSTLite: Failed to configure ticket number generator: $@",
+            );
+        }
+        
+        # Insert AES key directly using SQL
+        eval {
+            use MIME::Base64;
+            my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+
+            # Check if key already exists (but continue even if check fails)
+            my $Exists = 0;
+            my $PrepareResult = $DBObject->Prepare(
+                SQL => 'SELECT id FROM encryption_keys WHERE key_name = ?',
+                Bind => [ \'license_aes_key' ],
+            );
+
+            if ($PrepareResult) {
+                while (my @Row = $DBObject->FetchrowArray()) {
+                    $Exists = 1;
+                }
+            }
+            else {
+                $Kernel::OM->Get('Kernel::System::Log')->Log(
+                    Priority => 'warning',
+                    Message  => 'MSSTLite: Could not check if encryption key exists, will attempt to create anyway',
+                );
+            }
+
+            if (!$Exists) {
+                # Insert the key directly
+                # Use the original binary key from the working implementation
+                my $HardcodedKey = "\xFC\xFC\x77\x6E\x08\xE2\x88\xB9\x3C\xCB\x2E\x14\x3E\xAC\x48\x3B"
+                    . "\x7F\xC1\xE8\xD4\xE2\x65\x87\x30\xCA\x69\x16\x0E\x12\x2B\x09\xD0";
+
+                my $Success = $DBObject->Do(
+                    SQL => 'INSERT INTO encryption_keys (key_name, key_value, created_time, created_by) VALUES (?, ?, current_timestamp, ?)',
+                    Bind => [
+                        \'license_aes_key',
+                        \encode_base64($HardcodedKey, ''),
+                        \1,
+                    ],
+                );
+
+                if ($Success) {
+                    $Kernel::OM->Get('Kernel::System::Log')->Log(
+                        Priority => 'notice',
+                        Message  => 'MSSTLite: Successfully inserted AES key to database',
+                    );
+                }
+                else {
+                    # Check if it failed due to duplicate (key already exists)
+                    my $ErrorMessage = $DBObject->Error() || '';
+                    if ($ErrorMessage =~ /duplicate|unique|already exists/i) {
+                        $Kernel::OM->Get('Kernel::System::Log')->Log(
+                            Priority => 'notice',
+                            Message  => 'MSSTLite: AES key already exists (duplicate key error)',
+                        );
+                    }
+                    else {
+                        $Kernel::OM->Get('Kernel::System::Log')->Log(
+                            Priority => 'error',
+                            Message  => 'MSSTLite: Failed to insert AES key to database',
+                        );
+                    }
+                }
+            }
+            else {
+                $Kernel::OM->Get('Kernel::System::Log')->Log(
+                    Priority => 'notice',
+                    Message  => 'MSSTLite: AES key already exists in database',
+                );
+            }
+        };
+        
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "MSSTLite: Error during AES key insertion: $@",
+            );
+        }
+        
+        
+        # Create incident ticket types
+        eval {
+            my $TypeObject = $Kernel::OM->Get('Kernel::System::Type');
+            
+            # Define incident types to create
+            my @IncidentTypes = (
+                { Name => 'Incident',           ValidID => 1 },
+            );
+            
+            for my $Type (@IncidentTypes) {
+                # Check if type already exists
+                my $TypeID = $TypeObject->TypeLookup(
+                    Type => $Type->{Name},
+                );
+                
+                if (!$TypeID) {
+                    # Create the type
+                    $TypeID = $TypeObject->TypeAdd(
+                        Name    => $Type->{Name},
+                        ValidID => $Type->{ValidID},
+                        UserID  => 1,
+                    );
+                    
+                    if ($TypeID) {
+                        $Kernel::OM->Get('Kernel::System::Log')->Log(
+                            Priority => 'notice',
+                            Message  => "MSSTLite: Created ticket type '$Type->{Name}' successfully",
+                        );
+                    }
+                }
+            }
+        };
+        
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "MSSTLite: Error creating incident ticket types: $@",
+            );
+        }
+        
+        # Insert default INC prefix for Incident type
+        eval {
+            my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+            my $TypeObject = $Kernel::OM->Get('Kernel::System::Type');
+            
+            # Get Incident type ID
+            my $IncidentTypeID = $TypeObject->TypeLookup(
+                Type => 'Incident',
+            );
+            
+            if ($IncidentTypeID) {
+                # Check if prefix already exists (but continue even if check fails)
+                my $Count = 0;
+                my $PrepareResult = $DBObject->Prepare(
+                    SQL => 'SELECT COUNT(*) FROM ticket_prefix WHERE type = ?',
+                    Bind => [ \$IncidentTypeID ],
+                );
+
+                if ($PrepareResult) {
+                    while (my @Row = $DBObject->FetchrowArray()) {
+                        $Count = $Row[0] || 0;
+                    }
+                }
+                else {
+                    $Kernel::OM->Get('Kernel::System::Log')->Log(
+                        Priority => 'warning',
+                        Message  => 'MSSTLite: Could not check if ticket prefix exists, will attempt to create anyway',
+                    );
+                }
+
+                if ($Count == 0) {
+                    # Insert default INC prefix
+                    my $Success = $DBObject->Do(
+                        SQL => 'INSERT INTO ticket_prefix (type, prefix, valid_id, create_time, create_by) VALUES (?, ?, ?, current_timestamp, ?)',
+                        Bind => [ \$IncidentTypeID, \'INC', \1, \1 ],
+                    );
+                    
+                    if ($Success) {
+                        $Kernel::OM->Get('Kernel::System::Log')->Log(
+                            Priority => 'notice',
+                            Message  => 'MSSTLite: Created default INC prefix for Incident type',
+                        );
+                    }
+                }
+            }
+        };
+        
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "MSSTLite: Error creating default INC prefix: $@",
+            );
+        }
+        
+        # Insert default initial counter
+        eval {
+            my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+            
+            # Check if initial counter already exists (but continue even if check fails)
+            my $Count = 0;
+            my $PrepareResult = $DBObject->Prepare(
+                SQL => 'SELECT COUNT(*) FROM ticket_initial_counter',
+            );
+
+            if ($PrepareResult) {
+                while (my @Row = $DBObject->FetchrowArray()) {
+                    $Count = $Row[0] || 0;
+                }
+            }
+            else {
+                $Kernel::OM->Get('Kernel::System::Log')->Log(
+                    Priority => 'warning',
+                    Message  => 'MSSTLite: Could not check if initial counter exists, will attempt to create anyway',
+                );
+            }
+
+            if ($Count == 0) {
+                # Insert default initial counter of 0
+                my $Success = $DBObject->Do(
+                    SQL => 'INSERT INTO ticket_initial_counter (counter, create_time, create_by) VALUES (?, current_timestamp, ?)',
+                    Bind => [ \'0', \1 ],
+                );
+                
+                if ($Success) {
+                    $Kernel::OM->Get('Kernel::System::Log')->Log(
+                        Priority => 'notice',
+                        Message  => 'MSSTLite: Created default initial counter value of 0',
+                    );
+                }
+            }
+        };
+        
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "MSSTLite: Error creating default initial counter: $@",
+            );
+        }
+        
+        # Clear cache
+        $Kernel::OM->Get('Kernel::System::Cache')->CleanUp();
+        
+        # NOW delete Unclassified type after all configuration is deployed
+        eval {
+            my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+            my $TypeObject = $Kernel::OM->Get('Kernel::System::Type');
+            my $LogObject = $Kernel::OM->Get('Kernel::System::Log');
+            
+            # Get Unclassified type ID  
+            my $UnclassifiedTypeID = $TypeObject->TypeLookup(
+                Type => 'Unclassified',
+            );
+            
+            if ($UnclassifiedTypeID) {
+                # Get Incident type ID for ticket updates
+                my $IncidentTypeID = $TypeObject->TypeLookup(
+                    Type => 'Incident',
+                );
+                
+                if ($IncidentTypeID) {
+                    # Update existing tickets from Unclassified to Incident
+                    $DBObject->Do(
+                        SQL => "UPDATE ticket SET type_id = ? WHERE type_id = ?",
+                        Bind => [ \$IncidentTypeID, \$UnclassifiedTypeID ],
+                    );
+                    
+                    # Update ticket_history references
+                    $DBObject->Do(
+                        SQL => "UPDATE ticket_history SET type_id = ? WHERE type_id = ?",
+                        Bind => [ \$IncidentTypeID, \$UnclassifiedTypeID ],
+                    );
+                    
+                    # Delete the Unclassified type
+                    $DBObject->Do(
+                        SQL => "DELETE FROM ticket_type WHERE id = ?",
+                        Bind => [ \$UnclassifiedTypeID ],
+                    );
+                    
+                    $LogObject->Log(
+                        Priority => 'notice',
+                        Message  => "MSSTLite: Successfully deleted 'Unclassified' ticket type after configuration deployment",
+                    );
+                }
+            }
+        };
+        
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "MSSTLite: Error deleting Unclassified type: $@",
+            );
+        }
+        
+        # Ensure TicketCreateOverride is loaded properly
+        eval {
+            require Kernel::System::TicketCreateOverride;
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'notice',
+                Message  => 'MSSTLite: Successfully loaded TicketCreateOverride module',
+            );
+        };
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "MSSTLite: Failed to load TicketCreateOverride module: $@",
+            );
+        }
+        
+        # Initialize Incident Module
+        eval {
+            my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+            my $DynamicFieldObject = $Kernel::OM->Get('Kernel::System::DynamicField');
+            my $LogObject = $Kernel::OM->Get('Kernel::System::Log');
+            
+            # Import incident categories directly without using external script
+            $LogObject->Log(
+                Priority => 'notice',
+                Message  => "MSSTLite: Importing incident categories",
+            );
+            
+            eval {
+                my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+                my $Home = $Kernel::OM->Get('Kernel::Config')->Get('Home');
+                
+                # Process category CSV files
+                my @CategoryFiles = (
+                    {
+                        file => "$Home/var/categories/LSMP New Categories (Subset of ServiceNow Global Categories) - All Operational Cats.csv",
+                        table => 'incident_operational_category',
+                        type => 'operational'
+                    },
+                    {
+                        file => "$Home/var/categories/LSMP New Categories (Subset of ServiceNow Global Categories) - All Prod Cats.csv",
+                        table => 'incident_product_category',
+                        type => 'product'
+                    },
+                    {
+                        file => "$Home/var/categories/LSMP New Categories (Subset of ServiceNow Global Categories) - All Resolution Cats.csv",
+                        table => 'incident_resolution_category',
+                        type => 'resolution'
+                    }
+                );
+                
+                for my $CategoryFile (@CategoryFiles) {
+                    if (-f $CategoryFile->{file}) {
+                        open(my $fh, '<', $CategoryFile->{file}) or die "Cannot open $CategoryFile->{file}: $!";
+                        
+                        # Skip header
+                        <$fh>;
+                        
+                        my $count = 0;
+                        while (my $line = <$fh>) {
+                            chomp $line;
+                            next if $line =~ /^\s*$/;
+                            
+                            # Parse CSV line (handle quoted fields)
+                            my @fields = ();
+                            while ($line =~ /(?:^|,)("(?:[^"]|"")*"|[^,]*)/g) {
+                                my $field = $1;
+                                $field =~ s/^"(.*)"$/$1/;
+                                $field =~ s/""/"/g;
+                                $field =~ s/^\s+|\s+$//g; # Trim whitespace
+                                push @fields, $field;
+                            }
+                            
+                            # Insert based on type
+                            my $SQL;
+                            my @Bind;
+                            
+                            if ($CategoryFile->{type} eq 'product') {
+                                # Product has 4 tiers
+                                $SQL = "INSERT INTO $CategoryFile->{table} (tier1, tier2, tier3, tier4, valid_id, create_time, create_by, change_time, change_by) VALUES (?, ?, ?, ?, 1, current_timestamp, 1, current_timestamp, 1)";
+                                @Bind = ($fields[0] || '', $fields[1] || '', $fields[2] || '', $fields[3] || '');
+                            } else {
+                                # Operational and Resolution have 3 tiers
+                                $SQL = "INSERT INTO $CategoryFile->{table} (tier1, tier2, tier3, valid_id, create_time, create_by, change_time, change_by) VALUES (?, ?, ?, 1, current_timestamp, 1, current_timestamp, 1)";
+                                @Bind = ($fields[0] || '', $fields[1] || '', $fields[2] || '');
+                            }
+                            
+                            $DBObject->Do(
+                                SQL  => $SQL,
+                                Bind => [ map { \$_ } @Bind ],
+                            );
+                            $count++;
+                        }
+                        close $fh;
+                        
+                        $LogObject->Log(
+                            Priority => 'notice',
+                            Message  => "MSSTLite: Imported $count $CategoryFile->{type} categories",
+                        );
+                    }
+                }
+            };
+            
+            if ($@) {
+                $LogObject->Log(
+                    Priority => 'error',
+                    Message  => "MSSTLite: Error importing categories: $@",
+                );
+            }
+            
+            # Initialize Zabbix Integration
+            $LogObject->Log(
+                Priority => 'notice',
+                Message  => "MSSTLite: Initializing Zabbix integration",
+            );
+            
+            eval {
+                require var::packagesetup::MSSTLiteZabbix;
+                my $ZabbixSetup = var::packagesetup::MSSTLiteZabbix->new();
+                if ($ZabbixSetup) {
+                    $ZabbixSetup->CodeInstall();
+                    $LogObject->Log(
+                        Priority => 'notice',
+                        Message  => 'MSSTLite: Zabbix integration initialized successfully',
+                    );
+                }
+            };
+            
+            if ($@) {
+                $LogObject->Log(
+                    Priority => 'error',
+                    Message  => "MSSTLite: Error initializing Zabbix integration: $@",
+                );
+            }
+            
+            # Initialize MSI Support Remote Access/Proxmox Integration
+            $LogObject->Log(
+                Priority => 'notice',
+                Message  => "MSSTLite: Initializing MSI Support Remote Access/Proxmox integration",
+            );
+
+            eval {
+                require var::packagesetup::MSSTLiteProxmox;
+                my $ProxmoxSetup = var::packagesetup::MSSTLiteProxmox->new();
+                if ($ProxmoxSetup) {
+                    $ProxmoxSetup->CodeInstall();
+                    $LogObject->Log(
+                        Priority => 'notice',
+                        Message  => 'MSSTLite: MSI Support Remote Access/Proxmox integration initialized successfully',
+                    );
+                }
+            };
+
+            if ($@) {
+                $LogObject->Log(
+                    Priority => 'error',
+                    Message  => "MSSTLite: Error initializing MSI Support Remote Access/Proxmox integration: $@",
+                );
+            }
+
+            # Initialize ApplicationLogs Integration
+            $LogObject->Log(
+                Priority => 'notice',
+                Message  => "MSSTLite: Initializing ApplicationLogs integration",
+            );
+
+            eval {
+                require var::packagesetup::MSSTLiteApplicationLogs;
+                my $ApplicationLogsSetup = var::packagesetup::MSSTLiteApplicationLogs->new();
+                if ($ApplicationLogsSetup) {
+                    $ApplicationLogsSetup->CodeInstall();
+                    $LogObject->Log(
+                        Priority => 'notice',
+                        Message  => 'MSSTLite: ApplicationLogs integration initialized successfully',
+                    );
+                }
+            };
+
+            if ($@) {
+                $LogObject->Log(
+                    Priority => 'error',
+                    Message  => "MSSTLite: Error initializing ApplicationLogs integration: $@",
+                );
+            }
+
+            # Initialize EBonding ServiceNow Integration
+            $LogObject->Log(
+                Priority => 'notice',
+                Message  => "MSSTLite: Initializing EBonding ServiceNow integration",
+            );
+
+            eval {
+                require var::packagesetup::MSSTLiteEBonding;
+                my $EBondingSetup = var::packagesetup::MSSTLiteEBonding->new();
+                if ($EBondingSetup) {
+                    $EBondingSetup->CodeInstall();
+                    $LogObject->Log(
+                        Priority => 'notice',
+                        Message  => 'MSSTLite: EBonding ServiceNow integration initialized successfully',
+                    );
+                }
+            };
+
+            if ($@) {
+                $LogObject->Log(
+                    Priority => 'error',
+                    Message  => "MSSTLite: Error initializing EBonding ServiceNow integration: $@",
+                );
+            }
+
+            # Create Dynamic Fields
+            $LogObject->Log(
+                Priority => 'notice',
+                Message  => "MSSTLite: Creating dynamic fields",
+            );
+            
+            eval {
+                require var::packagesetup::MSSTLiteDynamicFields;
+                var::packagesetup::MSSTLiteDynamicFields::CreateDynamicFields();
+            };
+            
+            if ($@) {
+                $LogObject->Log(
+                    Priority => 'error',
+                    Message  => "MSSTLite: Error creating dynamic fields: $@",
+                );
+            }
+            
+            # Create Incident API webservice
+            $LogObject->Log(
+                Priority => 'notice',
+                Message  => "MSSTLite: Creating Incident API webservice",
+            );
+            
+            eval {
+                require var::packagesetup::MSSTLiteIncidentAPI;
+                var::packagesetup::MSSTLiteIncidentAPI::CreateIncidentAPIWebservice();
+            };
+            
+            if ($@) {
+                $LogObject->Log(
+                    Priority => 'error',
+                    Message  => "MSSTLite: Error creating Incident API webservice: $@",
+                );
+            }
+        };
+        
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "MSSTLite: Error initializing incident module: $@",
+            );
+        }
+        
+        # Enable SMTP notification event module
+        eval {
+            my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
+            
+            # Check if the setting exists first
+            my %Setting;
+            eval {
+                %Setting = $SysConfigObject->SettingGet(
+                    Name => 'Ticket::EventModulePost###SMTPNotification',
+                );
+            };
+            
+            # Only proceed if setting exists
+            if (%Setting) {
+                my $ExclusiveLockGUID = $SysConfigObject->SettingLock(
+                    Name     => 'Ticket::EventModulePost###SMTPNotification',
+                    UserID   => 1,
+                    Force    => 1,
+                );
+            
+            if ($ExclusiveLockGUID) {
+                my $Success = $SysConfigObject->SettingUpdate(
+                    Name              => 'Ticket::EventModulePost###SMTPNotification',
+                    IsValid           => 1,
+                    EffectiveValue    => {
+                        Module      => 'Kernel::System::Ticket::Event::SMTPNotification',
+                        Event       => 'TicketCreate|TicketStateUpdate',
+                        Transaction => '1',
+                    },
+                    ExclusiveLockGUID => $ExclusiveLockGUID,
+                    UserID            => 1,
+                );
+                
+                if ($Success) {
+                    $Kernel::OM->Get('Kernel::System::Log')->Log(
+                        Priority => 'notice',
+                        Message  => 'MSSTLite: SMTP notification event module enabled',
+                    );
+                }
+            }
+            } else {
+                $Kernel::OM->Get('Kernel::System::Log')->Log(
+                    Priority => 'notice',
+                    Message  => 'MSSTLite: Setting Ticket::EventModulePost###SMTPNotification not found, skipping',
+                );
+            }
+        };
+        
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "MSSTLite: Failed to enable SMTP notification: $@",
+            );
+        }
+        
+        # === BEGIN: Assign dynamic/search fields for AgentTicketSearch ===
+        eval {
+            my $LogObject = $Kernel::OM->Get('Kernel::System::Log');
+            my $ZnunyHelperObject = $Kernel::OM->Get('Kernel::System::ZnunyHelper');
+
+            $LogObject->Log(
+                Priority => 'notice',
+                Message  => 'MSSTLite: Assigning dynamic fields as required to AgentTicketSearch screen...',
+            );
+
+            # TEMPORARILY DISABLED: _DynamicFieldsScreenEnable triggers configuration validation
+            # that fails when Ticket::Type::Default has cached "Unclassified" value
+            # This can be run manually after installation via:
+            # su - znuny -c "/opt/znuny-6.5.15/bin/otrs.Console.pl Maint::Config::Rebuild"
+            #
+            # $ZnunyHelperObject->_DynamicFieldsScreenEnable(
+            #     'AgentTicketSearch###Defaults###DynamicField' => {
+            #         IncidentEventID            => 2,
+            #         IncidentSourceDevice       => 2,
+            #         Comments                   => 2,
+            #         IncidentMSITicketAssignee  => 2,
+            #         IncidentPriority           => 2,
+            #         TicketCalendarStartTime    => 2,
+            #         TicketCalendarEndTime      => 2,
+            #     },
+            # );
+            
+            $LogObject->Log(
+                Priority => 'notice',
+                Message  => 'MSSTLite: Skipped _DynamicFieldsScreenEnable - will be configured after installation',
+            );
+
+            # TEMPORARILY DISABLED: SettingsSet also triggers configuration validation
+            # $LogObject->Log(
+            #     Priority => 'notice',
+            #     Message  => 'MSSTLite: Enabling built-in fields in AgentTicketSearch...',
+            # );
+            #
+            # my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
+            # $SysConfigObject->SettingsSet(
+            #     Settings => [
+            #         {
+            #             Name           => 'Ticket::Frontend::AgentTicketSearch###Defaults###TicketNumber',
+            #             IsValid        => 1,
+            #             EffectiveValue => 0,
+            #         },
+            #         {
+            #             Name           => 'Ticket::Frontend::AgentTicketSearch###Defaults###TicketCreateTimeSlot',
+            #             IsValid        => 1,
+            #             EffectiveValue => 1,
+            #         },
+            #         {
+            #             Name           => 'Ticket::Frontend::AgentTicketSearch###Defaults###TicketCreateTimePoint',
+            #             IsValid        => 1,
+            #             EffectiveValue => 1,
+            #         },
+            #     ],
+            #     UserID => 1,
+            # );
+            
+            $LogObject->Log(
+                Priority => 'notice',
+                Message  => 'MSSTLite: Skipped AgentTicketSearch field configuration - will be configured after installation',
+            );
+
+            # TEMPORARILY DISABLED: _RebuildConfig triggers the same validation error
+            # $LogObject->Log(
+            #     Priority => 'notice',
+            #     Message  => 'MSSTLite: Rebuilding config to apply changes...',
+            # );
+            #
+            # $ZnunyHelperObject->_RebuildConfig();
+
+            $LogObject->Log(
+                Priority => 'notice',
+                Message  => 'MSSTLite: Dynamic field and search field assignment for AgentTicketSearch completed (rebuild skipped)',
+            );
+        };
+        
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "MSSTLite: Error assigning dynamic fields for AgentTicketSearch: $@",
+            );
+        }
+        # === END: Assign dynamic/search fields for AgentTicketSearch ===
+
+        # === BEGIN: Set Ticket::Type::Default to Incident ===
+        eval {
+            my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
+            my $LogObject = $Kernel::OM->Get('Kernel::System::Log');
+            
+            my $ExclusiveLockGUID = $SysConfigObject->SettingLock(
+                Name     => 'Ticket::Type::Default',
+                UserID   => 1,
+                Force    => 1,
+            );
+            
+            if ($ExclusiveLockGUID) {
+                my $Success = $SysConfigObject->SettingUpdate(
+                    Name              => 'Ticket::Type::Default',
+                    IsValid           => 1,
+                    EffectiveValue    => 'Incident',
+                    ExclusiveLockGUID => $ExclusiveLockGUID,
+                    UserID            => 1,
+                );
+                
+                if ($Success) {
+                    $LogObject->Log(
+                        Priority => 'notice',
+                        Message  => 'MSSTLite: Successfully set Ticket::Type::Default to Incident',
+                    );
+                } else {
+                    $LogObject->Log(
+                        Priority => 'error',
+                        Message  => 'MSSTLite: Failed to set Ticket::Type::Default to Incident',
+                    );
+                }
+            }
+        };
+        
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "MSSTLite: Error setting Ticket::Type::Default: $@",
+            );
+        }
+        # === END: Set Ticket::Type::Default to Incident ===
+
+        # === BEGIN: Set Motorola Skin as Default ===
+        eval {
+            my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
+            
+            my $ExclusiveLockGUID = $SysConfigObject->SettingLock(
+                Name     => 'Loader::Agent::DefaultSelectedSkin',
+                UserID   => 1,
+                Force    => 1,
+            );
+            
+            if ($ExclusiveLockGUID) {
+                my $Success = $SysConfigObject->SettingUpdate(
+                    Name              => 'Loader::Agent::DefaultSelectedSkin',
+                    IsValid           => 1,
+                    EffectiveValue    => 'motorola',
+                    ExclusiveLockGUID => $ExclusiveLockGUID,
+                    UserID            => 1,
+                );
+                
+                if ($Success) {
+                    $Kernel::OM->Get('Kernel::System::Log')->Log(
+                        Priority => 'notice',
+                        Message  => 'MSSTLite: Motorola Skin Set as Default',
+                    );
+                }
+            }
+        };
+        
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "MSSTLite: Failed to Set Motorola Skin as Default: $@",
+            );
+        }
+        # === END: Set Motorola Skin as Default ===
+
+        # === BEGIN: Remove Znuny Footer  ===
+        eval {
+            my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
+            
+            my $ExclusiveLockGUID = $SysConfigObject->SettingLock(
+                LockAll => 1,
+                Force   => 1,
+                UserID  => 1,
+            );
+            
+            if ($ExclusiveLockGUID) {
+                my $Success = $SysConfigObject->SettingUpdate(
+                    Name              => 'Secure::DisableBanner',
+                    IsValid           => 1,
+                    EffectiveValue    => 1,
+                    ExclusiveLockGUID => $ExclusiveLockGUID,
+                    UserID            => 1,
+                );
+                
+                if ($Success) {
+                    $Kernel::OM->Get('Kernel::System::Log')->Log(
+                        Priority => 'notice',
+                        Message  => 'MSSTLite: Remove Znuny Footer',
+                    );
+                }
+            }
+        };
+        
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "MSSTLite: Failed to Remove Znuny Footer: $@",
+            );
+        }
+        # === END: Remove Znuny Footer ===
+
+        # === BEGIN: Set Custom Login Logo  ===
+        eval {
+            my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
+            
+            my $ExclusiveLockGUID = $SysConfigObject->SettingLock(
+                LockAll => 1,
+                Force   => 1,
+                UserID  => 1,
+            );
+            
+            if ($ExclusiveLockGUID) {
+                my $Success = $SysConfigObject->SettingUpdate(
+                    Name              => 'AgentLoginLogo',
+                    IsValid           => 1,
+                    EffectiveValue    => {
+                        StyleHeight   => '90px',
+                        URL           => 'skins/Agent/motorola/img/login-logo.png',
+                    },
+                    ExclusiveLockGUID => $ExclusiveLockGUID,
+                    UserID            => 1,
+                );
+                
+                if ($Success) {
+                    $Kernel::OM->Get('Kernel::System::Log')->Log(
+                        Priority => 'notice',
+                        Message  => 'MSSTLite: Set Custom Login Logo',
+                    );
+                }
+            }
+        };
+        
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "MSSTLite: Failed to Set Custom Login Logo: $@",
+            );
+        }
+        # === END: Set Custom Login Logo ===
+
+        # === BEGIN: Set product name  ===
+        eval {
+            my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
+            
+            my $ExclusiveLockGUID = $SysConfigObject->SettingLock(
+                LockAll => 1,
+                Force   => 1,
+                UserID  => 1,
+            );
+            
+            if ($ExclusiveLockGUID) {
+                my $Success = $SysConfigObject->SettingUpdate(
+                    Name              => 'ProductName',
+                    IsValid           => 1,
+                    EffectiveValue    => 'Local Service Management Platform (LSMP)',
+                    ExclusiveLockGUID => $ExclusiveLockGUID,
+                    UserID            => 1,
+                );
+                
+                if ($Success) {
+                    $Kernel::OM->Get('Kernel::System::Log')->Log(
+                        Priority => 'notice',
+                        Message  => 'MSSTLite: Set Product Name',
+                    );
+                }
+            }
+        };
+        
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "MSSTLite: Failed to Set Product Name: $@",
+            );
+        }
+        # === END: product name ===
+
+        # === BEGIN: Deploy UI customization settings ===
+        # Deploy all settings configured after the initial deployment
+        # This includes AgentLoginLogo, ProductName, and Secure::DisableBanner
+        eval {
+            my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
+            
+            my $ExclusiveLockGUID = $SysConfigObject->SettingLock(
+                LockAll => 1,
+                Force   => 1,
+                UserID  => 1,
+            );
+            
+            if ($ExclusiveLockGUID) {
+                $SysConfigObject->ConfigurationDeploy(
+                    Comments          => "MSSTLite: Deploy UI customization settings",
+                    AllSettings       => 1,
+                    Force            => 1,
+                    NoValidation     => 1,
+                    UserID           => 1,
+                    ExclusiveLockGUID => $ExclusiveLockGUID,
+                );
+                
+                $Kernel::OM->Get('Kernel::System::Log')->Log(
+                    Priority => 'notice',
+                    Message  => 'MSSTLite: Deployed UI customization settings (AgentLoginLogo, ProductName, Secure::DisableBanner)',
+                );
+            }
+        };
+        
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "MSSTLite: Failed to deploy UI customization settings: $@",
+            );
+        }
+        # === END: Deploy UI customization settings ===
+
+        # === BEGIN: Create Incident Auto-Close GenericAgent Job ===
+        eval {
+            require var::packagesetup::MSSTLiteGenericAgent;
+            var::packagesetup::MSSTLiteGenericAgent::CreateIncidentAutoCloseJob();
+        };
+        
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "MSSTLite: Error creating IncidentAutoClose GenericAgent job: $@",
+            );
+        }
+        # === END: Create Incident Auto-Close GenericAgent Job ===
+        
+        # === START: Disable built-in Znuny ticket notifications ===
+        eval {
+            my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+            my $LogObject = $Kernel::OM->Get('Kernel::System::Log');
+                        
+            my $Success = $DBObject->Do(
+                SQL => "UPDATE notification_event SET valid_id = 2 WHERE name LIKE '%Ticket%' OR name LIKE '%ticket%'",
+            );
+            
+        };
+        # === END: Disable built-in Znuny ticket notifications ===
+    ]]></CodeInstall>
+
+    <!-- Code Uninstall -->
+    <CodeUninstall Type="post"><![CDATA[
+        # Clear cache to ensure clean state
+        $Kernel::OM->Get('Kernel::System::Cache')->CleanUp();
+
+        # Cleanup Zabbix Integration (safe - just logs messages)
+        eval {
+            require var::packagesetup::MSSTLiteZabbix;
+            my $ZabbixSetup = var::packagesetup::MSSTLiteZabbix->new();
+            if ($ZabbixSetup) {
+                $ZabbixSetup->CodeUninstall();
+            }
+        };
+
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "MSSTLite: Error cleaning up Zabbix integration: $@",
+            );
+        }
+
+        # Cleanup ApplicationLogs Integration (safe - just logs messages)
+        eval {
+            require var::packagesetup::MSSTLiteApplicationLogs;
+            my $ApplicationLogsSetup = var::packagesetup::MSSTLiteApplicationLogs->new();
+            if ($ApplicationLogsSetup) {
+                $ApplicationLogsSetup->CodeUninstall();
+            }
+        };
+
+        if ($@) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "MSSTLite: Error cleaning up ApplicationLogs integration: $@",
+            );
+        }
+
+        # NOTE: GenericAgent jobs, dynamic fields, and all data are preserved during uninstall
+        # This ensures no data loss during package reinstall or upgrade operations
+
+        $Kernel::OM->Get('Kernel::System::Log')->Log(
+            Priority => 'notice',
+            Message  => 'MSSTLite: Uninstall completed - all data and configuration preserved',
+        );
+    ]]></CodeUninstall>
+</otrs_package>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DatabaseInstall>
+   <TableCreate Name="license">
+   <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT"/>
+   <Column Name="UID" Required="true" Size="250" Type="VARCHAR"/>
+   <Column Name="contractCompany" Required="true" Size="250" Type="VARCHAR"/>
+   <Column Name="endCustomer" Required="true" Size="250" Type="VARCHAR"/>
+   <Column Name="contractNumber" Required="true" Size="250" Type="VARCHAR"/>
+   <Column Name="macAddress" Required="true" Size="250" Type="VARCHAR"/>
+   <Column Name="startDate" Required="true" Size="250" Type="DATE"/>
+   <Column Name="endDate" Required="true" Size="250" Type="DATE"/>
+   
+   <Column Name="content_type" Required="true" Size="250" Type="VARCHAR"/>
+   <Column Name="content" Required="true" Type="LONGBLOB"/>
+   <Column Name="filename" Required="true" Size="250" Type="VARCHAR"/>
+   <Column Name="create_time" Required="true" Type="DATE"/>
+   <Column Name="create_by" Required="true" Type="INTEGER"/>
+   </TableCreate>
+</DatabaseInstall>

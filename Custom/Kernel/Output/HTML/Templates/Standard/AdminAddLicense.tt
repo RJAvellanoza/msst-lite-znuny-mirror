@@ -1,0 +1,324 @@
+# --
+# Copyright (C) 2001-2021 OTRS AG, https://otrs.com/
+# Copyright (C) 2021 Znuny GmbH, https://znuny.org/
+# --
+# This software comes with ABSOLUTELY NO WARRANTY. For details, see
+# the enclosed file COPYING for license information (GPL). If you
+# did not receive this file, see https://www.gnu.org/licenses/gpl-3.0.txt.
+# --
+
+[% RenderBlockStart("Overview") %]
+<div class="MainBox ARIARoleMain LayoutFixedSidebar SidebarFirst">
+    <h1 class="InvisibleText">[% Translate("License Management") | html %]</h1>
+
+    [% BreadcrumbPath = [
+            {
+                Name => Translate('License Management'),
+                Link => Env("Action"),
+            },
+        ]
+    %]
+
+    [% SWITCH Data.Action %]
+        [% CASE 'Add' %]
+            [% BreadcrumbPath.push({ Name => Translate("Add License"),}) %]
+        [% CASE 'Change' %]
+            [% USE EditTitle = String(Translate("Edit License")) %]
+            [% BreadcrumbPath.push({ Name => EditTitle.append( ': ', Data.Name ) }) %]
+    [% END %]
+
+    [% INCLUDE "Breadcrumb.tt" Path = BreadcrumbPath %]
+
+[% RenderBlockStart("LicenseWarning") %]
+    <div class="MessageBox Warning">
+        <p>
+            [% IF Data.LicenseStatus == 'NotFound' %]
+                <strong>[% Translate("No License Found") | html %]</strong><br/>
+                [% Translate("No valid license file has been uploaded. Please upload a valid license file to continue using the system.") | html %]
+            [% ELSIF Data.LicenseStatus == 'Expired' %]
+                <strong>[% Translate("License Expired") | html %]</strong><br/>
+                [% Translate("Your license has expired. Please upload a new valid license file to continue using the system.") | html %]
+            [% ELSIF Data.LicenseStatus == 'Invalid' %]
+                <strong>[% Translate("Invalid License") | html %]</strong><br/>
+                [% Translate("The current license is invalid. Please upload a valid license file to continue using the system.") | html %]
+            [% ELSE %]
+                <strong>[% Translate("License Issue") | html %]</strong><br/>
+                [% Translate("There is an issue with your license. Please upload a valid license file to continue using the system.") | html %]
+            [% END %]
+        </p>
+    </div>
+[% RenderBlockEnd("LicenseWarning") %]
+
+    <div class="SidebarColumn">
+
+[% RenderBlockStart("ActionList") %]
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Actions") | html %]</h2>
+            </div>
+            <div class="Content">
+                <ul class="ActionList">
+[% RenderBlockStart("ActionOverview") %]
+                    <li>
+                        <a href="[% Env("Baselink") %]Action=[% Env("Action") %]" class="CallForAction Fullsize Center"><span><i class="fa fa-caret-left"></i>[% Translate("Go to overview") | html %]</span></a>
+                    </li>
+[% RenderBlockEnd("ActionOverview") %]
+[% RenderBlockStart("ActionAdd") %]
+                    <li>
+                        <a class="CallForAction Fullsize Center" href="[% Env("Baselink") %]Action=[% Env("Action") %];Subaction=Add">
+                            <span><i class="fa fa-plus-square"></i>[% Translate("Add License") | html %]</span>
+                        </a>
+                    </li>
+[% RenderBlockEnd("ActionAdd") %]
+                </ul>
+            </div>
+        </div>
+[% RenderBlockEnd("ActionList") %]
+
+<!-- [% RenderBlockStart("Filter") %]
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2><label for="FilterLicenses">[% Translate("Filter for Licenses") | html %]</label></h2>
+            </div>
+            <div class="Content">
+                <input type="text" id="FilterLicenses" class="FilterBox" placeholder="[% Translate("Just start typing to filter...") | html %]" name="FilterLicenses" value="" title="[% Translate("Filter for Licenses") | html %]">
+            </div>
+        </div>
+[% RenderBlockEnd("Filter") %] -->
+        <!-- <div class='WidgetSimple'>
+            <div class='Header'>
+                <h2>[% Translate('Related Actions') | html %]</h2>
+            </div>
+            <div class='Content'>
+                <ul class='ActionList SpacingTop'>
+                    <li>
+                        <a href='[% Env("Baselink") %]Action=AdminTemplate' class='CallForAction Fullsize Center'>
+                            <span>
+                                [% Translate('Templates') | html %]
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href='[% Env("Baselink") %]Action=AdminTemplateLicense' class='CallForAction Fullsize Center'>
+                            <span>
+                                [% Translate('Templates ↔ Licenses') | html %]
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div> -->
+    </div>
+
+    <div class="ContentColumn">
+        <div class="WidgetSimple">
+
+[% RenderBlockStart("OverviewResult") %]
+            <div class="Header">
+                <h2>[% Translate("List") | html %]</h2>
+            </div>
+            <div class="Content">
+
+                <table class="DataTable" id="Licenses">
+                    <thead>
+                        <tr>
+                            <th>[% Translate("License Status") | html %]</th>
+                            <th>[% Translate("File Name") | html %]</th>
+                            <th>[% Translate("Contract Company") | html %]</th>
+                            <th>[% Translate("End Customer") | html %]</th>
+                            <th>[% Translate("System Site ID") | html %]</th>
+                            <th>[% Translate("MCN") | html %]</th>
+                            <th>[% Translate("Start Date") | html %]</th>
+                            <th>[% Translate("End Date") | html %]</th>
+                            <th>[% Translate("Remaining Duration") | html %]</th>
+                            <!-- <th>[% Translate("Delete") | html %]</th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
+[% RenderBlockStart("NoDataFoundMsg") %]
+                        <tr>
+                            <td colspan="9">
+                                [% Translate("Empty") | html %]
+                            </td>
+                        </tr>
+[% RenderBlockEnd("NoDataFoundMsg") %]
+[% RenderBlockStart("OverviewResultRow") %]
+                        <tr>
+                            <td>[% Data.license_status | html %]
+                                <!-- <a class="AsBlock" href="[% Env("Baselink") %]Action=[% Env("Action") %];Subaction=Change;ID=[% Data.ID | uri %]">[% Data.Name | html %]</a> -->
+                            </td>
+                            <td title="[% Translate("Download file") | html %]: [% Data.Filename | html %]">
+                                <a href="[% Env("Baselink") %]Action=[% Env("Action") %];Subaction=Download;ID=[% Data.id | uri %];[% Env("ChallengeTokenParam") | html %]">
+                                    [% Data.filename | truncate(30) | html %]
+                                </a>
+                            </td>
+                            <td>[% Data.contractCompany | html %]</td>
+                            <td>[% Data.endCustomer | html %]</td>
+                            <td>[% Data.UID | html %]</td>
+                            <td>[% Data.mcn | html %]</td>
+                            <td>[% Data.startDate | Localize("TimeShort") %]</td>
+                            <td>[% Data.endDate | Localize("TimeShort") %]</td>
+                            [% IF Data.license_status == 'Valid' %]
+                                <td>[% Data.remaining_duration %]</td>
+                            [% ELSE %]
+                                <td>-</td>
+                            [% END %]
+
+                            
+                            <!-- <td class="Center">
+                                <a class="TrashCan LicenseDelete" href="#" data-id="[% Data.ID %]" title="[% Translate("Delete this License") | html %]">
+                                    [% Translate("Delete this License") | html %]
+                                    <i class="fa fa-trash-o"></i>
+                                </a>
+                            </td> -->
+                        </tr>
+[% RenderBlockEnd("OverviewResultRow") %]
+                        <tr class="FilterMessage Hidden">
+                            <td colspan="9">[% Translate("No matches found.") | html %]</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="Hidden" id="DeleteLicenseDialogContainer">
+                <div id ="DeleteLicenseDialog" class="InnerContent">
+                    <p class="Center Spacing">[% Translate("Do you really want to delete this License?") | html %]</p>
+                    <div class="SpacingTop"></div>
+                </div>
+            </div>
+[% RenderBlockEnd("OverviewResult") %]
+[% RenderBlockStart("OverviewUpdate") %]
+            <div class="Header">
+                [% IF Data.Action == 'Add' %]
+                    <h2>[% Translate("Add License") | html %]</h2>
+                [% ELSE %]
+                    <h2>[% Translate("Edit License") | html %]</h2>
+                [% END %]
+
+            </div>
+            <div class="Content">
+
+                <form action="[% Env("CGIHandle") %]" method="post" enctype="multipart/form-data" class="Validate PreventMultipleSubmits">
+                    <input type="hidden" name="Action" value="[% Env("Action") %]"/>
+                    <input type="hidden" name="Subaction" value="[% Data.Action | uri %]Action"/>
+                    <input type="hidden" name="ID" value="[% Data.ID | html %]"/>
+                    [% IF Data.Action == 'Change' %]
+                        <input type="hidden" name="ContinueAfterSave" id="ContinueAfterSave" value=""/>
+                    [% END %]
+
+                    <fieldset class="TableLike">
+                        <!-- <label class="Mandatory" for="Name"><span class="Marker">*</span> [% Translate("Name") | html %]:</label>
+                        <div class="Field">
+                            <input type="text" name="Name" id="Name" value="[% Data.Name | html %]" class="W50pc Validate_Required [% Data.NameInvalid | html %]" maxlength="200"/>
+                            <div id="NameError" class="TooltipErrorMessage">
+                                <p>[% Translate("This field is required.") | html %]</p>
+                            </div>
+                            <div id="NameServerError" class="TooltipErrorMessage">
+                                <p>[% Translate("This field is required.") | html %]</p>
+                            </div>
+                        </div>
+                        <div class="Clear"></div> -->
+
+                        [% IF Data.Action == 'Add' %]
+                            <label class="Mandatory" for="FileUpload"><span class="Marker">*</span> [% Translate("License") | html %] (.lic file):</label>
+                        [% ELSE %]
+                            <label for="FileUpload">[% Translate("License") | html %]:</label>
+                        [% END %]
+                        <div class="Field">
+                            <input name="FileUpload" accept=".lic" id="FileUpload" type="file" class="W50pc [% Data.FileUploadInvalid | html %]"/>
+                            [% IF Data.FileUploadInvalid %]
+                                <div id="FileUploadError" class="TooltipErrorMessage">
+                                    [% IF Data.InvalidFileType %]
+                                        <p>[% Translate("Invalid file type. Only .lic files are allowed.") | html %]</p>
+                                    [% ELSIF Data.KeyError %]
+                                        <p>[% Translate("Encryption key not found in database. Please contact your administrator.") | html %]</p>
+                                    [% ELSIF Data.InvalidLicenseFormat %]
+                                        <p>[% Translate("The license file format is invalid or the file is corrupted. Please ensure you have a valid license file.") | html %]</p>
+                                    [% ELSIF Data.InvalidBase64 %]
+                                        <p>[% Translate("The license file contains invalid encoding. Please ensure the file has not been modified.") | html %]</p>
+                                    [% ELSIF Data.DecryptionFailed %]
+                                        <p>[% Translate("Failed to decrypt the license file. This may indicate the file is corrupted or was encrypted with a different key.") | html %]</p>
+                                    [% ELSIF Data.FileSizeTooLarge %]
+                                        <p>[% Translate("The license file is too large. Maximum allowed size is 1MB.") | html %]</p>
+                                    [% ELSIF Data.FileSizeTooSmall %]
+                                        <p>[% Translate("The license file is too small to be valid. Please ensure you have uploaded the correct file.") | html %]</p>
+                                    [% ELSIF Data.LicenseExpired %]
+                                        <p>[% Translate("This license has already expired and cannot be imported.") | html %]</p>
+                                    [% ELSIF Data.LicenseNotYetValid %]
+                                        <p>[% Translate("This license is not yet valid and cannot be imported.") | html %]</p>
+                                    [% ELSIF Data.LicenseInvalidDates %]
+                                        <p>[% Translate("This license has invalid date format.") | html %]</p>
+                                    [% ELSIF Data.LicenseMissingDates %]
+                                        <p>[% Translate("This license is missing required date information.") | html %]</p>
+                                    [% ELSIF Data.LicenseSuspiciousDate %]
+                                        <p>[% Translate("This license has a suspiciously far future expiration date. Please verify the license is correct.") | html %]</p>
+                                    [% ELSIF Data.LicenseInvalidDateRange %]
+                                        <p>[% Translate("This license has invalid date range (start date is after end date).") | html %]</p>
+                                    [% ELSIF Data.LicenseSuspiciousContent %]
+                                        <p>[% Translate("This license contains suspicious content that may be a security risk.") | html %]</p>
+                                    [% ELSIF Data.LicenseInvalidMACFormat %]
+                                        <p>[% Translate("This license has an invalid MAC address format.") | html %]</p>
+                                    [% ELSIF Data.LicenseMissingFields %]
+                                        <p>[% Translate("This license is missing or has invalid values for required fields") | html %][% IF Data.LicenseMissingFieldsList %]: [% Data.LicenseMissingFieldsList | html %][% END %]</p>
+                                    [% ELSIF Data.InvalidJSONStructure %]
+                                        <p>[% Translate("The decrypted license file does not contain valid JSON data. This usually means the file was encrypted with a different key or is not a valid license file.") | html %]</p>
+                                    [% ELSIF Data.DecryptionEmpty %]
+                                        <p>[% Translate("License decryption produced no data. The file may be corrupted.") | html %]</p>
+                                    [% ELSIF Data.JSONInvalid %]
+                                        <p>[% Translate("The license file contains invalid data structure or is missing required license information.") | html %]</p>
+                                    [% ELSIF Data.LicenseMACMismatch %]
+                                        <p>[% Translate("License MAC address does not match server MAC address. This license is not valid for this server.") | html %]</p>
+                                    [% ELSIF Data.ServerMACNotFound %]
+                                        <p>[% Translate("Unable to determine server MAC address for license validation.") | html %]</p>
+                                    [% ELSE %]
+                                        <p>[% Translate("Please select a valid license file (.lic).") | html %]</p>
+                                    [% END %]
+                                </div>
+                            [% END %]
+                        </div>
+                        <div class="Clear"></div>
+
+                        <!-- <label class="Mandatory" for="ValidID"><span class="Marker">*</span> [% Translate("Validity") | html %]:</label>
+                        <div class="Field">
+                            [% Data.ValidOption %]
+                            <div id="ValidIDError" class="TooltipErrorMessage">
+                                <p>[% Translate("This field is required.") | html %]</p>
+                            </div>
+                            <div id="ValidIDServerError" class="TooltipErrorMessage">
+                                <p>[% Translate("This field is required.") | html %]</p>
+                            </div>
+                        </div>
+                        <div class="Clear"></div> -->
+
+                        <!-- <label for="Comment">[% Translate("Comment") | html %]:</label>
+                        <div class="Field">
+                            <input type="text" name="Comment" id="Comment" value="[% Data.Comment | html %]" class="W50pc" maxlength="250"/>
+                        </div>
+                        <div class="Clear"></div> -->
+
+                        <div class="Content">
+                            <fieldset class="TableLike">
+                                <div class="Field SpacingTop SaveButtons">
+                                    [% IF Data.Action == 'Change' %]
+                                        <button class="CallForAction Primary" id="SubmitAndContinue" type="button" value="[% Translate("Save") | html %]"><span>[% Translate("Save") | html %]</span></button>
+                                        [% Translate("or") | html %]
+                                        <button class="CallForAction Primary" id="Submit" type="submit" value="[% Translate("Save") | html %]"><span>[% Translate("Save and finish") | html %]</span></button>
+                                    [% ELSE %]
+                                        <button class="CallForAction Primary" id="Submit" type="submit" value="[% Translate("Save") | html %]"><span>[% Translate("Save") | html %]</span></button>
+                                    [% END %]
+                                    [% Translate("or") | html %]
+                                    <a href="[% Env("Baselink") %]Action=[% Env("Action") %]"><span>[% Translate("Cancel") | html %]</span></a>
+                                </div>
+                                <div class="Clear"></div>
+                            </fieldset>
+                        </div>
+                        <div class="Clear"></div>
+                    </fieldset>
+                </form>
+            </div>
+[% RenderBlockEnd("OverviewUpdate") %]
+        </div>
+    </div>
+    <div class="Clear"></div>
+</div>
+[% RenderBlockEnd("Overview") %]
+

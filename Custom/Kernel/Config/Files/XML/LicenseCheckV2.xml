@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Framework">
+    
+    <!-- Enable/Disable License Checking -->
+    <Setting Name="LicenseCheck::Enabled" Required="1" Valid="1">
+        <Description Translatable="1">Enable or disable the license checking system (1 = Yes, 0 = No).</Description>
+        <Navigation>Core::MSSTLite::LicenseCheck</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="^[01]$">1</Item>
+        </Value>
+    </Setting>
+    
+    <!-- Cache TTL -->
+    <Setting Name="LicenseCheck::CacheTTL" Required="1" Valid="1">
+        <Description Translatable="1">Time in seconds to cache license status in session (default: 3600 = 1 hour).</Description>
+        <Navigation>Core::MSSTLite::LicenseCheck</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="^\d+$">3600</Item>
+        </Value>
+    </Setting>
+    
+    <!-- Admin Groups -->
+    <Setting Name="LicenseCheck::AdminGroups" Required="1" Valid="1">
+        <Description Translatable="1">Groups that can manage licenses.</Description>
+        <Navigation>Core::MSSTLite::LicenseCheck</Navigation>
+        <Value>
+            <Array>
+                <Item>admin</Item>
+                <Item>MSIAdmin</Item>
+                <Item>NOCAdmin</Item>
+            </Array>
+        </Value>
+    </Setting>
+    
+    <!-- PreApplication Module Registration -->
+    <Setting Name="PreApplicationModule###AgentLicenseCheck" Required="1" Valid="1">
+        <Description Translatable="1">License check pre-application module.</Description>
+        <Navigation>Frontend::Base</Navigation>
+        <Value>
+            <Item ValueType="String">Kernel::Modules::PreApplicationLicenseCheck</Item>
+        </Value>
+    </Setting>
+    
+    <!-- Notification Module Registration -->
+    <Setting Name="Frontend::NotifyModule###800-LicenseStatus" Required="0" Valid="0">
+        <Description Translatable="1">Show license status notification banner.</Description>
+        <Navigation>Frontend::Agent::ModuleNotify</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Module">Kernel::Output::HTML::Notification::LicenseStatus</Item>
+            </Hash>
+        </Value>
+    </Setting>
+    
+    <!-- Block API Access -->
+    <Setting Name="LicenseCheck::BlockAPI" Required="1" Valid="1">
+        <Description Translatable="1">Block API access when license is invalid/expired (1 = Yes, 0 = No).</Description>
+        <Navigation>Core::MSSTLite::LicenseCheck</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="^[01]$">1</Item>
+        </Value>
+    </Setting>
+    
+    <!-- Block Webhook/Outbound Requests -->
+    <Setting Name="LicenseCheck::BlockWebhooks" Required="1" Valid="1">
+        <Description Translatable="1">Block outbound webhook/API requests when license is invalid/expired (1 = Yes, 0 = No).</Description>
+        <Navigation>Core::MSSTLite::LicenseCheck</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="^[01]$">1</Item>
+        </Value>
+    </Setting>
+    
+    <!-- PreApplication Module Registration for GenericInterface -->
+    <Setting Name="PreApplicationModule###GenericInterfaceLicenseCheck" Required="1" Valid="1">
+        <Description Translatable="1">License check pre-application module for GenericInterface (API/Webhooks).</Description>
+        <Navigation>Frontend::Base</Navigation>
+        <Value>
+            <Item ValueType="String">Kernel::Modules::PreApplicationLicenseCheck</Item>
+        </Value>
+    </Setting>
+    
+    <!-- Feature Restrictions (Phase 2) -->
+    <Setting Name="LicenseCheck::RestrictedFeatures" Required="0" Valid="0">
+        <Description Translatable="1">Features to restrict when license is invalid/expired. (Not implemented yet)</Description>
+        <Navigation>Core::MSSTLite::LicenseCheck</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="AgentTicketPhone">
+                    <Hash>
+                        <Item Key="RequiredStatus">Valid</Item>
+                        <Item Key="Message" Translatable="1">Creating phone tickets requires a valid license.</Item>
+                    </Hash>
+                </Item>
+                <Item Key="AgentTicketEmail">
+                    <Hash>
+                        <Item Key="RequiredStatus">Valid</Item>
+                        <Item Key="Message" Translatable="1">Creating email tickets requires a valid license.</Item>
+                    </Hash>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+    
+</otrs_config>

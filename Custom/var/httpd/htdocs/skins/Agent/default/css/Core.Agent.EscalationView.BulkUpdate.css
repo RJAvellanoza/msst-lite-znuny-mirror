@@ -1,0 +1,75 @@
+/**
+ * Copyright (C) 2025 MSST, https://msst.com/
+ * This software comes with ABSOLUTELY NO WARRANTY.
+ */
+
+/**
+ * @project    MSST Lite
+ * @description Styles for bulk update functionality in AgentTicketEscalationView
+ */
+
+/* Bulk Update Toolbar Container (above ticket table) */
+.EscalationViewBulkUpdateToolbar {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+/* Bulk Update Button */
+.BulkUpdateButton {
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.42857;
+    background-color: #0066cc;
+    color: #fff;
+    border: 1px solid #0052a3;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.BulkUpdateButton:hover:not(:disabled) {
+    background-color: #0052a3;
+}
+
+.BulkUpdateButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: #999;
+    border-color: #888;
+}
+
+/* Checkbox column */
+.BulkUpdateCheckboxColumn {
+    width: 40px;
+    text-align: center;
+    padding: 5px;
+}
+
+.BulkUpdateCheckbox {
+    cursor: pointer;
+    margin: 0;
+}
+
+.BulkUpdateCheckbox:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* Hidden cooldown data container */
+#BulkUpdateCooldownData {
+    display: none;
+}
+
+/* Ensure checkbox cells don't trigger row click */
+.BulkUpdateCheckboxColumn {
+    pointer-events: auto;
+}
+
+/* Override MasterAction row click for checkbox column */
+tr.MasterAction .BulkUpdateCheckboxColumn {
+    cursor: default;
+}

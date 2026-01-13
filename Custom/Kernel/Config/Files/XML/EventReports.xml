@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Framework">
+
+    <!-- Frontend Module Registration for Event Reports -->
+    <Setting Name="Frontend::Module###AgentEventReports" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for the Event Reports interface with charts.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="GroupRo">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Description" Translatable="1">Event Submission Reports with Charts</Item>
+                    <Item Key="Title" Translatable="1">Event Reports</Item>
+                    <Item Key="NavBarName">Reports</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+
+    <!-- Frontend Module Registration for Event Reports List (Drilldown) -->
+    <Setting Name="Frontend::Module###AgentEventReportsList" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for the Event Reports list view.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="GroupRo">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Description" Translatable="1">Event Reports Details List</Item>
+                    <Item Key="Title" Translatable="1">Event Reports - Details</Item>
+                    <Item Key="NavBarName">Reports</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+
+    <!-- Navigation Registration (Menu item under Reports) -->
+    <Setting Name="Frontend::Navigation###AgentEventReports###001-EventReports" Required="0" Valid="0">
+        <Description Translatable="1">Main menu navigation for Event Reports.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::MainMenu</Navigation>
+        <Value>
+            <Array>
+                <DefaultItem ValueType="FrontendNavigation">
+                    <Hash></Hash>
+                </DefaultItem>
+                <Item>
+                    <Hash>
+                        <Item Key="Group">
+                            <Array>
+                                <Item>stats</Item>
+                            </Array>
+                        </Item>
+                        <Item Key="GroupRo">
+                            <Array>
+                                <Item>stats</Item>
+                            </Array>
+                        </Item>
+                        <Item Key="Description" Translatable="1">View event submission reports with charts.</Item>
+                        <Item Key="Link">Action=AgentEventReports</Item>
+                        <Item Key="LinkOption"></Item>
+                        <Item Key="Name" Translatable="1">Event Reports</Item>
+                        <Item Key="NavBar">Reports</Item>
+                        <Item Key="Prio">140</Item>
+                        <Item Key="Type"></Item>
+                    </Hash>
+                </Item>
+            </Array>
+        </Value>
+    </Setting>
+
+    <!-- Loader Registration for JavaScript and CSS -->
+    <Setting Name="Loader::Module::AgentEventReports###002-EventReports" Required="0" Valid="1">
+        <Description Translatable="1">Loader module registration for AgentEventReports.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::Loader</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="CSS">
+                    <Array>
+                    </Array>
+                </Item>
+                <Item Key="JavaScript">
+                    <Array>
+                    </Array>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Loader Registration for Event Reports List -->
+    <Setting Name="Loader::Module::AgentEventReportsList###002-EventReports" Required="0" Valid="1">
+        <Description Translatable="1">Loader module registration for AgentEventReportsList.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::Loader</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="CSS">
+                    <Array>
+                    </Array>
+                </Item>
+                <Item Key="JavaScript">
+                    <Array>
+                    </Array>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Daemon Task for Automatic Event Cache Sync -->
+    <Setting Name="Daemon::SchedulerCronTaskManager::Task###EventReportSync" Required="0" Valid="1">
+        <Description Translatable="1">Sync Zabbix events to local cache for Event Reports.</Description>
+        <Navigation>Daemon::SchedulerCronTaskManager::Task</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="TaskName">EventReportSync</Item>
+                <Item Key="Schedule">*/15 * * * *</Item>
+                <Item Key="Module">Kernel::System::EventReportSync</Item>
+                <Item Key="Function">SyncEvents</Item>
+                <Item Key="MaximumParallelInstances">1</Item>
+                <Item Key="Params">
+                    <Array>
+                    </Array>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+</otrs_config>

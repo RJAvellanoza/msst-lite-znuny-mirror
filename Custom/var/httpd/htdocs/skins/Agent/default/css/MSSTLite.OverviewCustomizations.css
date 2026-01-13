@@ -1,0 +1,48 @@
+/**
+ * MSSTLite Customizations for Ticket Overview
+ * Hide the view mode selection controls (Preview, Medium, Small)
+ * Hide the New Article column
+ */
+
+/* Hide the overview zoom controls in ticket search and other views */
+.OverviewActions ul.OverviewZoom {
+    display: none !important;
+}
+
+/* Adjust the pagination positioning since zoom controls are hidden */
+.OverviewActions span.Pagination {
+    float: right;
+    margin-right: 0;
+}
+
+/* Hide New Article column in ticket search results and overview screens */
+/* Multiple selectors to ensure complete coverage */
+.TableSmall th[title="New Article"],
+.TableSmall td.UnreadArticles,
+.DataTable th[title="New Article"],
+.DataTable td.UnreadArticles,
+table th[title="New Article"],
+table td.UnreadArticles,
+th.UnreadArticles,
+td.UnreadArticles,
+.UnreadArticles.Small,
+td[title*="Unread article"] {
+    display: none !important;
+}
+
+/* Hide bulk action controls from all views */
+ul.Actions li#BulkAction,
+.Actions li#BulkAction,
+#BulkAction {
+    display: none !important;
+}
+
+/* Also hide the priority flag column (star icons) if needed */
+/*
+.TableSmall th[title="Priority"],
+.TableSmall td.Flags,
+.DataTable th[title="Priority"], 
+.DataTable td.Flags {
+    display: none !important;
+}
+*/

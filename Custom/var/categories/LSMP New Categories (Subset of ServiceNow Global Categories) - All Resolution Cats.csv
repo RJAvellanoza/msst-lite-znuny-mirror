@@ -1,0 +1,197 @@
+Res Cat - T1,Res Cat - T2,Res Cat - T3
+Configuration Resolution,Parameter Adjustment,System parameters updated
+Configuration Resolution,Parameter Adjustment,Threshold values modified
+Configuration Resolution,Parameter Adjustment,Default behaviors changed
+Configuration Resolution,Parameter Adjustment,System variables adjusted
+Configuration Resolution,Parameter Adjustment,Configuration files updated
+Configuration Resolution,Settings Correction,Configuration corrected
+Configuration Resolution,Settings Correction,Default conflicts resolved
+Configuration Resolution,Settings Correction,Integration configuration fixed
+Configuration Resolution,Software Installation,New software installed
+Configuration Resolution,Software Installation,Software evaluated
+Configuration Resolution,Software Installation,Feature request implemented
+Configuration Resolution,Update Completion,Update successfully applied
+Configuration Resolution,Update Completion,System successfully rolled back
+Configuration Resolution,Update Completion,Partial update completed
+Configuration Resolution,Version Alignment,Software/firmware aligned
+Configuration Resolution,Version Alignment,API compatibility established
+Configuration Resolution,Version Alignment,Version conflict resolved
+Data Resolution,Capacity Management,Quota increased
+Data Resolution,Capacity Management,Storage optimized
+Data Resolution,Capacity Management,Database scaled
+Data Resolution,Corruption Repair,File/database repaired
+Data Resolution,Corruption Repair,Data recovered
+Data Resolution,Corruption Repair,Database integrity restored
+Data Resolution,Data Administration,Backup performed
+Data Resolution,Data Administration,Data restored from backup
+Data Resolution,Data Administration,Data migration completed
+Data Resolution,Data Analysis Completed,Analysis report provided
+Data Resolution,Data Analysis Completed,Data insights delivered
+Data Resolution,Data Analysis Completed,Statistical correction made
+Data Resolution,Import/Export Solution,Format conversion corrected
+Data Resolution,Import/Export Solution,Mapping issue resolved
+Data Resolution,Import/Export Solution,Data transfer completed
+Documentation Resolution,Document Delivery,User manual provided
+Documentation Resolution,Document Delivery,Documentation created
+Documentation Resolution,Document Delivery,Technical documentation updated
+Documentation Resolution,Error Correction,Documentation updated
+Documentation Resolution,Error Correction,Missing information provided
+Documentation Resolution,Error Correction,Information access improved
+Documentation Resolution,Information Provision,Product information provided
+Documentation Resolution,Information Provision,Service details delivered
+Documentation Resolution,Information Provision,Technical specifications shared
+Hardware Resolution,Component Replacement,Hardware component replaced
+Hardware Resolution,Component Replacement,Battery replaced
+Hardware Resolution,Component Replacement,Display/screen replaced
+Hardware Resolution,Component Replacement,Cable/connector replaced
+Hardware Resolution,Maintenance Performed,Preventative service completed
+Hardware Resolution,Maintenance Performed,Firmware updated
+Hardware Resolution,Maintenance Performed,Hardware cleaned/maintained
+Hardware Resolution,Operational Correction,Recording function corrected
+Hardware Resolution,Operational Correction,Boot sequence repaired
+Hardware Resolution,Operational Correction,Device stability restored
+Hardware Resolution,Physical Repair,Physical damage repaired
+Hardware Resolution,Physical Repair,Corrosion cleaned
+Hardware Resolution,Physical Repair,Environmental protection added
+Hardware Resolution,Resource Optimization,Cooling improved
+Hardware Resolution,Resource Optimization,Storage expanded
+Hardware Resolution,Resource Optimization,Memory added
+Integration Resolution,Custom Integration,Custom connector repaired
+Integration Resolution,Custom Integration,Integration developed
+Integration Resolution,Custom Integration,Integration testing completed
+Integration Resolution,Third-Party Connectivity,API integration fixed
+Integration Resolution,Third-Party Connectivity,External authentication established
+Integration Resolution,Third-Party Connectivity,Data synchronization corrected
+Integration Resolution,Workflow Repair,Automation sequence restored
+Integration Resolution,Workflow Repair,Process flow corrected
+Integration Resolution,Workflow Repair,Integration timeout extended
+Monitoring Resolution,Automatic Alarm Resolution,Automated recovery process completed
+Monitoring Resolution,Environmental Resolution,Environmental sensor calibrated
+Monitoring Resolution,Environmental Resolution,Temperature regulation restored
+Monitoring Resolution,Environmental Resolution,Humidity control established
+Monitoring Resolution,Notification Repair,Alert delivery restored
+Monitoring Resolution,Notification Repair,False alarms eliminated
+Monitoring Resolution,Notification Repair,Escalation path corrected
+Monitoring Resolution,Power Alert Resolution,Power restored
+Monitoring Resolution,Power Alert Resolution,Low power situation remediated
+Monitoring Resolution,Power Alert Resolution,Generator operation restored
+Monitoring Resolution,Security Monitoring,Cabinet security restored
+Monitoring Resolution,Security Monitoring,Access monitoring implemented
+Monitoring Resolution,Security Monitoring,Security surveillance repaired
+Monitoring Resolution,System Alert Repair,Application monitoring restored
+Monitoring Resolution,System Alert Repair,Battery monitoring corrected
+Monitoring Resolution,System Alert Repair,Link/Backhaul monitoring fixed
+Network Resolution,Configuration Change,Network routing adjusted
+Network Resolution,Configuration Change,Interface settings modified
+Network Resolution,Configuration Change,Firewall rules updated
+Network Resolution,Configuration Change,Network zones reconfigured
+Network Resolution,Connection Restoration,Connection reestablished
+Network Resolution,Connection Restoration,Network timeout resolved
+Network Resolution,Connection Restoration,Login connectivity restored
+Network Resolution,Data Transmission Repair,Packet loss eliminated
+Network Resolution,Data Transmission Repair,Data integrity restored
+Network Resolution,Data Transmission Repair,Transmission rate optimized
+Network Resolution,Infrastructure Upgrade,New hardware installed
+Network Resolution,Infrastructure Upgrade,Equipment upgraded
+Network Resolution,Infrastructure Upgrade,Network capacity expanded
+Network Resolution,RF Issues Resolved,Interference source eliminated
+Network Resolution,RF Issues Resolved,Range extended
+Network Resolution,RF Issues Resolved,Frequency conflict resolved
+Network Resolution,Signal Improvement,Signal strength increased
+Network Resolution,Signal Improvement,Protocol compatibility established
+Network Resolution,Signal Improvement,Authentication token renewed
+Other,Uncategorized Issue,Requires Classification
+Problem Resolution,Permanent Solution,Fix developed
+Problem Resolution,Permanent Solution,Solution implemented
+Problem Resolution,Permanent Solution,Preventative measures established
+Problem Resolution,Root Cause Identification,Root cause identified
+Problem Resolution,Root Cause Identification,Analysis report delivered
+Problem Resolution,Root Cause Identification,Problem pattern documented
+Security Resolution,Authentication Repair,Login issue resolved
+Security Resolution,Authentication Repair,Account unlocked
+Security Resolution,Authentication Repair,MFA configured properly
+Security Resolution,Compliance Action,Compliance report delivered
+Security Resolution,Compliance Action,Compliance controls implemented
+Security Resolution,Compliance Action,Documentation updated
+Security Resolution,Encryption Repair,Key management corrected
+Security Resolution,Encryption Repair,Decryption issue resolved
+Security Resolution,Encryption Repair,Secure communication established
+Security Resolution,Permission Correction,Access level corrected
+Security Resolution,Permission Correction,Role assignment fixed
+Security Resolution,Permission Correction,Permission hierarchy adjusted
+Security Resolution,Security Enhancement,Security audit completed
+Security Resolution,Security Enhancement,Security measures implemented
+Security Resolution,Security Enhancement,Security policies updated
+Security Resolution,Vulnerability Mitigation,Unauthorized access blocked
+Security Resolution,Vulnerability Mitigation,Security breach contained
+Security Resolution,Vulnerability Mitigation,Security patch applied
+Security Resolution,Vulnerability Mitigation,Malware removed and system cleaned
+Security Resolution,Vulnerability Mitigation,Attack vector eliminated
+Support Resolution,Account Administration,Account provisioned
+Support Resolution,Account Administration,Password reset completed
+Support Resolution,Account Administration,Account settings updated
+Support Resolution,Connectivity Management,Connectivity successfully added
+Support Resolution,Connectivity Management,Connectivity successfully removed
+Support Resolution,Connectivity Management,Connectivity configuration verified
+Support Resolution,Contract Administration,Service agreement established
+Support Resolution,Contract Administration,Contract renewal processed
+Support Resolution,Contract Administration,Service scope modified
+Support Resolution,Contract Administration,Contract requirements documented
+Support Resolution,Contract Administration,Service terms updated
+Support Resolution,Contract Administration,Service successfully enabled
+Support Resolution,Contract Administration,Contract maintenance completed
+Support Resolution,Contract Administration,Contract successfully renewed
+Support Resolution,Contract Administration,Site addition completed
+Support Resolution,Contract Administration,System upgrade agreement finalized
+Support Resolution,Contract Administration,Service termination processed
+Support Resolution,Equipment Administration,Equipment successfully configured
+Support Resolution,Equipment Administration,Equipment inventory documented
+Support Resolution,Equipment Administration,Equipment maintenance completed
+Support Resolution,Network Monitoring,Monitoring data successfully managed
+Support Resolution,Network Monitoring,Monitoring service enabled
+Support Resolution,Network Monitoring,Monitoring notifications configured
+Support Resolution,Network Monitoring,Monitoring validation completed
+Support Resolution,Service Management,Service implementation completed
+Support Resolution,Service Management,Service transition finalized
+Support Resolution,Service Management,Service documentation delivered
+Support Resolution,Service Management,Service acceptance verified
+Support Resolution,Service Management,Knowledge transfer completed
+Support Resolution,Service Management,Operational readiness confirmed
+Support Resolution,Service Management,Early life support provided
+Support Resolution,Service Management,Service decommissioned
+Support Resolution,Training Provided,Training session delivered
+Support Resolution,Training Provided,Training materials provided
+Support Resolution,Training Provided,Refresher training scheduled
+Support Resolution,User Administration,User profile created
+Support Resolution,User Administration,User permissions modified
+Support Resolution,User Administration,User reactivated
+Support Resolution,User Administration,User registration completed
+Support Resolution,User Administration,Bulk user creation completed
+System Resolution,Intermittent Issue Resolution,Connection stability restored
+System Resolution,Intermittent Issue Resolution,Timing issue corrected
+System Resolution,Intermittent Issue Resolution,Load balancing implemented
+System Resolution,Performance Improvement,System resources optimized
+System Resolution,Performance Improvement,Memory leak resolved
+System Resolution,Performance Improvement,CPU utilization normalized
+System Resolution,Preventative Action,Health check completed
+System Resolution,Preventative Action,Monitoring implemented
+System Resolution,Preventative Action,Proactive maintenance performed
+System Resolution,Scheduled Maintenance,Planned maintenance completed
+System Resolution,Scheduled Maintenance,System upgrade performed
+System Resolution,Scheduled Maintenance,Preventative actions implemented
+System Resolution,Scheduled Maintenance,Regular service rotation conducted
+System Resolution,Service Restoration,System restart performed
+System Resolution,Service Restoration,Process restarted
+System Resolution,Service Restoration,Service fully restored
+UI Resolution,Accessibility Improvement,Screen reader compatibility established
+UI Resolution,Accessibility Improvement,Contrast/visibility improved
+UI Resolution,Accessibility Improvement,Input assistance implemented
+UI Resolution,Display Correction,Visual elements aligned
+UI Resolution,Display Correction,Input functionality restored
+UI Resolution,Display Correction,Dashboard display fixed
+UI Resolution,Media Playback Fix,Audio/Video playback restored
+UI Resolution,Media Playback Fix,Media distortion eliminated
+UI Resolution,Media Playback Fix,Synchronization established
+UI Resolution,Navigation Repair,Links repaired
+UI Resolution,Navigation Repair,Page transitions corrected
+UI Resolution,Navigation Repair,Location display restored

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<otrs_config version="2.0" init="Application">
+
+    <!-- Module Registration -->
+    <Setting Name="Frontend::Module###AgentIncidentForm" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for the incident form.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="Group">
+                        <Array>
+                        </Array>
+                    </Item>
+                    <Item Key="GroupRo">
+                        <Array>
+                        </Array>
+                    </Item>
+                    <Item Key="Description" Translatable="1">Create and manage incidents</Item>
+                    <Item Key="Title" Translatable="1">Incident Management</Item>
+                    <Item Key="NavBarName">Incident</Item>
+                    <Item Key="Loader">
+                        <Hash>
+                            <Item Key="JavaScript">
+                                <Array>
+                                    <Item>Core.Agent.IncidentForm.js</Item>
+                                </Array>
+                            </Item>
+                        </Hash>
+                    </Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="Frontend::Module###AgentIncidentList" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for the incident list.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="Group">
+                        <Array>
+                        </Array>
+                    </Item>
+                    <Item Key="GroupRo">
+                        <Array>
+                        </Array>
+                    </Item>
+                    <Item Key="Description" Translatable="1">View all incidents</Item>
+                    <Item Key="Title" Translatable="1">Incident List</Item>
+                    <Item Key="NavBarName">Incident</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+
+    <!-- Main menu registration - REMOVED: Incidents menu is now integrated into Tickets menu -->
+
+    <!-- Add Create Incident link to Tickets menu -->
+    <Setting Name="Frontend::Navigation###AgentIncidentForm###002-Ticket" Required="0" Valid="1">
+        <Description Translatable="1">Create incident from Tickets menu</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::MainMenu</Navigation>
+        <Value>
+            <Array>
+                <DefaultItem ValueType="FrontendNavigation">
+                    <Hash>
+                    </Hash>
+                </DefaultItem>
+                <Item>
+                    <Hash>
+                        <Item Key="Group">
+                            <Array>
+                            </Array>
+                        </Item>
+                        <Item Key="GroupRo">
+                            <Array>
+                            </Array>
+                        </Item>
+                        <Item Key="Description" Translatable="1">Create a new incident</Item>
+                        <Item Key="Name" Translatable="1">Create Incident</Item>
+                        <Item Key="Link">Action=AgentIncidentForm</Item>
+                        <Item Key="LinkOption"></Item>
+                        <Item Key="NavBar">Ticket</Item>
+                        <Item Key="Type"></Item>
+                        <Item Key="Block"></Item>
+                        <Item Key="AccessKey"></Item>
+                        <Item Key="Prio">40</Item>
+                    </Hash>
+                </Item>
+            </Array>
+        </Value>
+    </Setting>
+
+</otrs_config>

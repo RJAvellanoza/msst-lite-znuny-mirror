@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Framework">
+
+    <!-- ========================================= -->
+    <!-- AgentEscalatedActiveTicket Module Registration -->
+    <!-- ========================================= -->
+    <Setting Name="Frontend::Module###AgentEscalatedActiveTicket" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for Escalated Active Tickets Response Status.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="GroupRo">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Description" Translatable="1">Active Tickets Response Status</Item>
+                    <Item Key="Title" Translatable="1">Active Tickets</Item>
+                    <Item Key="NavBarName">Reports</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+
+    <!-- ========================================= -->
+    <!-- AgentEscalatedActiveTicketBreakdown Module Registration -->
+    <!-- ========================================= -->
+    <Setting Name="Frontend::Module###AgentEscalatedActiveTicketBreakdown" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for Escalated Active Tickets Breakdown.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="GroupRo">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Description" Translatable="1">Escalated Active Tickets</Item>
+                    <Item Key="Title" Translatable="1">Escalated Active Tickets</Item>
+                    <Item Key="NavBarName">Reports</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+
+    <!-- ========================================= -->
+    <!-- AgentEscalatedClosedTicket Module Registration -->
+    <!-- ========================================= -->
+    <Setting Name="Frontend::Module###AgentEscalatedClosedTicket" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for Escalated Closed Tickets.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="GroupRo">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Description" Translatable="1">Escalated Closed Tickets</Item>
+                    <Item Key="Title" Translatable="1">Escalated Closed Tickets</Item>
+                    <Item Key="NavBarName">Reports</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+
+    <!-- ========================================= -->
+    <!-- Navigation Menu Item - Escalation Reports -->
+    <!-- ========================================= -->
+    <Setting Name="Frontend::Navigation###AgentEscalatedActiveTicket###001-EscalationReports" Required="0" Valid="1">
+        <Description Translatable="1">Main menu navigation for Escalation Reports.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::MainMenu</Navigation>
+        <Value>
+            <Array>
+                <DefaultItem ValueType="FrontendNavigation">
+                    <Hash></Hash>
+                </DefaultItem>
+                <Item>
+                    <Hash>
+                        <Item Key="Group">
+                            <Array>
+                                <Item>stats</Item>
+                            </Array>
+                        </Item>
+                        <Item Key="GroupRo">
+                            <Array>
+                                <Item>stats</Item>
+                            </Array>
+                        </Item>
+                        <Item Key="Description" Translatable="1">Escalated Active and Closed Tickets reports.</Item>
+                        <Item Key="Link">Action=AgentEscalatedActiveTicket</Item>
+                        <Item Key="LinkOption"></Item>
+                        <Item Key="Name" Translatable="1">Escalation Reports</Item>
+                        <Item Key="NavBar">Reports</Item>
+                        <Item Key="Prio">125</Item>
+                        <Item Key="Type"></Item>
+                    </Hash>
+                </Item>
+            </Array>
+        </Value>
+    </Setting>
+
+    <!-- ========================================= -->
+    <!-- Loader Registration for AgentEscalatedActiveTicket -->
+    <!-- ========================================= -->
+    <Setting Name="Loader::Module::AgentEscalatedActiveTicket###002-EscalationReports" Required="0" Valid="1">
+        <Description Translatable="1">Loader module registration for AgentEscalatedActiveTicket.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::Loader</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="CSS">
+                    <Array>
+                    </Array>
+                </Item>
+                <Item Key="JavaScript">
+                    <Array>
+                    </Array>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- ========================================= -->
+    <!-- Loader Registration for AgentEscalatedActiveTicketBreakdown -->
+    <!-- ========================================= -->
+    <Setting Name="Loader::Module::AgentEscalatedActiveTicketBreakdown###002-EscalationReports" Required="0" Valid="1">
+        <Description Translatable="1">Loader module registration for AgentEscalatedActiveTicketBreakdown.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::Loader</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="CSS">
+                    <Array>
+                    </Array>
+                </Item>
+                <Item Key="JavaScript">
+                    <Array>
+                    </Array>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- ========================================= -->
+    <!-- Loader Registration for AgentEscalatedClosedTicket -->
+    <!-- ========================================= -->
+    <Setting Name="Loader::Module::AgentEscalatedClosedTicket###002-EscalationReports" Required="0" Valid="1">
+        <Description Translatable="1">Loader module registration for AgentEscalatedClosedTicket.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::Loader</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="CSS">
+                    <Array>
+                    </Array>
+                </Item>
+                <Item Key="JavaScript">
+                    <Array>
+                    </Array>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- ========================================= -->
+    <!-- AgentEscalationReportTickets Module Registration -->
+    <!-- ========================================= -->
+    <Setting Name="Frontend::Module###AgentEscalationReportTickets" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for Escalation Report Tickets.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="GroupRo">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Description" Translatable="1">Escalation Report Tickets</Item>
+                    <Item Key="Title" Translatable="1">Escalation Report Tickets</Item>
+                    <Item Key="NavBarName">Reports</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+
+    <!-- ========================================= -->
+    <!-- Loader Registration for AgentEscalationReportTickets -->
+    <!-- ========================================= -->
+    <Setting Name="Loader::Module::AgentEscalationReportTickets###002-EscalationReports" Required="0" Valid="1">
+        <Description Translatable="1">Loader module registration for AgentEscalationReportTickets.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::Loader</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="CSS">
+                    <Array>
+                    </Array>
+                </Item>
+                <Item Key="JavaScript">
+                    <Array>
+                    </Array>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+</otrs_config>

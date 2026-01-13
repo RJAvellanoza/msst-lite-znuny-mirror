@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <DatabaseInstall>
+   <TableCreate Name="ticket_initial_counter">
+   <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT"/>
+   <Column Name="counter" Required="true" Size="200" Type="VARCHAR"/>
+
+   <Column Name="create_time" Required="true" Type="DATE"/>
+   <Column Name="create_by" Required="true" Type="INTEGER"/>
+   </TableCreate>
+</DatabaseInstall>

@@ -1,0 +1,61 @@
+---
+- ChangeBy: 1
+  ChangeTime: 2025-06-26 13:05:00
+  Comment: 'Notification when ticket is resolved'
+  CreateBy: 1
+  CreateTime: 2025-06-26 13:05:00
+  Data:
+    AgentEnabledByDefault:
+    - Email
+    ArticleAttachmentInclude:
+    - '0'
+    Events:
+    - TicketStateUpdate
+    LanguageID:
+    - en
+    Recipients:
+    - Customer
+    - AgentOwner
+    SendOnOutOfOffice:
+    - '1'
+    TransportEmailTemplate:
+    - Default
+    Transports:
+    - Email
+    VisibleForAgent:
+    - '1'
+    VisibleForAgentTooltip:
+    - You will receive a notification when a ticket is resolved.
+  ID: 99
+  Message:
+    en:
+      Body: |-
+        Dear <OTRS_NOTIFICATION_RECIPIENT_UserFirstname>,<br />
+        <br />
+        Your support ticket has been resolved:<br />
+        <br />
+        Ticket Information:<br />
+        ------------------<br />
+        Ticket Number: <OTRS_CONFIG_Ticket::Hook><OTRS_CONFIG_Ticket::HookDivider><OTRS_TICKET_TicketNumber><br />
+        Title: <OTRS_TICKET_Title><br />
+        Site: <OTRS_TICKET_DynamicField_Site><br />
+        Impacted CI: <OTRS_TICKET_DynamicField_ImpactedCI><br />
+        Priority: <OTRS_TICKET_Priority><br />
+        Status: RESOLVED<br />
+        Final State: <OTRS_TICKET_State><br />
+        Queue: <OTRS_TICKET_Queue><br />
+        Created: <OTRS_TICKET_Created><br />
+        Resolved: <OTRS_TICKET_Changed><br />
+        <br />
+        Thank you for using our support system. If you need to reopen this ticket,<br />
+        please reference ticket number <OTRS_CONFIG_Ticket::Hook><OTRS_CONFIG_Ticket::HookDivider><OTRS_TICKET_TicketNumber>.<br />
+        <br />
+        Ticket URL:<br />
+        <OTRS_CONFIG_HttpType>://<OTRS_CONFIG_FQDN>/<OTRS_CONFIG_ScriptAlias>index.pl?Action=AgentTicketZoom;TicketID=<OTRS_TICKET_TicketID><br />
+        <br />
+        Best regards,<br />
+        <OTRS_CONFIG_NotificationSenderName>
+      ContentType: text/html
+      Subject: '[<OTRS_CONFIG_Ticket::Hook><OTRS_CONFIG_Ticket::HookDivider><OTRS_TICKET_TicketNumber>] RESOLVED: <OTRS_TICKET_Title>'
+  Name: Ticket resolved notification
+  ValidID: 1

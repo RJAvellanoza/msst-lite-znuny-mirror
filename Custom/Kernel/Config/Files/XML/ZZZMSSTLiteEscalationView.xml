@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Application">
+    <!--
+    MSST Lite - Custom Escalation View Configuration
+
+    Configures AgentTicketEscalationView to show MSI-escalated incidents with appropriate columns and filters.
+    -->
+
+    <!-- Configure default columns for escalation view -->
+    <Setting Name="Ticket::Frontend::AgentTicketEscalationView###DefaultColumns" Required="0" Valid="1">
+        <Description Translatable="1">Default columns for MSI Escalated Incidents view.</Description>
+        <Navigation>Frontend::Agent::View::TicketEscalation</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="TicketNumber">2</Item>
+                <Item Key="Created">2</Item>
+                <Item Key="DynamicField_AssignedTo">2</Item>
+                <Item Key="DynamicField_MSITicketNumber">2</Item>
+                <Item Key="DynamicField_MSITicketState">2</Item>
+                <Item Key="DynamicField_MSITicketEbondLastUpdateTime">2</Item>
+                <Item Key="DynamicField_CI">2</Item>
+                <Item Key="Title">2</Item>
+                <Item Key="Priority">2</Item>
+                <Item Key="State">2</Item>
+                <Item Key="Age">2</Item>
+                <Item Key="UnreadArticles">0</Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Register MSI dynamic fields for escalation view -->
+    <Setting Name="Ticket::Frontend::AgentTicketEscalationView###DynamicField" Required="0" Valid="1">
+        <Description Translatable="1">Dynamic fields shown in the escalation view screen.</Description>
+        <Navigation>Frontend::Agent::View::TicketEscalation</Navigation>
+        <Value>
+            <Hash>
+                <!-- MSI Integration Fields -->
+                <Item Key="MSITicketNumber">2</Item>
+                <Item Key="MSITicketState">2</Item>
+                <Item Key="MSITicketEbondLastUpdateTime">2</Item>
+
+                <!-- Incident Fields -->
+                <Item Key="AssignedTo">2</Item>
+                <Item Key="CI">2</Item>
+                <Item Key="CIDeviceType">1</Item>
+                <Item Key="Description">1</Item>
+
+                <!-- Alarm/Event Fields -->
+                <Item Key="AlarmID">1</Item>
+                <Item Key="EventID">1</Item>
+                <Item Key="EventMessage">1</Item>
+                <Item Key="EventSite">1</Item>
+
+                <!-- Source -->
+                <Item Key="IncidentSource">1</Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Frontend Module Registration -->
+    <Setting Name="Frontend::Module###AgentTicketEscalationView" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for the MSI Escalated Incidents view.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Group">
+                    <Array>
+                    </Array>
+                </Item>
+                <Item Key="GroupRo">
+                    <Array>
+                    </Array>
+                </Item>
+                <Item Key="Description">Overview of MSI escalated incidents</Item>
+                <Item Key="Title">MSI Escalated Incidents</Item>
+                <Item Key="NavBarName">Ticket</Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- TicketPermission for escalation view -->
+    <Setting Name="Ticket::Frontend::AgentTicketEscalationView###Permission" Required="1" Valid="1">
+        <Description Translatable="1">Required ticket permission level to access escalation view.</Description>
+        <Navigation>Frontend::Agent::View::TicketEscalation</Navigation>
+        <Value>
+            <Item ValueType="String">ro</Item>
+        </Value>
+    </Setting>
+
+    <!-- PreApplication Module Registration for Escalation View -->
+    <Setting Name="PreApplicationModule###EscalationViewEBondingCheck" Required="1" Valid="1">
+        <Description Translatable="1">Pre-application module to block escalation view when Easy MSI Escalation integration is disabled.</Description>
+        <Navigation>Frontend::Base</Navigation>
+        <Value>
+            <Item ValueType="String">Kernel::Modules::PreApplicationEscalationViewCheck</Item>
+        </Value>
+    </Setting>
+
+</otrs_config>

@@ -1,0 +1,348 @@
+{
+  "info": {
+    "_postman_id": "znuny-ticket-api-collection",
+    "name": "Znuny TicketAPI",
+    "description": "Complete REST API collection for Znuny ticket operations. Import the TicketAPI_WebService.yml file in Znuny first!",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "noauth"
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Auto-login if no session and not already logging in",
+          "if (!pm.environment.get(\"session_id\") && !pm.request.url.path.includes(\"Session\")) {",
+          "    console.log(\"No session found, attempting auto-login...\");",
+          "    ",
+          "    const loginRequest = {",
+          "        url: pm.environment.get(\"base_url\") + \"/Webservice/TicketAPI/Session\",",
+          "        method: 'POST',",
+          "        header: {",
+          "            'Content-Type': 'application/json'",
+          "        },",
+          "        body: {",
+          "            mode: 'raw',",
+          "            raw: JSON.stringify({",
+          "                \"UserLogin\": pm.environment.get(\"username\"),",
+          "                \"Password\": pm.environment.get(\"password\")",
+          "            })",
+          "        }",
+          "    };",
+          "    ",
+          "    pm.sendRequest(loginRequest, (err, res) => {",
+          "        if (!err && res.code === 200) {",
+          "            const response = res.json();",
+          "            pm.environment.set(\"session_id\", response.SessionID);",
+          "            console.log(\"Auto-login successful, SessionID: \" + response.SessionID);",
+          "        } else {",
+          "            console.log(\"Auto-login failed\", err || res);",
+          "        }",
+          "    });",
+          "}"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "Session Management",
+      "item": [
+        {
+          "name": "Create Session (Login)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    ",
+                  "    if (response.SessionID) {",
+                  "        pm.environment.set(\"session_id\", response.SessionID);",
+                  "        console.log(\"Session created and saved: \" + response.SessionID);",
+                  "        ",
+                  "        pm.test(\"Session created successfully\", function () {",
+                  "            pm.expect(response).to.have.property('SessionID');",
+                  "        });",
+                  "    }",
+                  "} else {",
+                  "    pm.test(\"Login failed\", function () {",
+                  "        pm.response.to.have.status(200);",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"UserLogin\": \"{{username}}\",\n  \"Password\": \"{{password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/Webservice/TicketAPI/Session",
+              "host": ["{{base_url}}"],
+              "path": ["Webservice", "TicketAPI", "Session"]
+            },
+            "description": "Creates a new session for API authentication. Save the SessionID for subsequent requests."
+          }
+        },
+        {
+          "name": "Get Session Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/Webservice/TicketAPI/Session/{{session_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["Webservice", "TicketAPI", "Session", "{{session_id}}"]
+            },
+            "description": "Get information about the current session"
+          }
+        },
+        {
+          "name": "Remove Session (Logout)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    pm.environment.unset(\"session_id\");",
+                  "    console.log(\"Session removed\");",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/Webservice/TicketAPI/Session/{{session_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["Webservice", "TicketAPI", "Session", "{{session_id}}"]
+            },
+            "description": "Removes the session and logs out"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ticket Operations",
+      "item": [
+        {
+          "name": "Create Ticket",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    ",
+                  "    if (response.TicketID) {",
+                  "        pm.environment.set(\"last_ticket_id\", response.TicketID);",
+                  "        pm.environment.set(\"last_ticket_number\", response.TicketNumber);",
+                  "        ",
+                  "        console.log(\"Ticket created:\");",
+                  "        console.log(\"- TicketID: \" + response.TicketID);",
+                  "        console.log(\"- TicketNumber: \" + response.TicketNumber);",
+                  "        console.log(\"- ArticleID: \" + response.ArticleID);",
+                  "        ",
+                  "        pm.test(\"Ticket created successfully\", function () {",
+                  "            pm.expect(response).to.have.property('TicketID');",
+                  "            pm.expect(response).to.have.property('TicketNumber');",
+                  "        });",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"SessionID\": \"{{session_id}}\",\n  \"Ticket\": {\n    \"Title\": \"Test Ticket from Postman API\",\n    \"Queue\": \"Raw\",\n    \"State\": \"new\",\n    \"Priority\": \"3 normal\",\n    \"CustomerUser\": \"{{username}}\"\n  },\n  \"Article\": {\n    \"Subject\": \"Initial ticket article\",\n    \"Body\": \"This ticket was created via REST API from Postman.\\n\\nTest performed at: {{$timestamp}}\",\n    \"ContentType\": \"text/plain; charset=utf8\",\n    \"ArticleType\": \"note-external\",\n    \"SenderType\": \"agent\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/Webservice/TicketAPI/Ticket",
+              "host": ["{{base_url}}"],
+              "path": ["Webservice", "TicketAPI", "Ticket"]
+            },
+            "description": "Creates a new ticket with an initial article"
+          }
+        },
+        {
+          "name": "Get Ticket Details",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"SessionID\": \"{{session_id}}\",\n  \"AllArticles\": 1,\n  \"DynamicFields\": 1,\n  \"Extended\": 1,\n  \"Attachments\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/Webservice/TicketAPI/Ticket/{{last_ticket_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["Webservice", "TicketAPI", "Ticket", "{{last_ticket_id}}"]
+            },
+            "description": "Get detailed information about a specific ticket"
+          }
+        },
+        {
+          "name": "Update Ticket",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"SessionID\": \"{{session_id}}\",\n  \"Ticket\": {\n    \"State\": \"open\",\n    \"Priority\": \"4 high\",\n    \"Title\": \"[UPDATED] Test Ticket from Postman API\"\n  },\n  \"Article\": {\n    \"Subject\": \"Ticket Updated\",\n    \"Body\": \"This ticket has been updated via API.\\n\\nChanges:\\n- State changed to open\\n- Priority increased to high\\n- Title updated\",\n    \"ContentType\": \"text/plain; charset=utf8\",\n    \"ArticleType\": \"note-internal\",\n    \"SenderType\": \"agent\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/Webservice/TicketAPI/Ticket/{{last_ticket_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["Webservice", "TicketAPI", "Ticket", "{{last_ticket_id}}"]
+            },
+            "description": "Update an existing ticket's properties and add a note"
+          }
+        },
+        {
+          "name": "Search Tickets",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"SessionID\": \"{{session_id}}\",\n  \"States\": [\"new\", \"open\", \"pending reminder\"],\n  \"Queues\": [\"Raw\"],\n  \"Priority\": [\"3 normal\", \"4 high\", \"5 very high\"],\n  \"CreatedAfter\": \"2025-06-01 00:00:00\",\n  \"Limit\": 50,\n  \"SortBy\": [\"Age\"],\n  \"OrderBy\": [\"Down\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/Webservice/TicketAPI/TicketSearch",
+              "host": ["{{base_url}}"],
+              "path": ["Webservice", "TicketAPI", "TicketSearch"]
+            },
+            "description": "Search for tickets based on various criteria"
+          }
+        },
+        {
+          "name": "Get Ticket History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/Webservice/TicketAPI/TicketHistory/{{last_ticket_id}}?SessionID={{session_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["Webservice", "TicketAPI", "TicketHistory", "{{last_ticket_id}}"],
+              "query": [
+                {
+                  "key": "SessionID",
+                  "value": "{{session_id}}"
+                }
+              ]
+            },
+            "description": "Get the complete history of a ticket"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Test Endpoints",
+      "item": [
+        {
+          "name": "Test API Access (No Auth)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/Webservice/TicketAPI",
+              "host": ["{{base_url}}"],
+              "path": ["Webservice", "TicketAPI"]
+            },
+            "description": "Test if the API is accessible. Should return empty response if web service is configured."
+          }
+        },
+        {
+          "name": "Test License Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/Webservice/Test",
+              "host": ["{{base_url}}"],
+              "path": ["Webservice", "Test"]
+            },
+            "description": "Test endpoint to verify license checking. With valid license, should return empty. Without license, returns 403."
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://msst-lite-znuny.lan/otrs/nph-genericinterface.pl",
+      "type": "string"
+    },
+    {
+      "key": "username",
+      "value": "root@localhost",
+      "type": "string"
+    },
+    {
+      "key": "password",
+      "value": "JluBLzI8VTKotTZB",
+      "type": "string"
+    },
+    {
+      "key": "session_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "last_ticket_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "last_ticket_number",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

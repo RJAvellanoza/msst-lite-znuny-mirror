@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Framework">
+    
+    <!-- Navigation Module Registration -->
+    <Setting Name="Frontend::NavigationModule###AdminApplicationLogs" Required="0" Valid="1">
+        <Description Translatable="1">Admin area navigation for the Application Logs interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration::AdminOverview</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Group">
+                    <Array>
+                        <Item>admin</Item>
+                        <Item>MSIAdmin</Item>
+                    </Array>
+                </Item>
+                <Item Key="GroupRo">
+                    <Array>
+                    </Array>
+                </Item>
+                <Item Key="Module">Kernel::Output::HTML::NavBar::ModuleAdmin</Item>
+                <Item Key="Name" Translatable="1">Application Logs</Item>
+                <Item Key="Block">MSSTLite</Item>
+                <Item Key="Description" Translatable="1">Configure SSH connections for log collection from Zabbix and Proxmox servers.</Item>
+                <Item Key="IconBig">fa-file-text-o</Item>
+                <Item Key="IconSmall">fa-file-text-o</Item>
+                <Item Key="Prio">930</Item>
+            </Hash>
+        </Value>
+    </Setting>
+    
+    <!-- Frontend Module Registration -->
+    <Setting Name="Frontend::Module###AdminApplicationLogs" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for the Application Logs configuration admin interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="GroupRo">
+                        <Array>
+                        </Array>
+                    </Item>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>admin</Item>
+                            <Item>MSIAdmin</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Description" Translatable="1">Configure SSH connections for log collection from Zabbix and Proxmox servers.</Item>
+                    <Item Key="Title" Translatable="1">Application Logs</Item>
+                    <Item Key="NavBarName">Admin</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+    
+    <!-- Application Logs Configuration Settings -->
+    <Setting Name="ApplicationLogs::ZabbixSSHHost" Required="0" Valid="1">
+        <Description Translatable="1">SSH hostname or IP address of the Zabbix server for log collection.</Description>
+        <Navigation>Core::ApplicationLogs::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="">zabbix-container</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="ApplicationLogs::ZabbixSSHUser" Required="0" Valid="1">
+        <Description Translatable="1">SSH username for connecting to the Zabbix server.</Description>
+        <Navigation>Core::ApplicationLogs::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="">zabbix</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="ApplicationLogs::ZabbixSSHKeyPath" Required="0" Valid="1">
+        <Description Translatable="1">Full path to the SSH private key file for Zabbix authentication.</Description>
+        <Navigation>Core::ApplicationLogs::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="">/opt/znuny/.ssh/zabbix_key</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="ApplicationLogs::ZabbixLogPaths" Required="0" Valid="1">
+        <Description Translatable="1">Comma-separated list of log file paths or patterns to collect from Zabbix server.</Description>
+        <Navigation>Core::ApplicationLogs::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="">/var/log/zabbix/*.log</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="ApplicationLogs::ProxmoxSSHHost" Required="0" Valid="1">
+        <Description Translatable="1">SSH hostname or IP address of the Proxmox server for log collection.</Description>
+        <Navigation>Core::ApplicationLogs::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="">proxmox-host</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="ApplicationLogs::ProxmoxSSHUser" Required="0" Valid="1">
+        <Description Translatable="1">SSH username for connecting to the Proxmox server.</Description>
+        <Navigation>Core::ApplicationLogs::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="">root</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="ApplicationLogs::ProxmoxSSHKeyPath" Required="0" Valid="1">
+        <Description Translatable="1">Full path to the SSH private key file for Proxmox authentication.</Description>
+        <Navigation>Core::ApplicationLogs::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="">/opt/znuny/.ssh/proxmox_key</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="ApplicationLogs::ProxmoxLogPaths" Required="0" Valid="1">
+        <Description Translatable="1">Comma-separated list of log file paths or patterns to collect from Proxmox server.</Description>
+        <Navigation>Core::ApplicationLogs::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="">/var/log/pve/tasks/active,/var/log/pve-firewall.log,/var/log/pveproxy/access.log,/var/log/pveam.log</Item>
+        </Value>
+    </Setting>
+    
+    <Setting Name="ApplicationLogs::SSHConnectionTimeout" Required="0" Valid="1">
+        <Description Translatable="1">Connection timeout in seconds for SSH connections to log servers.</Description>
+        <Navigation>Core::ApplicationLogs::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="^\d+$">30</Item>
+        </Value>
+    </Setting>
+    
+    <!-- JavaScript Module Loader Registration -->
+    <Setting Name="Loader::Module::AdminApplicationLogs###002-Framework" Required="0" Valid="1">
+        <Description Translatable="1">List of JS files loaded for AdminApplicationLogs frontend module.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration::Loader</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="JavaScript">
+                    <Array>
+                        <Item>Core.Agent.Admin.ApplicationLogs.js</Item>
+                    </Array>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+    
+    <!-- Admin Groups for Application Logs Configuration -->
+    <Setting Name="ApplicationLogs::AdminGroups" Required="1" Valid="1">
+        <Description Translatable="1">Groups that can manage Application Logs configuration (MSI Service Providers only).</Description>
+        <Navigation>Core::MSSTLite::ApplicationLogs</Navigation>
+        <Value>
+            <Array>
+                <Item>MSIAdmin</Item>
+            </Array>
+        </Value>
+    </Setting>
+    
+</otrs_config>

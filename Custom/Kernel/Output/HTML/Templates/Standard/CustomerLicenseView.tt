@@ -1,0 +1,271 @@
+# --
+# Copyright (C) 2001-2021 OTRS AG, https://otrs.com/
+# Copyright (C) 2021 Znuny GmbH, https://znuny.org/
+# --
+# This software comes with ABSOLUTELY NO WARRANTY. For details, see
+# the enclosed file COPYING for license information (GPL). If you
+# did not receive this file, see https://www.gnu.org/licenses/gpl-3.0.txt.
+# --
+
+<div class="MainBox ARIARoleMain LayoutFixedSidebar SidebarFirst AdminManagement">
+    <h1 class="InvisibleText">[% Translate("License Information") | html %]</h1>
+
+    [% BreadcrumbPath = [
+            {
+                Name => Translate('License Information'),
+            },
+        ]
+    %]
+
+    [% INCLUDE "Breadcrumb.tt" Path = BreadcrumbPath %]
+
+    <div class="SidebarColumn">
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Actions") | html %]</h2>
+            </div>
+            <div class="Content">
+                <ul class="ActionList">
+                    <li>
+                        <a href="[% Env("Baselink") %]Action=[% Env("Action") %]" class="CallForAction Fullsize Center">
+                            <span><i class="fa fa-refresh"></i>[% Translate("Refresh") | html %]</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="CopyToClipboardBtn" class="CallForAction Fullsize Center">
+                            <span><i class="fa fa-copy"></i>[% Translate("Add Information to Clipboard") | html %]</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Description") | html %]</h2>
+            </div>
+            <div class="Content">
+                <p class="FieldExplanation">
+                    [% Translate("This page displays your current LSMP license information. Only MSI Personnel can upload or modify licenses.") | html %]
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="ContentColumn">
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("License Information") | html %]</h2>
+            </div>
+            <div class="Content">
+
+[% RenderBlockStart("Overview") %]
+                <h3>[% Translate("License Status") | html %]: 
+                    [% IF Data.LicenseStatus == 'Valid' %]
+                        <span class="Valid">[% Translate("Valid") | html %]</span>
+                    [% ELSIF Data.LicenseStatus == 'Expired' %]
+                        <span class="Invalid">[% Translate("Expired") | html %]</span>
+                    [% ELSIF Data.LicenseStatus == 'NotFound' %]
+                        <span class="Invalid">[% Translate("No License Found") | html %]</span>
+                    [% ELSE %]
+                        <span class="Warning">[% Translate(Data.LicenseStatus) | html %]</span>
+                    [% END %]
+                </h3>
+[% RenderBlockEnd("Overview") %]
+
+[% RenderBlockStart("LicenseInfo") %]
+                <fieldset class="TableLike">
+                    <label>[% Translate("Contract Company") | html %]:</label>
+                    <div class="Field">
+                        [% Data.contractCompany | html %]
+                    </div>
+                    <div class="Clear"></div>
+
+                    <label>[% Translate("End Customer") | html %]:</label>
+                    <div class="Field">
+                        [% Data.endCustomer | html %]
+                    </div>
+                    <div class="Clear"></div>
+
+                    <label>[% Translate("System Site ID") | html %]:</label>
+                    <div class="Field">
+                        [% Data.UID | html %]
+                    </div>
+                    <div class="Clear"></div>
+
+                    <label>[% Translate("MCN") | html %]:</label>
+                    <div class="Field">
+                        [% Data.mcn | html %]
+                    </div>
+                    <div class="Clear"></div>
+
+                    <label>[% Translate("System Technology") | html %]:</label>
+                    <div class="Field">
+                        [% Data.systemTechnology | html %]
+                    </div>
+                    <div class="Clear"></div>
+
+                    <label>[% Translate("LSMP Site ID") | html %]:</label>
+                    <div class="Field">
+                        [% Data.lsmpSiteID | html %]
+                    </div>
+                    <div class="Clear"></div>
+
+                    <label>[% Translate("Start Date") | html %]:</label>
+                    <div class="Field">
+                        [% Data.startDate | html %] UTC
+                    </div>
+                    <div class="Clear"></div>
+
+                    <label>[% Translate("End Date") | html %]:</label>
+                    <div class="Field">
+                        [% Data.endDate | html %] UTC
+                        [% IF Data.LicenseStatus == 'Valid' %]
+                            [% TimeObject = Kernel.System.Time.new() %]
+                            [% CurrentTime = TimeObject.SystemTime() %]
+                            [% EndDateParts = Data.endDate.split('[-/]') %]
+                            [% IF EndDateParts.0 && EndDateParts.1 && EndDateParts.2 %]
+                                [% EndTime = TimeObject.Date2SystemTime(
+                                    Year   => EndDateParts.0,
+                                    Month  => EndDateParts.1,
+                                    Day    => EndDateParts.2,
+                                    Hour   => 23,
+                                    Minute => 59,
+                                    Second => 59,
+                                ) %]
+                                [% DaysRemaining = (EndTime - CurrentTime) / 86400 %]
+                                [% IF DaysRemaining > 0 %]
+                                    [% IF DaysRemaining < 90 %]
+                                        <span class="Warning">
+                                            ([% DaysRemaining FILTER Format("%.0f") %] [% Translate("days remaining") | html %])
+                                        </span>
+                                    [% ELSE %]
+                                        <span class="Valid">
+                                            ([% DaysRemaining FILTER Format("%.0f") %] [% Translate("days remaining") | html %])
+                                        </span>
+                                    [% END %]
+                                [% END %]
+                            [% END %]
+                        [% END %]
+                    </div>
+                    <div class="Clear"></div>
+
+                    <label>[% Translate("License Status") | html %]:</label>
+                    <div class="Field">
+                        [% IF Data.LicenseStatus == 'Valid' %]
+                            <span class="Valid">[% Translate("Valid") | html %]</span>
+                        [% ELSIF Data.LicenseStatus == 'Expired' %]
+                            <span class="Invalid">[% Translate("Expired") | html %]</span>
+                        [% ELSE %]
+                            <span class="Warning">[% Translate(Data.LicenseStatus) | html %]</span>
+                        [% END %]
+                    </div>
+                    <div class="Clear"></div>
+
+                    <label>[% Translate("License Remaining Duration") | html %]:</label>
+                    <div class="Field">
+                        [% Data.remaining_duration | html %]
+                    </div>
+                    <div class="Clear"></div>
+                </fieldset>
+[% RenderBlockEnd("LicenseInfo") %]
+
+[% RenderBlockStart("NoLicenseFound") %]
+                <p>
+                    [% Translate("No valid license found. Please contact MSI Personnel to upload a valid license.") | html %]
+                </p>
+[% RenderBlockEnd("NoLicenseFound") %]
+
+            </div>
+        </div>
+    </div>
+    <div class="Clear"></div>
+</div>
+
+[% WRAPPER JSOnDocumentComplete %]
+Core.App.Ready(function() {
+    var copyBtn = document.getElementById('CopyToClipboardBtn');
+    if (!copyBtn) return;
+
+    copyBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        var licenseInfo = [];
+
+        // Header
+        licenseInfo.push('=== LICENSE INFORMATION ===\n');
+
+        // Fields from the LicenseInfo table-like fieldset
+        var labels = document.querySelectorAll('.TableLike label');
+        labels.forEach(function(labelEl) {
+            var label = (labelEl.textContent || '').replace(':', '').trim();
+            var fieldEl = labelEl.nextElementSibling && labelEl.nextElementSibling.classList.contains('Field')
+                ? labelEl.nextElementSibling
+                : null;
+            var value = fieldEl ? (fieldEl.textContent || '').trim() : '';
+            if (label && value) {
+                licenseInfo.push(label + ': ' + value);
+            }
+        });
+
+        var licenseText = licenseInfo.join('\n');
+
+        function prependToMainBox(element) {
+            var mainBox = document.querySelector('.MainBox');
+            if (!mainBox) return;
+            mainBox.insertBefore(element, mainBox.firstChild);
+        }
+
+        function showSuccessMessage() {
+            var notification = document.createElement('div');
+            notification.className = 'MessageBox Notice';
+            notification.innerHTML = '<p>[% Translate("License information has been copied to clipboard successfully!") | html %]</p>';
+            prependToMainBox(notification);
+            setTimeout(function() {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 3000);
+        }
+
+        function showErrorMessage() {
+            var notification = document.createElement('div');
+            notification.className = 'MessageBox Error';
+            notification.innerHTML = '<p>[% Translate("Failed to copy license information to clipboard. Please try again.") | html %]</p>';
+            prependToMainBox(notification);
+            setTimeout(function() {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 5000);
+        }
+
+        function fallbackCopyToClipboard(text) {
+            var textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showSuccessMessage();
+            } catch (err) {
+                showErrorMessage();
+            } finally {
+                document.body.removeChild(textArea);
+            }
+        }
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(licenseText)
+                .then(function() { showSuccessMessage(); })
+                .catch(function() { fallbackCopyToClipboard(licenseText); });
+        } else {
+            fallbackCopyToClipboard(licenseText);
+        }
+    });
+});
+[% END %]

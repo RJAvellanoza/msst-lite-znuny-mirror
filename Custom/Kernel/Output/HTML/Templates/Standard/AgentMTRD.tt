@@ -1,0 +1,264 @@
+# --
+# Copyright (C) 2025 MSST, https://msst.com/
+# --
+# This software comes with ABSOLUTELY NO WARRANTY.
+# --
+
+<div class="MainBox ARIARoleMain LayoutFixedSidebar SidebarFirst">
+
+    <!-- Side Navigation (Shared) -->
+    [% INCLUDE "AgentOperationalReportsSidebar.tt" ActiveSidebar = 'MTRD' %]
+
+    <div class="ContentColumn">
+
+        <!-- Section 1: Active Tickets Response Status -->
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Active Tickets Response Status") | html %]</h2>
+            </div>
+            <div class="Content">
+
+                <!-- Charts with Legend on right -->
+                <div style="display: flex; gap: 20px;">
+                    <!-- 4 Charts - 2x2 grid -->
+                    <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <!-- P1 Chart -->
+                        <div style="border: 1px solid #dee2e6; padding: 15px; text-align: center; border-radius: 4px;">
+                            <h3 style="margin-top: 0;">P1</h3>
+                            <svg id="mtrdChartP1"></svg>
+                        </div>
+
+                        <!-- P2 Chart -->
+                        <div style="border: 1px solid #dee2e6; padding: 15px; text-align: center; border-radius: 4px;">
+                            <h3 style="margin-top: 0;">P2</h3>
+                            <svg id="mtrdChartP2"></svg>
+                        </div>
+
+                        <!-- P3 Chart -->
+                        <div style="border: 1px solid #dee2e6; padding: 15px; text-align: center; border-radius: 4px;">
+                            <h3 style="margin-top: 0;">P3</h3>
+                            <svg id="mtrdChartP3"></svg>
+                        </div>
+
+                        <!-- P4 Chart -->
+                        <div style="border: 1px solid #dee2e6; padding: 15px; text-align: center; border-radius: 4px;">
+                            <h3 style="margin-top: 0;">P4</h3>
+                            <svg id="mtrdChartP4"></svg>
+                        </div>
+                    </div>
+
+                    <!-- Right: Color Code Legend -->
+                    <div style="flex: 0 0 180px;">
+                        <h4 style="margin-top: 0;">[% Translate("Legend") | html %]</h4>
+                        <div style="padding: 10px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px;">
+                            <div style="margin-bottom: 10px;">
+                                <div style="display: inline-block; width: 20px; height: 20px; background: #4285F4; margin-right: 8px; vertical-align: middle;"></div>
+                                <span>[% Translate("Responded") | html %]</span>
+                            </div>
+                            <div>
+                                <div style="display: inline-block; width: 20px; height: 20px; background: #EA4335; margin-right: 8px; vertical-align: middle;"></div>
+                                <span>[% Translate("Unresponded") | html %]</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Section 2: Breakdown -->
+        <div class="WidgetSimple" style="margin-top: 20px;">
+            <div class="Header">
+                <h2>[% Translate("Breakdown") | html %]</h2>
+            </div>
+            <div class="Content">
+                <table class="DataTable" style="width: auto; min-width: 500px;">
+                    <thead>
+                        <tr>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: left;">[% Translate("Response State") | html %]</th>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: center;">P1</th>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: center;">P2</th>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: center;">P3</th>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: center;">P4</th>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: center;">[% Translate("Total") | html %]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 10px 12px;">[% Translate("Responded") | html %]</td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P1-Critical;AssignedOnly=1;Source=AgentMTRD" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P1-Critical').Responded || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P2-High;AssignedOnly=1;Source=AgentMTRD" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P2-High').Responded || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P3-Medium;AssignedOnly=1;Source=AgentMTRD" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P3-Medium').Responded || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P4-Low;AssignedOnly=1;Source=AgentMTRD" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P4-Low').Responded || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;AssignedOnly=1;Source=AgentMTRD" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P1-Critical').Responded + Data.ByPriority.item('P2-High').Responded + Data.ByPriority.item('P3-Medium').Responded + Data.ByPriority.item('P4-Low').Responded %]</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px 12px;">[% Translate("Unresponded") | html %]</td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P1-Critical;Unresponded=1;Source=AgentMTRD" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P1-Critical').Unresponded || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P2-High;Unresponded=1;Source=AgentMTRD" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P2-High').Unresponded || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P3-Medium;Unresponded=1;Source=AgentMTRD" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P3-Medium').Unresponded || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P4-Low;Unresponded=1;Source=AgentMTRD" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P4-Low').Unresponded || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Unresponded=1;Source=AgentMTRD" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P1-Critical').Unresponded + Data.ByPriority.item('P2-High').Unresponded + Data.ByPriority.item('P3-Medium').Unresponded + Data.ByPriority.item('P4-Low').Unresponded %]</a>
+                            </td>
+                        </tr>
+                        <tr style="font-weight: bold; border-top: 2px solid #dee2e6;">
+                            <td style="padding: 10px 12px;">[% Translate("Grand Total") | html %]</td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P1-Critical;Source=AgentMTRD" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P1-Critical').Total || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P2-High;Source=AgentMTRD" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P2-High').Total || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P3-Medium;Source=AgentMTRD" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P3-Medium').Total || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P4-Low;Source=AgentMTRD" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P4-Low').Total || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Source=AgentMTRD" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P1-Critical').Total + Data.ByPriority.item('P2-High').Total + Data.ByPriority.item('P3-Medium').Total + Data.ByPriority.item('P4-Low').Total %]</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- D3.js Library -->
+<script src="[% Config("Frontend::WebPath") %]js/thirdparty/d3-3.5.7/d3.min.js"></script>
+<script type="text/javascript">
+(function() {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initMTRDCharts);
+    } else {
+        initMTRDCharts();
+    }
+
+    function initMTRDCharts() {
+        var chartData = {
+            'P1-Critical': {
+                responded: [% Data.ByPriority.item('P1-Critical').Responded || 0 %],
+                unresponded: [% Data.ByPriority.item('P1-Critical').Unresponded || 0 %],
+                respondedPct: [% Data.ByPriority.item('P1-Critical').RespondedPct || 0 %],
+                unrespondedPct: [% Data.ByPriority.item('P1-Critical').UnrespondedPct || 0 %]
+            },
+            'P2-High': {
+                responded: [% Data.ByPriority.item('P2-High').Responded || 0 %],
+                unresponded: [% Data.ByPriority.item('P2-High').Unresponded || 0 %],
+                respondedPct: [% Data.ByPriority.item('P2-High').RespondedPct || 0 %],
+                unrespondedPct: [% Data.ByPriority.item('P2-High').UnrespondedPct || 0 %]
+            },
+            'P3-Medium': {
+                responded: [% Data.ByPriority.item('P3-Medium').Responded || 0 %],
+                unresponded: [% Data.ByPriority.item('P3-Medium').Unresponded || 0 %],
+                respondedPct: [% Data.ByPriority.item('P3-Medium').RespondedPct || 0 %],
+                unrespondedPct: [% Data.ByPriority.item('P3-Medium').UnrespondedPct || 0 %]
+            },
+            'P4-Low': {
+                responded: [% Data.ByPriority.item('P4-Low').Responded || 0 %],
+                unresponded: [% Data.ByPriority.item('P4-Low').Unresponded || 0 %],
+                respondedPct: [% Data.ByPriority.item('P4-Low').RespondedPct || 0 %],
+                unrespondedPct: [% Data.ByPriority.item('P4-Low').UnrespondedPct || 0 %]
+            }
+        };
+
+        var charts = {
+            'P1-Critical': 'mtrdChartP1',
+            'P2-High': 'mtrdChartP2',
+            'P3-Medium': 'mtrdChartP3',
+            'P4-Low': 'mtrdChartP4'
+        };
+
+        Object.keys(charts).forEach(function(priority) {
+            var canvasId = charts[priority];
+            var data = chartData[priority];
+            createMTRDChart(canvasId, data);
+        });
+    }
+
+    function createMTRDChart(canvasId, data) {
+        var width = 180;
+        var height = 180;
+        var radius = Math.min(width, height) / 2;
+
+        var svg = d3.select('#' + canvasId)
+            .attr('width', width)
+            .attr('height', height)
+            .append('g')
+            .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')');
+
+        var arc = d3.svg.arc()
+            .outerRadius(radius - 10)
+            .innerRadius(0);
+
+        var pie = d3.layout.pie()
+            .sort(null)
+            .value(function(d) { return d.value; });
+
+        var total = data.responded + data.unresponded;
+        var pieData = [];
+
+        if (total > 0) {
+            if (data.responded > 0) {
+                pieData.push({ value: data.responded, color: '#4285F4', pct: data.respondedPct });
+            }
+            if (data.unresponded > 0) {
+                pieData.push({ value: data.unresponded, color: '#EA4335', pct: data.unrespondedPct });
+            }
+        } else {
+            pieData.push({ value: 0, color: '#e0e0e0', pct: 0 });
+        }
+
+        var g = svg.selectAll('.arc')
+            .data(pie(pieData))
+            .enter().append('g')
+            .attr('class', 'arc');
+
+        g.append('path')
+            .attr('d', arc)
+            .style('fill', function(d) { return d.data.color; });
+
+        // Add count label (top line)
+        g.append('text')
+            .attr('transform', function(d) { return 'translate(' + arc.centroid(d) + ')'; })
+            .attr('dy', '-0.2em')
+            .style('text-anchor', 'middle')
+            .style('fill', 'white')
+            .style('font-size', '14px')
+            .style('font-weight', 'bold')
+            .text(function(d) { return d.data.value > 0 ? d.data.value : ''; });
+
+        // Add percentage label (bottom line)
+        g.append('text')
+            .attr('transform', function(d) { return 'translate(' + arc.centroid(d) + ')'; })
+            .attr('dy', '1em')
+            .style('text-anchor', 'middle')
+            .style('fill', 'white')
+            .style('font-size', '11px')
+            .style('font-weight', 'bold')
+            .text(function(d) { return d.data.pct > 5 ? '(' + d.data.pct + '%)' : ''; });
+    }
+})();
+</script>

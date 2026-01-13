@@ -1,0 +1,200 @@
+# --
+# Copyright (C) 2025 MSST, https://msst.com/
+# --
+# This software comes with ABSOLUTELY NO WARRANTY. For details, see
+# the enclosed file COPYING for license information (GPL). If you
+# did not receive this file, see https://www.gnu.org/licenses/gpl-3.0.txt.
+# --
+
+<div class="MainBox ARIARoleMain LayoutFixedSidebar SidebarFirst ActionsSideBar">
+    <div class="SidebarColumn ActionsSideBarComp">
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Actions") | html %]</h2>
+            </div>
+            <div class="Content">
+                <ul class="ActionList">
+                    <li>
+                        <a href="[% Env("Baselink") %]Action=Admin" class="CallForAction Fullsize Center">
+                            <span><i class="fa fa-caret-left"></i>[% Translate("Go to overview") | html %]</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Note") | html %]</h2>
+            </div>
+            <div class="Content">
+                <p class="FieldExplanation">
+                    [% Translate("Configure the ServiceNow Easy MSI Escalation integration to synchronize incidents between LSMP and MSI CMSO ServiceNow.") | html %]
+                </p>
+                <p class="FieldExplanation">
+                    [% Translate("Credentials are stored in Config.pm and can only be changed by system administrators.") | html %]
+                </p>
+                <p class="FieldExplanation">
+                    [% Translate("Use the test connection button to verify API credentials and connectivity.") | html %]
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="ContentColumn">
+        <h1>[% Translate("Easy MSI Escalation ServiceNow Integration Configuration") | html %]</h1>
+
+        [% IF Data.Saved %]
+        <div class="MessageBox Notice">
+            <p>[% Translate("Configuration saved successfully.") | html %]</p>
+        </div>
+        [% END %]
+
+        [% IF Data.SaveError %]
+        <div class="MessageBox Error">
+            <p>[% Translate("Failed to save configuration. Please check the logs.") | html %]</p>
+        </div>
+        [% END %]
+
+
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("ServiceNow API Settings") | html %]</h2>
+            </div>
+            <div class="Content">
+                <form action="[% Env("CGIHandle") %]" method="post" enctype="multipart/form-data" name="compose" class="Validate PreventMultipleSubmits">
+                    <input type="hidden" name="Action" value="[% Env("Action") %]"/>
+                    <input type="hidden" name="Subaction" value="Save"/>
+                    <input type="hidden" name="[% Env("SessionName") %]" value="[% Env("SessionID") %]"/>
+
+                    <fieldset class="TableLike">
+                        <label for="Environment">[% Translate("ServiceNow Environment") | html %]:</label>
+                        <div class="Field">
+                            [% Data.EnvironmentStrg %]
+                            <p class="FieldExplanation">[% Translate("Select Reference (default) or Production ServiceNow environment. API credentials are configured for each environment.") | html %]</p>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("API Configuration") | html %]:</label>
+                        <div class="Field">
+                            <p class="FieldExplanation" style="color: #009900;">
+                                <i class="fa fa-check-circle"></i> <strong>[% Translate("Configured") | html %]</strong> - [% Translate("Using") | html %] [% IF Data.Environment == 'production' %][% Translate("Production") | html %][% ELSE %][% Translate("Reference") | html %][% END %] [% Translate("credentials") | html %]
+                            </p>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("API URL") | html %]:</label>
+                        <div class="Field">
+                            <p class="FieldExplanation">
+                                [% IF Data.APIURL %][% Data.APIURL | html %][% ELSE %]<span style="color: #ff6600;">[% Translate("Not set") | html %]</span>[% END %]
+                            </p>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("API Username") | html %]:</label>
+                        <div class="Field">
+                            <p class="FieldExplanation">
+                                [% IF Data.APIUser %][% Data.APIUser | html %][% ELSE %]<span style="color: #ff6600;">[% Translate("Not set") | html %]</span>[% END %]
+                            </p>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("API Password") | html %]:</label>
+                        <div class="Field">
+                            <p class="FieldExplanation">
+                                [% IF Data.APIPassword %]********[% ELSE %]<span style="color: #ff6600;">[% Translate("Not set") | html %]</span>[% END %]
+                            </p>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label for="Enabled">[% Translate("Enable Easy MSI Escalation") | html %]:</label>
+                        <div class="Field">
+                            <input type="checkbox" name="Enabled" id="Enabled" value="1" [% IF Data.Enabled %]checked="checked"[% END %]/>
+                            <p class="FieldExplanation">[% Translate("Enable or disable ServiceNow Easy MSI Escalation integration") | html %]</p>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <div class="Field SpacingTop">
+                            <button type="button" id="TestConnection" class="CallForAction">
+                                <span>[% Translate("Test Connection") | html %]</span>
+                            </button>
+                            <button type="submit" class="CallForAction Primary" value="[% Translate("Save") | html %]">
+                                <span>[% Translate("Save") | html %]</span>
+                            </button>
+                            [% Translate("or") | html %]
+                            <a href="[% Env("Baselink") %]Action=Admin">[% Translate("Cancel") | html %]</a>
+                        </div>
+                        <div class="Clear"></div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+
+        <div class="WidgetSimple" id="ConnectionTestResult" style="display:none;">
+            <div class="Header">
+                <h2>[% Translate("Connection Test Result") | html %]</h2>
+            </div>
+            <div class="Content">
+                <div id="TestResultMessage"></div>
+            </div>
+        </div>
+
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Easy MSI Escalation API Submission Logs") | html %]</h2>
+            </div>
+            <div class="Content">
+                <fieldset class="TableLike">
+                    <label>[% Translate("Time Filter") | html %]:</label>
+                    <div class="Field">
+                        <select id="LogFilter" name="LogFilter">
+                            <option value="24h">[% Translate("Last 24 Hours") | html %]</option>
+                            <option value="7d" selected="selected">[% Translate("Last 7 Days") | html %]</option>
+                            <option value="30d">[% Translate("Last 30 Days") | html %]</option>
+                            <option value="all">[% Translate("All Time") | html %]</option>
+                        </select>
+                        <button type="button" id="RefreshLogs" class="CallForAction" style="margin-left: 10px;">
+                            <span><i class="fa fa-refresh"></i> [% Translate("Refresh") | html %]</span>
+                        </button>
+                    </div>
+                    <div class="Clear"></div>
+                </fieldset>
+
+                <div id="APILogsTableContainer">
+                    <p class="Center"><i class="fa fa-spinner fa-spin"></i> [% Translate("Loading API logs...") | html %]</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="LogDetailModal" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; max-width: 1000px; background: white; border: 2px solid #ccc; box-shadow: 0 4px 20px rgba(0,0,0,0.3); z-index: 9999; max-height: 80vh; overflow: hidden;">
+            <div style="background: #f7f7f7; padding: 15px; border-bottom: 1px solid #ccc; position: relative;">
+                <h2 style="margin: 0; display: inline-block;">[% Translate("API Log Details") | html %]</h2>
+                <button type="button" id="CloseLogDetails" style="position: absolute; right: 15px; top: 15px; background: #dc3545; color: white; border: none; padding: 8px 15px; cursor: pointer; border-radius: 3px;" onclick="$('#LogDetailModal, #LogDetailBackdrop').hide(); return false;">
+                    <i class="fa fa-times"></i> [% Translate("Close") | html %]
+                </button>
+            </div>
+            <div style="padding: 20px; overflow-y: auto; max-height: calc(80vh - 80px);">
+                <h3 style="margin-top: 0;">[% Translate("Request Payload") | html %]</h3>
+                <pre id="LogDetailRequest" style="background: #f5f5f5; padding: 15px; overflow-x: auto; font-family: monospace; font-size: 11px; border: 1px solid #ddd; border-radius: 3px; white-space: pre-wrap; word-wrap: break-word;"></pre>
+
+                <h3 style="margin-top: 20px;">[% Translate("Response Payload") | html %]</h3>
+                <pre id="LogDetailResponse" style="background: #f5f5f5; padding: 15px; overflow-x: auto; font-family: monospace; font-size: 11px; border: 1px solid #ddd; border-radius: 3px; white-space: pre-wrap; word-wrap: break-word;"></pre>
+            </div>
+        </div>
+
+        <div id="LogDetailBackdrop" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9998;" onclick="$('#LogDetailModal, #LogDetailBackdrop').hide();"></div>
+    </div>
+</div>
+
+[% WRAPPER JSOnDocumentComplete %]
+<script type="text/javascript">//<![CDATA[
+    if (typeof Core !== 'undefined' &&
+        typeof Core.Agent !== 'undefined' &&
+        typeof Core.Agent.Admin !== 'undefined' &&
+        typeof Core.Agent.Admin.EBondingConfiguration !== 'undefined') {
+        Core.Agent.Admin.EBondingConfiguration.Init();
+    } else {
+        console.error('EBondingConfiguration JavaScript module not loaded');
+    }
+//]]></script>
+[% END %]

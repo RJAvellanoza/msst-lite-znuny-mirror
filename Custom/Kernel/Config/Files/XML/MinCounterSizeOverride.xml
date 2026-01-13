@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Config">
+    <Setting Name="Ticket::NumberGenerator::MinCounterSize" Required="1" Valid="1">
+        <Description Translatable="1">Sets the minimal ticket counter size if "AutoIncrement" was selected as TicketNumberGenerator. Default is 5, this means the counter starts from 10000.</Description>
+        <Navigation>Core::Ticket</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="^[0-9]{1,2}$">10</Item>
+        </Value>
+    </Setting>
+</otrs_config>

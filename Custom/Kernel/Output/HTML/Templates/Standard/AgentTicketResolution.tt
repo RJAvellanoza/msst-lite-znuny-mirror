@@ -1,0 +1,264 @@
+# --
+# Copyright (C) 2025 MSST, https://msst.com/
+# --
+# This software comes with ABSOLUTELY NO WARRANTY.
+# --
+
+<div class="MainBox ARIARoleMain LayoutFixedSidebar SidebarFirst">
+
+    <!-- Side Navigation (Shared) -->
+    [% INCLUDE "AgentOperationalReportsSidebar.tt" ActiveSidebar = 'TicketResolution' %]
+
+    <div class="ContentColumn">
+
+        <!-- Section 1: Ticket Resolution Status -->
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Ticket Resolution Status") | html %]</h2>
+            </div>
+            <div class="Content">
+
+                <!-- Charts with Legend on right -->
+                <div style="display: flex; gap: 20px;">
+                    <!-- 4 Charts - 2x2 grid -->
+                    <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <!-- P1 Chart -->
+                        <div style="border: 1px solid #dee2e6; padding: 15px; text-align: center; border-radius: 4px;">
+                            <h3 style="margin-top: 0;">P1</h3>
+                            <svg id="mttrChartP1"></svg>
+                        </div>
+
+                        <!-- P2 Chart -->
+                        <div style="border: 1px solid #dee2e6; padding: 15px; text-align: center; border-radius: 4px;">
+                            <h3 style="margin-top: 0;">P2</h3>
+                            <svg id="mttrChartP2"></svg>
+                        </div>
+
+                        <!-- P3 Chart -->
+                        <div style="border: 1px solid #dee2e6; padding: 15px; text-align: center; border-radius: 4px;">
+                            <h3 style="margin-top: 0;">P3</h3>
+                            <svg id="mttrChartP3"></svg>
+                        </div>
+
+                        <!-- P4 Chart -->
+                        <div style="border: 1px solid #dee2e6; padding: 15px; text-align: center; border-radius: 4px;">
+                            <h3 style="margin-top: 0;">P4</h3>
+                            <svg id="mttrChartP4"></svg>
+                        </div>
+                    </div>
+
+                    <!-- Right: Color Code Legend -->
+                    <div style="flex: 0 0 180px;">
+                        <h4 style="margin-top: 0;">[% Translate("Legend") | html %]</h4>
+                        <div style="padding: 10px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px;">
+                            <div style="margin-bottom: 10px;">
+                                <div style="display: inline-block; width: 20px; height: 20px; background: #28a745; margin-right: 8px; vertical-align: middle;"></div>
+                                <span>[% Translate("Resolved") | html %]</span>
+                            </div>
+                            <div>
+                                <div style="display: inline-block; width: 20px; height: 20px; background: #ffc107; margin-right: 8px; vertical-align: middle;"></div>
+                                <span>[% Translate("Active") | html %]</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Section 2: Breakdown -->
+        <div class="WidgetSimple" style="margin-top: 20px;">
+            <div class="Header">
+                <h2>[% Translate("Breakdown") | html %]</h2>
+            </div>
+            <div class="Content">
+                <table class="DataTable" style="width: auto; min-width: 500px;">
+                    <thead>
+                        <tr>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: left;">[% Translate("Resolution State") | html %]</th>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: center;">P1</th>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: center;">P2</th>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: center;">P3</th>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: center;">P4</th>
+                            <th style="background: #f8f9fa; padding: 12px; text-align: center;">[% Translate("Total") | html %]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 10px 12px;">[% Translate("Resolved") | html %]</td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateIDs=[% Data.ClosedStateIDs %];PriorityIDs=[% Data.ByPriority.item('P1-Critical').PriorityID %];Source=AgentTicketResolution" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P1-Critical').Resolved || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateIDs=[% Data.ClosedStateIDs %];PriorityIDs=[% Data.ByPriority.item('P2-High').PriorityID %];Source=AgentTicketResolution" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P2-High').Resolved || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateIDs=[% Data.ClosedStateIDs %];PriorityIDs=[% Data.ByPriority.item('P3-Medium').PriorityID %];Source=AgentTicketResolution" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P3-Medium').Resolved || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateIDs=[% Data.ClosedStateIDs %];PriorityIDs=[% Data.ByPriority.item('P4-Low').PriorityID %];Source=AgentTicketResolution" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P4-Low').Resolved || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateIDs=[% Data.ClosedStateIDs %];Source=AgentTicketResolution" style="color: #007bff; text-decoration: none;">[% Data.TotalResolved %]</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px 12px;">[% Translate("Active") | html %]</td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateIDs=[% Data.OpenStateIDs %];PriorityIDs=[% Data.ByPriority.item('P1-Critical').PriorityID %];Source=AgentTicketResolution" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P1-Critical').Active || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateIDs=[% Data.OpenStateIDs %];PriorityIDs=[% Data.ByPriority.item('P2-High').PriorityID %];Source=AgentTicketResolution" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P2-High').Active || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateIDs=[% Data.OpenStateIDs %];PriorityIDs=[% Data.ByPriority.item('P3-Medium').PriorityID %];Source=AgentTicketResolution" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P3-Medium').Active || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateIDs=[% Data.OpenStateIDs %];PriorityIDs=[% Data.ByPriority.item('P4-Low').PriorityID %];Source=AgentTicketResolution" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P4-Low').Active || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateIDs=[% Data.OpenStateIDs %];Source=AgentTicketResolution" style="color: #007bff; text-decoration: none;">[% Data.TotalActive %]</a>
+                            </td>
+                        </tr>
+                        <tr style="font-weight: bold; border-top: 2px solid #dee2e6;">
+                            <td style="padding: 10px 12px;">[% Translate("Grand Total") | html %]</td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateIDs=[% Data.AllStateIDs %];PriorityIDs=[% Data.ByPriority.item('P1-Critical').PriorityID %];Source=AgentTicketResolution" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P1-Critical').Total || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateIDs=[% Data.AllStateIDs %];PriorityIDs=[% Data.ByPriority.item('P2-High').PriorityID %];Source=AgentTicketResolution" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P2-High').Total || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateIDs=[% Data.AllStateIDs %];PriorityIDs=[% Data.ByPriority.item('P3-Medium').PriorityID %];Source=AgentTicketResolution" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P3-Medium').Total || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateIDs=[% Data.AllStateIDs %];PriorityIDs=[% Data.ByPriority.item('P4-Low').PriorityID %];Source=AgentTicketResolution" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P4-Low').Total || 0 %]</a>
+                            </td>
+                            <td style="padding: 10px 12px; text-align: center;">
+                                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateIDs=[% Data.AllStateIDs %];Source=AgentTicketResolution" style="color: #007bff; text-decoration: none;">[% Data.GrandTotal %]</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- D3.js Library -->
+<script src="[% Config("Frontend::WebPath") %]js/thirdparty/d3-3.5.7/d3.min.js"></script>
+<script type="text/javascript">
+(function() {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initMTTRCharts);
+    } else {
+        initMTTRCharts();
+    }
+
+    function initMTTRCharts() {
+        var chartData = {
+            'P1-Critical': {
+                resolved: [% Data.ByPriority.item('P1-Critical').Resolved || 0 %],
+                active: [% Data.ByPriority.item('P1-Critical').Active || 0 %],
+                resolvedPct: [% Data.ByPriority.item('P1-Critical').ResolvedPct || 0 %],
+                activePct: [% Data.ByPriority.item('P1-Critical').ActivePct || 0 %]
+            },
+            'P2-High': {
+                resolved: [% Data.ByPriority.item('P2-High').Resolved || 0 %],
+                active: [% Data.ByPriority.item('P2-High').Active || 0 %],
+                resolvedPct: [% Data.ByPriority.item('P2-High').ResolvedPct || 0 %],
+                activePct: [% Data.ByPriority.item('P2-High').ActivePct || 0 %]
+            },
+            'P3-Medium': {
+                resolved: [% Data.ByPriority.item('P3-Medium').Resolved || 0 %],
+                active: [% Data.ByPriority.item('P3-Medium').Active || 0 %],
+                resolvedPct: [% Data.ByPriority.item('P3-Medium').ResolvedPct || 0 %],
+                activePct: [% Data.ByPriority.item('P3-Medium').ActivePct || 0 %]
+            },
+            'P4-Low': {
+                resolved: [% Data.ByPriority.item('P4-Low').Resolved || 0 %],
+                active: [% Data.ByPriority.item('P4-Low').Active || 0 %],
+                resolvedPct: [% Data.ByPriority.item('P4-Low').ResolvedPct || 0 %],
+                activePct: [% Data.ByPriority.item('P4-Low').ActivePct || 0 %]
+            }
+        };
+
+        var charts = {
+            'P1-Critical': 'mttrChartP1',
+            'P2-High': 'mttrChartP2',
+            'P3-Medium': 'mttrChartP3',
+            'P4-Low': 'mttrChartP4'
+        };
+
+        Object.keys(charts).forEach(function(priority) {
+            var canvasId = charts[priority];
+            var data = chartData[priority];
+            createMTTRChart(canvasId, data);
+        });
+    }
+
+    function createMTTRChart(canvasId, data) {
+        var width = 180;
+        var height = 180;
+        var radius = Math.min(width, height) / 2;
+
+        var svg = d3.select('#' + canvasId)
+            .attr('width', width)
+            .attr('height', height)
+            .append('g')
+            .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')');
+
+        var arc = d3.svg.arc()
+            .outerRadius(radius - 10)
+            .innerRadius(0);
+
+        var pie = d3.layout.pie()
+            .sort(null)
+            .value(function(d) { return d.value; });
+
+        var total = data.resolved + data.active;
+        var pieData = [];
+
+        if (total > 0) {
+            if (data.resolved > 0) {
+                pieData.push({ value: data.resolved, color: '#28a745', pct: data.resolvedPct });
+            }
+            if (data.active > 0) {
+                pieData.push({ value: data.active, color: '#ffc107', pct: data.activePct });
+            }
+        } else {
+            pieData.push({ value: 0, color: '#e0e0e0', pct: 0 });
+        }
+
+        var g = svg.selectAll('.arc')
+            .data(pie(pieData))
+            .enter().append('g')
+            .attr('class', 'arc');
+
+        g.append('path')
+            .attr('d', arc)
+            .style('fill', function(d) { return d.data.color; });
+
+        // Add count label (top line)
+        g.append('text')
+            .attr('transform', function(d) { return 'translate(' + arc.centroid(d) + ')'; })
+            .attr('dy', '-0.2em')
+            .style('text-anchor', 'middle')
+            .style('fill', 'white')
+            .style('font-size', '14px')
+            .style('font-weight', 'bold')
+            .text(function(d) { return d.data.value > 0 ? d.data.value : ''; });
+
+        // Add percentage label (bottom line)
+        g.append('text')
+            .attr('transform', function(d) { return 'translate(' + arc.centroid(d) + ')'; })
+            .attr('dy', '1em')
+            .style('text-anchor', 'middle')
+            .style('fill', 'white')
+            .style('font-size', '11px')
+            .style('font-weight', 'bold')
+            .text(function(d) { return d.data.pct > 5 ? '(' + d.data.pct + '%)' : ''; });
+    }
+})();
+</script>

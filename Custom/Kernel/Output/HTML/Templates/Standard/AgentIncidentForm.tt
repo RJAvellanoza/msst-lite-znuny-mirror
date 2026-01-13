@@ -1,0 +1,1268 @@
+# --
+# Copyright (C) 2024 Athena Technologies LLC, https://athena.us
+# --
+# This software comes with ABSOLUTELY NO WARRANTY. For details, see
+# the enclosed file COPYING for license information (GPL). If you
+# did not receive this file, see https://www.gnu.org/licenses/gpl-3.0.txt.
+# --
+
+[% RenderBlockStart("IncidentFormCSS") %]
+<link rel="stylesheet" type="text/css" href="[% Config("Frontend::WebPath") %]skins/Agent/default/css/Core.Agent.IncidentForm.css" />
+[% RenderBlockEnd("IncidentFormCSS") %]
+
+<div class="MainBox ARIARoleMain FormScreen">
+    <h1>
+[% IF Data.Action == 'Create' %]
+        [% Translate("Create New Incident") | html %]
+[% ELSIF Data.Action == 'Update' %]
+        [% Translate("Update Incident") | html %]: [% Data.IncidentNumber | html %]
+[% ELSE %]
+        [% Translate("View Incident") | html %]: [% Data.IncidentNumber | html %]
+[% END %]
+    </h1>
+    <p class="AsteriskExplanation">[% Translate("All fields marked with an asterisk (*) are mandatory.") | html %]</p>
+
+    <div class="ContentColumn">
+    
+[% IF Data.ReadOnly %]
+        <div class="MessageBox Notice">
+            <p>[% Translate("This incident is in a closed or cancelled state and cannot be modified.") | html %]</p>
+        </div>
+[% END %]
+    
+[% IF Data.ValidationError %]
+        <div class="MessageBox Error">
+            <p>[% Translate("Validation failed! Please check the following fields:") | html %]</p>
+            <ul>
+[% IF Data.SourceInvalid %]
+                <li>[% Translate("Source is required") | html %]</li>
+[% END %]
+[% IF Data.PriorityInvalid %]
+                <li>[% Translate("Priority is required") | html %]</li>
+[% END %]
+[% IF Data.ShortDescriptionInvalid %]
+                <li>[% Translate("Short Description is required") | html %]</li>
+[% END %]
+[% IF Data.ProductCat1Invalid %]
+                <li>[% Translate("Product Category 1 is required") | html %]</li>
+[% END %]
+[% IF Data.ProductCat2Invalid %]
+                <li>[% Translate("Product Category 2 is required") | html %]</li>
+[% END %]
+[% IF Data.OperationalCat1Invalid %]
+                <li>[% Translate("Operational Category Tier 1 is required") | html %]</li>
+[% END %]
+[% IF Data.OperationalCat2Invalid %]
+                <li>[% Translate("Operational Category Tier 2 is required") | html %]</li>
+[% END %]
+[% IF Data.AssignedToInvalid %]
+                <li>[% Translate("Assigned To is required for this state") | html %]</li>
+[% END %]
+[% IF Data.ResolutionCat1Invalid %]
+                <li>[% Translate("Resolution Category Tier 1 is required when resolving") | html %]</li>
+[% END %]
+[% IF Data.ResolutionCat2Invalid %]
+                <li>[% Translate("Resolution Category Tier 2 is required when resolving") | html %]</li>
+[% END %]
+[% IF Data.ResolutionNotesInvalid %]
+                <li>[% Translate("Resolution Notes are required when resolving") | html %]</li>
+[% END %]
+            </ul>
+        </div>
+[% END %]
+            
+        
+        <form action="[% Env("CGIHandle") %]?Action=AgentIncidentForm[% IF Data.Action == 'Update' %];Subaction=Update[% END %][% IF Data.IncidentNumber %];IncidentNumber=[% Data.IncidentNumber | uri %][% END %][% IF Data.IncidentID && !Data.IncidentNumber %];IncidentID=[% Data.IncidentID | uri %][% END %]" method="post" enctype="multipart/form-data" name="compose" id="IncidentForm" class="Validate">
+            <input type="hidden" name="Action" value="AgentIncidentForm"/>
+[% IF Data.Action == 'Update' || Data.IncidentNumber || Data.IncidentID %]
+            <input type="hidden" name="Subaction" value="UpdateAction"/>
+[% ELSE %]
+            <input type="hidden" name="Subaction" value="CreateAction"/>
+[% END %]
+[% IF Data.IncidentNumber %]
+            <input type="hidden" name="IncidentNumber" value="[% Data.IncidentNumber | html %]"/>
+[% END %]
+[% IF Data.IncidentID %]
+            <input type="hidden" name="IncidentID" value="[% Data.IncidentID | html %]"/>
+[% END %]
+[% IF Data.TicketID %]
+            <input type="hidden" name="TicketID" value="[% Data.TicketID | html %]"/>
+[% END %]
+            <input type="hidden" name="FormID" value="[% Data.FormID | html %]"/>
+
+            <!-- Basic Information -->
+            <div class="WidgetSimple">
+                <div class="Header">
+                    <h2>[% Translate("Basic Information") | html %]</h2>
+                </div>
+                <div class="Content">
+                    <fieldset class="TableLike">
+                        <label for="IncidentNumber">[% Translate("Incident Number") | html %]:</label>
+                        <div class="Field">
+[% IF Data.IncidentNumber %]
+                            <input type="text" name="IncidentNumber" id="IncidentNumber" value="[% Data.IncidentNumber | html %]" class="W50pc" readonly="readonly"/>
+[% ELSE %]
+                            <span class="FieldExplanation">[% Translate("Will be generated automatically") | html %]</span>
+[% END %]
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label for="Source">[% Translate("Source") | html %]:</label>
+                        <div class="Field">
+                            <input type="text" name="Source" id="Source" value="[% Data.Source || 'Direct Input' | html %]" class="W25pc" readonly="readonly" style="background-color: #f0f0f0;"/>
+                            <p class="FieldExplanation">[% Translate("Source is automatically determined based on how the incident was created") | html %]</p>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label class="Mandatory" for="PriorityID"><span class="Marker">*</span> [% Translate("Priority") | html %]:</label>
+                        <div class="Field">
+                            [% Data.PriorityStrg %]
+                            <div id="PriorityIDError" class="TooltipErrorMessage"><p>[% Translate("This field is required.") | html %]</p></div>
+                            <div id="PriorityIDServerError" class="TooltipErrorMessage"><p>[% Translate("This field is required.") | html %]</p></div>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label class="Mandatory" for="State"><span class="Marker">*</span> [% Translate("State") | html %]:</label>
+                        <div class="Field">
+                            [% Data.StateStrg %]
+                            <div id="StateError" class="TooltipErrorMessage"><p>[% Translate("This field is required.") | html %]</p></div>
+                            <div id="StateServerError" class="TooltipErrorMessage"><p>[% Translate("This field is required.") | html %]</p></div>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label for="CI">[% Translate("Configuration Item") | html %]:</label>
+                        <div class="Field">
+                            <input type="text" name="CI" id="CI" value="[% Data.CI | html %]" class="W50pc"/>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label for="AssignmentQueue">[% Translate("Assignment Queue") | html %]:</label>
+                        <div class="Field">
+                            <input type="text" name="AssignmentQueue" id="AssignmentQueue" value="Support Group" class="W25pc" readonly="readonly" style="background-color: #f0f0f0;"/>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label for="AssignedTo">[% Translate("Assigned To") | html %]:</label>
+                        <div class="Field">
+                            [% Data.AssignedToStrg %]
+                            <div id="AssignedToError" class="TooltipErrorMessage"><p>[% Translate("This field is required when the state requires an assignee.") | html %]</p></div>
+                            <div id="AssignedToServerError" class="TooltipErrorMessage"><p>[% Translate("This field is required when the state requires an assignee.") | html %]</p></div>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label class="Mandatory" for="ShortDescription"><span class="Marker">*</span> [% Translate("Short Description") | html %]:</label>
+                        <div class="Field">
+                            <input type="text" name="ShortDescription" id="ShortDescription" value="[% Data.ShortDescription | html %]" class="W75pc Validate_Required [% Data.ShortDescriptionInvalid | html %]" maxlength="160"/>
+                            <div id="ShortDescriptionError" class="TooltipErrorMessage"><p>[% Translate("This field is required.") | html %]</p></div>
+                            <div id="ShortDescriptionServerError" class="TooltipErrorMessage"><p>[% Translate("This field is required.") | html %]</p></div>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label for="Description">[% Translate("Description") | html %]:</label>
+                        <div id="RichTextField" class="RichTextField">
+                            <textarea name="Description" id="Description" class="RichText" rows="15" cols="[% Config("Ticket::Frontend::TextAreaNote") | html %]">[% Data.Description | html %]</textarea>
+                        </div>
+                        <div class="Clear"></div>
+                    </fieldset>
+                </div>
+            </div>
+
+            <!-- Categories -->
+            <div class="WidgetSimple">
+                <div class="Header">
+                    <div class="WidgetAction Toggle">
+                        <a href="#" title="[% Translate("Show or hide the content") | html %]"><i class="fa fa-caret-right"></i><i class="fa fa-caret-down"></i></a>
+                    </div>
+                    <h2>[% Translate("Categories") | html %]</h2>
+                </div>
+                <div class="Content">
+                    <div class="CategoryColumnsLayout">
+                        <!-- Product Categories Column -->
+                        <div class="CategoryColumn">
+                            <fieldset class="TableLike">
+                                <label class="Mandatory" for="ProductCat1"><span class="Marker">*</span> [% Translate("Product Category 1") | html %]:</label>
+                                <div class="Field">
+                                    [% Data.ProductCat1Strg %]
+                                    <div id="ProductCat1Error" class="TooltipErrorMessage"><p>[% Translate("This field is required.") | html %]</p></div>
+                                    <div id="ProductCat1ServerError" class="TooltipErrorMessage"><p>[% Translate("This field is required.") | html %]</p></div>
+                                </div>
+                                <div class="Clear"></div>
+
+                                <label class="Mandatory" for="ProductCat2"><span class="Marker">*</span> [% Translate("Product Category 2") | html %]:</label>
+                                <div class="Field">
+                                    [% Data.ProductCat2Strg %]
+                                    <div id="ProductCat2Error" class="TooltipErrorMessage"><p>[% Translate("This field is required.") | html %]</p></div>
+                                    <div id="ProductCat2ServerError" class="TooltipErrorMessage"><p>[% Translate("This field is required.") | html %]</p></div>
+                                </div>
+                                <div class="Clear"></div>
+
+                                <label for="ProductCat3">[% Translate("Product Category 3") | html %]:</label>
+                                <div class="Field">
+                                    [% Data.ProductCat3Strg %]
+                                </div>
+                                <div class="Clear"></div>
+
+                                <label for="ProductCat4">[% Translate("Product Category 4") | html %]:</label>
+                                <div class="Field">
+                                    [% Data.ProductCat4Strg %]
+                                </div>
+                                <div class="Clear"></div>
+                            </fieldset>
+                        </div>
+
+                        <!-- Operational Categories Column -->
+                        <div class="CategoryColumn">
+                            <fieldset class="TableLike">
+                                <label class="Mandatory" for="OperationalCat1"><span class="Marker">*</span> [% Translate("Operational Category Tier 1") | html %]:</label>
+                                <div class="Field">
+                                    [% Data.OperationalCat1Strg %]
+                                    <div id="OperationalCat1Error" class="TooltipErrorMessage"><p>[% Translate("This field is required.") | html %]</p></div>
+                                    <div id="OperationalCat1ServerError" class="TooltipErrorMessage"><p>[% Translate("This field is required.") | html %]</p></div>
+                                </div>
+                                <div class="Clear"></div>
+
+                                <label class="Mandatory" for="OperationalCat2"><span class="Marker">*</span> [% Translate("Operational Category Tier 2") | html %]:</label>
+                                <div class="Field">
+                                    [% Data.OperationalCat2Strg %]
+                                    <div id="OperationalCat2Error" class="TooltipErrorMessage"><p>[% Translate("This field is required.") | html %]</p></div>
+                                    <div id="OperationalCat2ServerError" class="TooltipErrorMessage"><p>[% Translate("This field is required.") | html %]</p></div>
+                                </div>
+                                <div class="Clear"></div>
+
+                                <label for="OperationalCat3">[% Translate("Operational Category Tier 3") | html %]:</label>
+                                <div class="Field">
+                                    [% Data.OperationalCat3Strg %]
+                                </div>
+                                <div class="Clear"></div>
+                            </fieldset>
+                        </div>
+                    </div>
+                    <div class="Clear"></div>
+                </div>
+            </div>
+
+            <!-- Work Notes -->
+            <div class="WidgetSimple Collapsed">
+                <div class="Header">
+                    <div class="WidgetAction Toggle">
+                        <a href="#" title="[% Translate("Show or hide the content") | html %]"><i class="fa fa-caret-right"></i><i class="fa fa-caret-down"></i></a>
+                    </div>
+                    <h2>[% Translate("Work Notes") | html %]</h2>
+                </div>
+                <div class="Content">
+                    <fieldset class="TableLike">
+                        <h3>[% Translate("Add Work Note") | html %]</h3>
+                        <label for="WorkNoteText">[% Translate("Work Note") | html %]:</label>
+                        <div class="Field RichTextField">
+                            <textarea name="WorkNoteText" id="WorkNoteText" class="RichText W75pc" rows="5"></textarea>
+                        </div>
+                        <div class="Clear"></div>
+                        
+                        <!-- Include in MSI is now always enabled but hidden from UI -->
+                        <input type="hidden" name="IncludeInMSI" id="IncludeInMSI" value="1"/>
+                        
+
+[% IF Data.CombinedHistory && Data.CombinedHistory.size() %]
+                        <div class="WorkNotesHistory">
+                            <h3>[% Translate("History") | html %]</h3>
+[% RenderBlockStart("CombinedHistoryRow") %]
+                            <div class="HistoryRow[% IF Data.IsWorkNote %] WorkNote[% ELSIF Data.IsIncidentUpdate %] IncidentUpdate[% END %]">
+                                <div class="HistoryHeader">
+                                    <div class="HistoryHeaderLeft">
+                                        <span class="HistoryUser">[% Data.CreatedByName | html %]</span>
+                                        <span class="HistoryTime">[% Data.Created | Localize("TimeLong") %]</span>
+                                    </div>
+                                    <div class="HistoryHeaderRight">
+[% IF Data.IsWorkNote %]
+                                        <span class="HistoryType">Work Note</span>
+                                        [% IF Data.IncludeInMSI %]<span class="HistoryMSI"><span class="Flag" title="[% Translate("Included in MSI") | html %]">MSI</span></span>[% END %]
+[% ELSIF Data.IsIncidentUpdate %]
+                                        <span class="HistoryType">[% Data.HistoryType | html %]</span>
+[% END %]
+                                    </div>
+                                </div>
+                                <div class="HistoryContent">
+[% IF Data.IsWorkNote %]
+    [% IF Data.NoteHTML %]
+                                    [% Data.NoteHTML %]
+    [% ELSE %]
+                                    [% Data.Note | html %]
+    [% END %]
+[% ELSIF Data.IsIncidentUpdate %]
+    [%  # Map state names to display names for incident updates
+        SET StateMap = {
+            'new'                => 'New',
+            'assigned'           => 'Assigned', 
+            'in progress'        => 'In Progress',
+            'pending reminder'   => 'Pending',
+            'resolved'           => 'Resolved',
+            'closed successful'  => 'Closed',
+            'cancelled'          => 'Cancelled'
+        };
+        
+        # Check if this is a state update and replace state names
+        SET HistoryText = Data.Name;
+        IF Data.HistoryType == 'StateUpdate' && HistoryText;
+            FOREACH OldState IN StateMap.keys;
+                SET NewState = StateMap.$OldState;
+                SET HistoryText = HistoryText.replace("'$OldState'", "'$NewState'");
+            END;
+        END;
+    %]
+                                    [% HistoryText | html %]
+[% END %]
+                                </div>
+                            </div>
+[% RenderBlockEnd("CombinedHistoryRow") %]
+                        </div>
+[% ELSE %]
+                        <p class="SpacingTop">[% Translate("No history available.") | html %]</p>
+[% END %]
+                    </fieldset>
+                </div>
+            </div>
+
+            <!-- System Information / Dates -->
+            <div class="WidgetSimple Collapsed">
+                <div class="Header">
+                    <div class="WidgetAction Toggle">
+                        <a href="#" title="[% Translate("Show or hide the content") | html %]"><i class="fa fa-caret-right"></i><i class="fa fa-caret-down"></i></a>
+                    </div>
+                    <h2>[% Translate("System/Date Information") | html %]</h2>
+                </div>
+                <div class="Content">
+                    <fieldset class="TableLike">
+                        <label>[% Translate("Opened Date") | html %]:</label>
+                        <div class="Field">
+                            <span>[% IF Data.Opened %][% Data.Opened | Localize("TimeLong") %][% ELSE %]-[% END %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("Opened By") | html %]:</label>
+                        <div class="Field">
+                            <span>[% Data.OpenedBy || '-' | html %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("Last Updated Date") | html %]:</label>
+                        <div class="Field">
+                            <span>[% IF Data.Updated %][% Data.Updated | Localize("TimeLong") %][% ELSE %]-[% END %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("Last Updated By") | html %]:</label>
+                        <div class="Field">
+                            <span>[% Data.UpdatedBy || '-' | html %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("Assigned Date") | html %]:</label>
+                        <div class="Field">
+                            <span>[% IF Data.AssignedDate %][% Data.AssignedDate | Localize("TimeLong") %][% ELSE %]-[% END %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("Resolution Date") | html %]:</label>
+                        <div class="Field">
+                            <span>[% IF Data.ResolutionDate %][% Data.ResolutionDate | Localize("TimeLong") %][% ELSE %]-[% END %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("Closed/Cancelled Date") | html %]:</label>
+                        <div class="Field">
+                            <span>[% IF Data.ClosedDate %][% Data.ClosedDate | Localize("TimeLong") %][% ELSE %]-[% END %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("Final Status") | html %]:</label>
+                        <div class="Field">
+                            <span>[% Data.FinalStatus || '-' | html %]</span>
+                        </div>
+                        <div class="Clear"></div>
+                    </fieldset>
+                </div>
+            </div>
+
+            <div class="WidgetSimple Collapsed">
+                <div class="Header">
+                    <div class="WidgetAction Toggle">
+                        <a href="#" title="[% Translate("Show or hide the content") | html %]"><i class="fa fa-caret-right"></i><i class="fa fa-caret-down"></i></a>
+                    </div>
+                    <h2>[% Translate("Resolution Details") | html %]</h2>
+                </div>
+                <div class="Content">
+                    <fieldset class="TableLike">
+                        <label for="ResolutionCat1">[% Translate("Resolution Category Tier 1") | html %]:</label>
+                        <div class="Field">
+                            [% Data.ResolutionCat1Strg %]
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label for="ResolutionCat2">[% Translate("Resolution Category Tier 2") | html %]:</label>
+                        <div class="Field">
+                            [% Data.ResolutionCat2Strg %]
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label for="ResolutionCat3">[% Translate("Resolution Category Tier 3") | html %]:</label>
+                        <div class="Field">
+                            [% Data.ResolutionCat3Strg %]
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label for="ResolutionNotes">[% Translate("Resolution Notes") | html %]:</label>
+                        <div class="Field RichTextField">
+                            <textarea name="ResolutionNotes" id="ResolutionNotes" class="RichText W75pc" rows="10">[% Data.ResolutionNotes | html %]</textarea>
+                        </div>
+                        <div class="Clear"></div>
+                    </fieldset>
+                </div>
+            </div>
+
+            <!-- Monitoring -->
+[% IF Data.Source && Data.Source == 'Event Monitoring' %]
+            <div class="WidgetSimple Collapsed">
+                <div class="Header">
+                    <div class="WidgetAction Toggle">
+                        <a href="#" title="[% Translate("Show or hide the content") | html %]"><i class="fa fa-caret-right"></i><i class="fa fa-caret-down"></i></a>
+                    </div>
+                    <h2>[% Translate("Monitoring") | html %]</h2>
+                </div>
+                <div class="Content">
+                    <fieldset class="TableLike">
+                        <label>[% Translate("Alarm ID") | html %]:</label>
+                        <div class="Field">
+                            <span>[% Data.AlarmID || '-' | html %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("Event ID") | html %]:</label>
+                        <div class="Field">
+                            <span>[% Data.EventID || '-' | html %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("Event Site") | html %]:</label>
+                        <div class="Field">
+                            <span>[% Data.EventSite || '-' | html %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("Source Device") | html %]:</label>
+                        <div class="Field">
+                            <span>[% Data.SourceDevice || '-' | html %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("CI Device Type") | html %]:</label>
+                        <div class="Field">
+                            <span>[% Data.CIDeviceType || '-' | html %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("Event Message") | html %]:</label>
+                        <div class="Field">
+                            <span>[% Data.EventMessage || '-' | html %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("Event Begin Time") | html %]:</label>
+                        <div class="Field">
+                            <span>[% IF Data.EventBeginTime %][% Data.EventBeginTime | Localize("TimeLong") %][% ELSE %]-[% END %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("Event Detect Time") | html %]:</label>
+                        <div class="Field">
+                            <span>[% IF Data.EventDetectTime %][% Data.EventDetectTime | Localize("TimeLong") %][% ELSE %]-[% END %]</span>
+                        </div>
+                        <div class="Clear"></div>
+                    </fieldset>
+                </div>
+            </div>
+[% END %]
+
+[% IF Data.EBondingEnabled == 1 && Data.IncidentID && Data.Action != 'Create' %]
+            <!-- Easy MSI Escalation -->
+            <div class="WidgetSimple Collapsed">
+                <div class="Header">
+                    <div class="WidgetAction Toggle">
+                        <a href="#" title="[% Translate("Show or hide the content") | html %]"><i class="fa fa-caret-right"></i><i class="fa fa-caret-down"></i></a>
+                    </div>
+                    <h2>[% Translate("Easy MSI Escalation") | html %]</h2>
+                </div>
+                <div class="Content">
+                    <fieldset class="TableLike">
+                        <label>[% Translate("MSI Ticket Number") | html %]:</label>
+                        <div class="Field">
+                            <span>[% Data.MSITicketNumber || '-' | html %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <!-- Easy MSI Escalation Submission -->
+                        <label>[% Translate("Submit to MSI CMSO") | html %]:</label>
+                        <div class="Field">
+    [% IF Data.MSITicketNumber %]
+                            <div class="MessageBox Success">
+                                <p><i class="fa fa-check-circle"></i> [% Translate("Already submitted to MSI CMSO ServiceNow") | html %]: <strong>[% Data.MSITicketNumber | html %]</strong>[% IF Data.MSITicketEbondLastUpdateTime %] (Last sync: [% Data.MSITicketEbondLastUpdateTime | Localize("TimeLong") %])[% END %]</p>
+                            </div>
+                            <button type="button" id="SyncFromServiceNowButton" class="CallForAction" style="margin-top: 10px;"[% IF Data.SyncInCooldown %] disabled title="Next sync can only be triggered after 10 minutes from last update (wait [% Data.SyncCooldownMinutes %] more minute(s))"[% END %]>
+                                <span><i class="fa fa-refresh"></i> [% Translate("Sync from MSI ServiceNow") | html %]</span>
+                            </button>
+                            <span id="SyncFromServiceNowSpinner" class="AJAXLoader" style="display: none;"></span>
+                            <div id="SyncFromServiceNowResult" style="margin-top: 10px;">[% IF Data.SyncInCooldown %]<div class="MessageBox Notice"><p><i class="fa fa-clock-o"></i> Please wait [% Data.SyncCooldownMinutes %] more minute(s) before syncing again.</p></div>[% END %]</div>
+                            <!-- Hidden container for cooldown status (for JavaScript) -->
+                            <div id="EBondingSyncCooldownData" style="display: none;" data-in-cooldown="[% Data.SyncInCooldown %]" data-cooldown-minutes="[% Data.SyncCooldownMinutes %]"></div>
+    [% ELSE %]
+                            <button type="button" id="SubmitToServiceNowButton" class="CallForAction">
+                                <span><i class="fa fa-cloud-upload"></i> [% Translate("Submit to MSI CMSO ServiceNow") | html %]</span>
+                            </button>
+                            <span id="SubmitToServiceNowSpinner" class="AJAXLoader" style="display: none;"></span>
+                            <div id="SubmitToServiceNowResult" style="margin-top: 10px;"></div>
+    [% END %]
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("Customer (Company)") | html %]:</label>
+                        <div class="Field">
+                            <span>[% Data.MSICustomer || '-' | html %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("MSI Ticket Site") | html %]:</label>
+                        <div class="Field">
+                            <span>[% Data.MSITicketSite || '-' | html %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("MSI Ticket State") | html %]:</label>
+                        <div class="Field">
+                            <span>[% Data.MSITicketState || '-' | html %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("MSI Ticket State Reason") | html %]:</label>
+                        <div class="Field">
+                            <span>[% Data.MSITicketStateReason || '-' | html %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("MSI Ticket Priority") | html %]:</label>
+                        <div class="Field">
+                            <span>[% Data.MSITicketPriority || '-' | html %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("MSI Ticket Assignee") | html %]:</label>
+                        <div class="Field">
+                            <span>[% Data.MSITicketAssignee || '-' | html %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label style="vertical-align: top;">[% Translate("MSI Ticket Short Description") | html %]:</label>
+                        <div class="Field">
+                            <span style="white-space: pre-wrap; display: block;">[% Data.MSITicketShortDescription || '-' | html %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label style="vertical-align: top;">[% Translate("MSI Ticket Resolution Note") | html %]:</label>
+                        <div class="Field">
+                            <span style="white-space: pre-wrap; display: block;">[% Data.MSITicketResolutionNote || '-' | html %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("MSI Ticket Created Time") | html %]:</label>
+                        <div class="Field">
+                            <span>[% IF Data.MSITicketCreatedTime %][% Data.MSITicketCreatedTime | Localize("TimeLong") %][% ELSE %]-[% END %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("MSI Ticket Last Update Time") | html %]:</label>
+                        <div class="Field">
+                            <span>[% IF Data.MSITicketLastUpdateTime %][% Data.MSITicketLastUpdateTime | Localize("TimeLong") %][% ELSE %]-[% END %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("MSI Ticket Ebond Last Update Time") | html %]:</label>
+                        <div class="Field">
+                            <span>[% IF Data.MSITicketEbondLastUpdateTime %][% Data.MSITicketEbondLastUpdateTime | Localize("TimeLong") %][% ELSE %]-[% END %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("MSI Ticket Resolved Time") | html %]:</label>
+                        <div class="Field">
+                            <span>[% IF Data.MSITicketResolvedTime %][% Data.MSITicketResolvedTime | Localize("TimeLong") %][% ELSE %]-[% END %]</span>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label>[% Translate("MSI Ebond API Response") | html %]:</label>
+                        <div class="Field">
+[% IF Data.MSIEbondAPIResponse %]
+                            <button type="button" id="ViewAPIResponseBtn" class="CallForAction" onclick="openAPIResponseModal()">
+                                <span><i class="fa fa-code"></i> [% Translate("View API Response") | html %]</span>
+                            </button>
+                            <div id="APIResponseData" style="display: none;">[% Data.MSIEbondAPIResponse | html %]</div>
+[% ELSE %]
+                            <span>-</span>
+[% END %]
+                        </div>
+                        <div class="Clear"></div>
+
+[% IF Data.MSIWorkNotes && Data.MSIWorkNotes.size > 0 %]
+                        <label style="vertical-align: top;">[% Translate("MSI Work Notes") | html %]:</label>
+                        <div class="Field" style="max-width: 100%; overflow: hidden;">
+                            <div class="msi-work-notes-container" style="border: 1px solid #ddd; padding: 10px; background: #f9f9f9; max-width: 100%; overflow-x: auto; box-sizing: border-box;">
+[% FOREACH Note IN Data.MSIWorkNotes %]
+                                <div class="msi-work-note" style="border-left: 3px solid #0078D4; padding: 10px; margin-bottom: 10px; background: white; overflow: hidden;">
+                                    <div class="note-meta" style="color: #666; font-size: 0.9em; margin-bottom: 5px;">
+                                        <strong>[% Note.CreatedBy | html %]</strong> -
+                                        <span title="Created: [% Note.CreatedTime | html %]">[% Note.CreatedTime | html %]</span>
+[% IF Note.UpdatedTime && Note.UpdatedTime != Note.CreatedTime %]
+                                        <span style="color: #999;"> (Updated: [% Note.UpdatedTime | html %] by [% Note.UpdatedBy | html %])</span>
+[% END %]
+                                    </div>
+                                    <div class="note-text" style="white-space: pre-wrap; word-wrap: break-word; word-break: break-word; overflow-wrap: break-word; max-width: 100%;">
+[% Note.NoteText | html %]
+                                    </div>
+                                </div>
+[% END %]
+                            </div>
+                        </div>
+                        <div class="Clear"></div>
+[% END %]
+                    </fieldset>
+                </div>
+            </div>
+[% END %]
+
+            <!-- Form Actions -->
+            <fieldset class="TableLike">
+                <div class="Field SpacingTop">
+[% IF Data.Action == 'View' %]
+                    <a href="[% Env("Baselink") %]Action=AgentIncidentForm;Subaction=Update;IncidentID=[% Data.IncidentID | uri %]" class="Primary CallForAction">
+                        <span><i class="fa fa-edit"></i> [% Translate("Edit") | html %]</span>
+                    </a>
+                    [% Translate("or") | html %]
+[% ELSIF Data.Action != 'View' && !Data.ReadOnly %]
+                    <button class="Primary CallForAction" type="submit" id="SubmitButton" name="SubmitButton" value="Save">
+                        <span><i class="fa fa-check-square-o"></i> [% Translate("Save") | html %]</span>
+                    </button>
+                    <button class="CallForAction" type="submit" id="SubmitAndCloseButton" name="SubmitButton" value="SaveAndClose">
+                        <span><i class="fa fa-check-square-o"></i> [% Translate("Save and Close") | html %]</span>
+                    </button>
+                    [% Translate("or") | html %]
+[% END %]
+                    <a href="[% Env("Baselink") %]Action=AgentDashboard">[% Translate("Cancel") | html %]</a>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+
+<!-- API Response Modal -->
+<div id="APIResponseModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; overflow: auto;">
+    <div style="background: white; margin: 50px auto; max-width: 900px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+        <div style="padding: 15px 20px; background: #333; color: white; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; font-size: 16px;"><i class="fa fa-code"></i> [% Translate("MSI Ebond API Response") | html %]</h3>
+            <button type="button" onclick="closeAPIResponseModal()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0; line-height: 1;">&times;</button>
+        </div>
+        <div id="APIResponseContent" style="padding: 20px; max-height: 70vh; overflow: auto;">
+            <pre id="APIResponsePre" style="background: #f5f5f5; padding: 15px; border-radius: 4px; overflow-x: auto; font-size: 12px; line-height: 1.4; white-space: pre-wrap; word-wrap: break-word;"></pre>
+        </div>
+        <div style="padding: 15px 20px; border-top: 1px solid #ddd; text-align: right;">
+            <button type="button" onclick="copyAPIResponse()" class="CallForAction" style="margin-right: 10px;">
+                <span><i class="fa fa-copy"></i> [% Translate("Copy to Clipboard") | html %]</span>
+            </button>
+            <button type="button" onclick="closeAPIResponseModal()" class="CallForAction">
+                <span>[% Translate("Close") | html %]</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function openAPIResponseModal() {
+        var rawData = document.getElementById('APIResponseData');
+        if (!rawData) return;
+
+        var jsonStr = rawData.textContent || rawData.innerText;
+        var formattedJson = jsonStr;
+
+        // Try to parse and pretty-print JSON
+        try {
+            var parsed = JSON.parse(jsonStr);
+            formattedJson = JSON.stringify(parsed, null, 2);
+        } catch (e) {
+            // If not valid JSON, just display as-is
+            formattedJson = jsonStr;
+        }
+
+        document.getElementById('APIResponsePre').textContent = formattedJson;
+        document.getElementById('APIResponseModal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeAPIResponseModal() {
+        document.getElementById('APIResponseModal').style.display = 'none';
+        document.body.style.overflow = '';
+    }
+
+    function copyAPIResponse() {
+        var text = document.getElementById('APIResponsePre').textContent;
+        navigator.clipboard.writeText(text).then(function() {
+            alert('Copied to clipboard!');
+        }).catch(function() {
+            // Fallback for older browsers
+            var textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            alert('Copied to clipboard!');
+        });
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('APIResponseModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeAPIResponseModal();
+        }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeAPIResponseModal();
+        }
+    });
+</script>
+
+<script type="text/javascript" src="[% Config("Frontend::JavaScriptPath") %]Core.Agent.IncidentForm.js"></script>
+
+[% WRAPPER JSOnDocumentComplete %]
+<script type="text/javascript">//<![CDATA[
+    // Initialize form functionality
+    var $form = $('#IncidentForm');
+    
+    // Check if form is read-only
+    var isReadOnly = [% IF Data.ReadOnly %]true[% ELSE %]false[% END %];
+    
+    // If form is read-only, disable all form fields
+    if (isReadOnly) {
+        
+        // Function to disable all form elements
+        function disableAllFormElements() {
+            // Remove ALL "x" buttons completely
+            $('.Remove').remove();
+            $('a[title="Remove selection"]').remove();
+            
+            // Only disable incident form fields, NOT search fields
+            // Use a whitelist approach - only disable known incident fields
+            var incidentSelectors = [
+                '#Source', '#PriorityID', '#State', '#CI', '#AssignedTo',
+                '#ShortDescription', '#Description', 
+                '#ProductCat1', '#ProductCat2', '#ProductCat3', '#ProductCat4',
+                '#OperationalCat1', '#OperationalCat2', '#OperationalCat3',
+                '#ResolutionCat1', '#ResolutionCat2', '#ResolutionCat3',
+                '#ResolutionNotes', '#WorkNoteText', '#IncludeInMSI',
+                '[name="Source"]', '[name="PriorityID"]', '[name="State"]', 
+                '[name="CI"]', '[name="AssignedTo"]', '[name="ShortDescription"]',
+                '[name="Description"]', '[name="WorkNoteText"]'
+            ].join(', ');
+            
+            $form.find(incidentSelectors).each(function() {
+                var $element = $(this);
+                
+                // Apply both readonly and disabled attributes
+                $element.prop('readonly', true)
+                       .prop('disabled', true)
+                       .attr('disabled', 'disabled')
+                       .attr('readonly', 'readonly')
+                       .css({
+                           'background-color': '#f0f0f0',
+                           'cursor': 'not-allowed'
+                       });
+                
+                // For select elements, ensure the disabled state is enforced
+                if ($element.is('select')) {
+                    $element.attr('disabled', 'disabled');
+                    // IMPORTANT: Set data attribute that Core.UI.InputFields checks
+                    $element.data('incident-readonly', true);
+                    
+                    // For modernized select fields, also disable the search input
+                    var searchInputId = $element.attr('id') + '_Search';
+                    var $searchInput = $('#' + searchInputId);
+                    if ($searchInput.length) {
+                        // CRITICAL: Set form-disabled data attribute that Core.UI.InputFields checks!
+                        $searchInput.data('form-disabled', true);
+                        $searchInput.prop('readonly', true)
+                                   .prop('disabled', true)
+                                   .attr('disabled', 'disabled')
+                                   .attr('readonly', 'readonly')
+                                   .css({
+                                       'background-color': '#f0f0f0',
+                                       'cursor': 'not-allowed'
+                                   });
+                    }
+                }
+            });
+            
+            // Force disable ONLY incident form InputField containers, NOT search modal
+            $('#IncidentForm .InputField_Container').each(function() {
+                var $container = $(this);
+                
+                // Disable the container itself
+                $container.attr('tabindex', '-1').css({
+                    'pointer-events': 'none',
+                    'opacity': '0.6',
+                    'background-color': '#f0f0f0'
+                }).off().unbind();
+                
+                // Find the select element inside and ensure it's disabled
+                var $select = $container.find('select');
+                if ($select.length) {
+                    $select.prop('disabled', true)
+                           .attr('disabled', 'disabled')
+                           .css('cursor', 'not-allowed');
+                }
+                
+                // Disable all inputs inside the container
+                $container.find('input').each(function() {
+                    $(this).prop('readonly', true)
+                           .prop('disabled', true)
+                           .attr('disabled', 'disabled')
+                           .attr('readonly', 'readonly')
+                           .css({
+                               'background-color': '#f0f0f0',
+                               'cursor': 'not-allowed'
+                           });
+                });
+            });
+            
+            // Disable ONLY incident form InputField input containers
+            $('#IncidentForm .InputField_InputContainer').css({
+                'pointer-events': 'none',
+                'cursor': 'not-allowed'
+            }).off().unbind();
+            
+            // Disable search inputs specifically IN INCIDENT FORM ONLY
+            $('#IncidentForm .InputField_Search').each(function() {
+                $(this).prop('readonly', true)
+                       .prop('disabled', true)
+                       .attr('disabled', 'disabled')
+                       .attr('readonly', 'readonly')
+                       .css({
+                           'background-color': '#f0f0f0',
+                           'cursor': 'not-allowed'
+                       });
+            });
+            
+            // Specifically handle category dropdowns to ensure they're readonly
+            var categorySelectors = '#OperationalCat1, #OperationalCat2, #OperationalCat3, ' +
+                                  '#ProductCat1, #ProductCat2, #ProductCat3, #ProductCat4, ' +
+                                  '#ResolutionCat1, #ResolutionCat2, #ResolutionCat3';
+            $(categorySelectors).each(function() {
+                var $select = $(this);
+                var $searchInput = $('#' + $select.attr('id') + '_Search');
+                
+                // Make the select readonly and disabled
+                $select.prop('readonly', true)
+                       .prop('disabled', true)
+                       .attr('readonly', 'readonly')
+                       .attr('disabled', 'disabled');
+                
+                // Make the search input readonly and disabled
+                if ($searchInput.length) {
+                    $searchInput.prop('readonly', true)
+                               .prop('disabled', true)
+                               .attr('readonly', 'readonly')
+                               .attr('disabled', 'disabled')
+                               .css({
+                                   'background-color': '#f0f0f0',
+                                   'cursor': 'not-allowed'
+                               });
+                }
+            });
+            
+            // Hide RichText editor toolbar
+            $('.cke_top').hide();
+            if (typeof CKEDITOR !== 'undefined') {
+                for (var instance in CKEDITOR.instances) {
+                    CKEDITOR.instances[instance].setReadOnly(true);
+                }
+            }
+        }
+        
+        // Run multiple times to catch dynamically loaded elements
+        // BUT SKIP if search modal is open
+        function runDisableIfNotInSearch() {
+            // Check if we're NOT in a search context
+            if ($('#SearchForm').length === 0 || $('#SearchForm').closest('.Dialog, .Overlay').length === 0) {
+                disableAllFormElements();
+            }
+        }
+        runDisableIfNotInSearch();
+        setTimeout(runDisableIfNotInSearch, 100);
+        setTimeout(runDisableIfNotInSearch, 500);
+        setTimeout(runDisableIfNotInSearch, 1000);
+        
+        // Special handling for category fields with longer delay
+        setTimeout(function() {
+            var categorySelectors = '#OperationalCat1, #OperationalCat2, #OperationalCat3, ' +
+                                  '#ProductCat1, #ProductCat2, #ProductCat3, #ProductCat4, ' +
+                                  '#ResolutionCat1, #ResolutionCat2, #ResolutionCat3';
+            $(categorySelectors).each(function() {
+                var $select = $(this);
+                var $searchInput = $('#' + $select.attr('id') + '_Search');
+                
+                // Make the select readonly and disabled
+                $select.prop('readonly', true)
+                       .prop('disabled', true)
+                       .attr('readonly', 'readonly')
+                       .attr('disabled', 'disabled');
+                
+                // Make the search input readonly and disabled
+                if ($searchInput.length) {
+                    $searchInput.prop('readonly', true)
+                               .prop('disabled', true)
+                               .attr('readonly', 'readonly')
+                               .attr('disabled', 'disabled')
+                               .css({
+                                   'background-color': '#f0f0f0',
+                                   'cursor': 'not-allowed'
+                               });
+                }
+                
+                // Also disable the container
+                var $container = $select.closest('.InputField_Container');
+                if ($container.length) {
+                    $container.css({
+                        'pointer-events': 'none',
+                        'opacity': '0.6'
+                    });
+                }
+            });
+        }, 1500); // 1.5 second delay to ensure everything is loaded
+        
+        // Also run on any AJAX complete
+        $(document).ajaxComplete(function() {
+            disableAllFormElements();
+        });
+    }
+    
+    // Initialize form functionality
+    if (typeof Core.Agent.IncidentForm !== 'undefined' && typeof Core.Agent.IncidentForm.Init === 'function') {
+        Core.Agent.IncidentForm.Init();
+    }
+    
+    // Add confirmation dialog for Closed/Cancelled status changes
+    (function() {
+        var $Form = $('#IncidentForm');
+        var $StateField = $('#State');
+        
+        if (!$Form.length || !$StateField.length) {
+            return;
+        }
+        
+        // Store original state when page loads
+        var OriginalState = $StateField.val() || '';
+        var OriginalStateText = $StateField.find('option:selected').text().toLowerCase().trim();
+        
+        // INTERCEPT ALL BUTTON CLICKS FIRST
+        $Form.find('button[type="submit"], input[type="submit"]').on('click', function(e) {
+            var CurrentStateText = $StateField.find('option:selected').text().toLowerCase().trim();
+            
+            // Check if changing TO closed or cancelled
+            var IsChangingToClosedOrCancelled = false;
+            if (CurrentStateText === 'closed' || CurrentStateText === 'cancelled') {
+                // Only show prompt if not already in those states
+                if (OriginalStateText !== 'closed' && 
+                    OriginalStateText !== 'cancelled' && 
+                    OriginalStateText !== 'closed successful') {
+                    IsChangingToClosedOrCancelled = true;
+                }
+            }
+            
+            if (IsChangingToClosedOrCancelled && !$Form.data('close-status-confirmed')) {
+                // STOP EVERYTHING
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                
+                var $button = $(this);
+                
+                // Show confirmation
+                if (confirm('Reminder! Ticket is not editable after Closed or Cancelled.\n\nDo you want to proceed?')) {
+                    // User clicked OK - proceed with save
+                    $Form.data('close-status-confirmed', true);
+                    // Trigger the button click again, which will now pass through
+                    $button.click();
+                } else {
+                    // User clicked Cancel - do nothing
+                    $Form.data('close-status-confirmed', false);
+                }
+                
+                return false;
+            }
+        });
+        
+        // ALSO block form submission as backup
+        $Form.on('submit', function(e) {
+            // If not confirmed and changing to closed/cancelled, block it
+            if (!$Form.data('close-status-confirmed')) {
+                var CurrentStateText = $StateField.find('option:selected').text().toLowerCase().trim();
+                
+                if ((CurrentStateText === 'closed' || CurrentStateText === 'cancelled') &&
+                    OriginalStateText !== 'closed' && 
+                    OriginalStateText !== 'cancelled' && 
+                    OriginalStateText !== 'closed successful') {
+                    
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    return false;
+                }
+            }
+            
+            // Reset flag after submission
+            $Form.data('close-status-confirmed', false);
+        });
+    })();
+    
+    // Initialize widget toggle functionality
+    Core.UI.InitWidgetActionToggle();
+    
+    // Group to Queue mapping no longer used - all incidents use Support Group queue
+    var GroupToQueueMap = {};
+    
+    // Category cascading logic - only load when parent has value
+    $('#ProductCat1').on('change', function() {
+        if ($(this).val()) {
+            Core.Agent.IncidentForm.UpdateCategoryDropdown('Product', 2, $(this).val());
+        }
+    });
+    
+    $('#ProductCat2').on('change', function() {
+        if ($(this).val() && $('#ProductCat1').val()) {
+            Core.Agent.IncidentForm.UpdateCategoryDropdown('Product', 3, $('#ProductCat1').val(), $(this).val());
+        }
+    });
+    
+    $('#ProductCat3').on('change', function() {
+        if ($(this).val() && $('#ProductCat1').val() && $('#ProductCat2').val()) {
+            Core.Agent.IncidentForm.UpdateCategoryDropdown('Product', 4, $('#ProductCat1').val(), $('#ProductCat2').val(), $(this).val());
+        }
+    });
+    
+    // Operational category Tier handlers are now in Core.Agent.IncidentForm.js
+    
+    $('#ResolutionCat1').on('change', function() {
+        Core.Agent.IncidentForm.UpdateCategoryDropdown('Resolution', 2, $(this).val());
+    });
+    
+    $('#ResolutionCat2').on('change', function() {
+        Core.Agent.IncidentForm.UpdateCategoryDropdown('Resolution', 3, $('#ResolutionCat1').val(), $(this).val());
+    });
+    
+    // Assignment group removed - all incidents use Support Group queue
+    
+    // Add validation for resolution fields when state is "Resolved" and AssignedTo when state is "Assigned"
+    $('#State').on('change', function() {
+        var selectedValue = $(this).val();
+        var selectedText = $(this).find('option:selected').text();
+        
+        // Check if state is "resolved" (case insensitive)
+        var isResolved = selectedValue.toLowerCase() === 'resolved' || selectedText.toLowerCase() === 'resolved';
+        
+        // Check if state is "assigned" (case insensitive)
+        var isAssigned = selectedValue.toLowerCase() === 'assigned' || selectedText.toLowerCase() === 'assigned';
+        
+        // Update resolution field requirements
+        if (isResolved) {
+            // Make resolution fields required
+            $('#ResolutionCat1').addClass('Validate_Required');
+            $('#ResolutionCat2').addClass('Validate_Required');
+            $('#ResolutionNotes').addClass('Validate_Required');
+            
+            // Add required markers
+            $('label[for="ResolutionCat1"]').html('<span class="Marker">*</span> ' + Core.Language.Translate('Resolution Category Tier 1') + ':');
+            $('label[for="ResolutionCat2"]').html('<span class="Marker">*</span> ' + Core.Language.Translate('Resolution Category Tier 2') + ':');
+            $('label[for="ResolutionNotes"]').html('<span class="Marker">*</span> ' + Core.Language.Translate('Resolution Notes') + ':');
+        } else {
+            // Remove required validation
+            $('#ResolutionCat1').removeClass('Validate_Required');
+            $('#ResolutionCat2').removeClass('Validate_Required');
+            $('#ResolutionNotes').removeClass('Validate_Required');
+            
+            // Remove required markers
+            $('label[for="ResolutionCat1"]').html(Core.Language.Translate('Resolution Category Tier 1') + ':');
+            $('label[for="ResolutionCat2"]').html(Core.Language.Translate('Resolution Category Tier 2') + ':');
+            $('label[for="ResolutionNotes"]').html(Core.Language.Translate('Resolution Notes') + ':');
+        }
+        
+        // Update AssignedTo field requirements
+        if (isAssigned) {
+            // Make AssignedTo required
+            $('#AssignedTo').addClass('Validate_Required');
+            
+            // Add required marker
+            $('label[for="AssignedTo"]').html('<span class="Marker">*</span> ' + Core.Language.Translate('Assigned To') + ':');
+        } else {
+            // Remove required validation
+            $('#AssignedTo').removeClass('Validate_Required');
+            
+            // Remove required marker
+            $('label[for="AssignedTo"]').html(Core.Language.Translate('Assigned To') + ':');
+        }
+        
+        // Re-initialize form validation
+        Core.Form.Init();
+    });
+    
+    // Trigger the change event on page load to set initial state
+    $('#State').trigger('change');
+
+    // Auto-assign state to "Assigned" if an owner is selected and the ticket is new (only for UPDATE mode)
+    $('#AssignedTo').on('change', function() {
+        var currentState = $('#State').val();
+        var isCreateMode = !$('#IncidentForm input[name="IncidentID"]').val() && !$('#IncidentForm input[name="TicketID"]').val();
+        
+        // Only auto-transition state for UPDATE mode, not CREATE mode
+        if (!isCreateMode && currentState === 'new' && $(this).val()) {
+            $('#State').val('assigned');
+            // Modernize the dropdown to reflect the change
+            $('#State').trigger('redraw.InputField');
+        }
+    });
+
+    // Trigger AssignedTo change event on page load if it has a value (for auto-populated users)
+    if ($('#AssignedTo').val()) {
+        $('#AssignedTo').trigger('change');
+    }
+[% IF Data.EBondingEnabled == 1 && Data.IncidentID && Data.Action != 'Create' %]
+
+    // Easy MSI Escalation ServiceNow Sync functionality
+    (function() {
+        console.log('=== Easy MSI Escalation Sync Script Starting ===');
+
+        var $SyncButton = $('#SyncFromServiceNowButton');
+        var $SyncSpinner = $('#SyncFromServiceNowSpinner');
+        var $SyncResult = $('#SyncFromServiceNowResult');
+        var $CooldownData = $('#EBondingSyncCooldownData');
+
+        console.log('Sync button found:', $SyncButton.length);
+        console.log('Sync spinner found:', $SyncSpinner.length);
+        console.log('Sync result div found:', $SyncResult.length);
+        console.log('Cooldown data found:', $CooldownData.length);
+
+        if (!$SyncButton.length) {
+            console.log('ERROR: Sync button not found! Exiting.');
+            return;
+        }
+
+        // Get incident ID from form
+        var IncidentID = $('#IncidentForm input[name="IncidentID"]').val();
+        console.log('IncidentID from form:', IncidentID);
+
+        if (!IncidentID) {
+            console.log('ERROR: No IncidentID found! Exiting.');
+            return;
+        }
+
+        // Check cooldown status from backend data
+        var IsInCooldown = $CooldownData.data('in-cooldown') === '1' || $CooldownData.data('in-cooldown') === 1;
+        var RemainingMinutes = parseInt($CooldownData.data('cooldown-minutes')) || 0;
+
+        console.log('Cooldown status from backend:', IsInCooldown);
+        console.log('Remaining minutes:', RemainingMinutes);
+
+        // If in cooldown, apply visual styling (button already disabled by backend)
+        if (IsInCooldown) {
+            $SyncButton.css({
+                'opacity': '0.5',
+                'cursor': 'not-allowed'
+            });
+            console.log('Sync button in cooldown - ' + RemainingMinutes + ' minutes remaining');
+        } else {
+            console.log('No cooldown - button enabled');
+        }
+
+        console.log('=== Ready to setup sync handlers ===');
+
+        // Function to perform sync
+        function performSync(isAutoLoad) {
+            console.log('performSync called with isAutoLoad:', isAutoLoad);
+            console.log('IncidentID:', IncidentID);
+
+            // Show spinner, hide result, disable button
+            $SyncSpinner.show();
+            $SyncResult.hide();
+            $SyncButton.prop('disabled', true);
+
+            // Make AJAX request using Znuny's Core.AJAX.FunctionCall
+            console.log('Sending AJAX request via Core.AJAX.FunctionCall');
+            Core.AJAX.FunctionCall(
+                Core.Config.Get('Baselink'),
+                {
+                    Action: 'AgentIncidentForm',
+                    Subaction: 'PullFromServiceNow',
+                    IncidentID: IncidentID
+                },
+                function(response) {
+                    console.log('AJAX response received:', response);
+                    // Hide spinner
+                    $SyncSpinner.hide();
+
+                    // Display result
+                    if (response && response.Success) {
+                        $SyncResult.html('<div class="MessageBox Success"><p><i class="fa fa-check-circle"></i> ' + response.Message + '</p></div>');
+                        $SyncResult.show();
+
+                        // Keep button disabled after successful sync
+                        // Page will reload to show proper cooldown time
+                        $SyncButton.css({
+                            'opacity': '0.5',
+                            'cursor': 'not-allowed'
+                        });
+                        $SyncButton.attr('title', 'Reloading page to refresh data...');
+
+                        // Only reload if this was a manual sync (not auto-load)
+                        if (!isAutoLoad) {
+                            // Reload page after 2 seconds to show updated fields and proper cooldown
+                            setTimeout(function() {
+                                window.location.reload();
+                            }, 2000);
+                        }
+                    } else {
+                        // Re-enable button on error so user can retry
+                        $SyncButton.prop('disabled', false);
+
+                        // Only show error messages for manual sync or if incident not linked
+                        var errorMsg = response && response.Message ? response.Message : 'Unknown error occurred';
+                        if (!isAutoLoad || errorMsg.indexOf('not linked') !== -1) {
+                            $SyncResult.html('<div class="MessageBox Error"><p><i class="fa fa-exclamation-triangle"></i> ' + errorMsg + '</p></div>');
+                            $SyncResult.show();
+                        }
+                    }
+                },
+                'json',
+                false  // Don't show an error dialog on failure
+            );
+        }
+
+        // Bind click handler for manual sync
+        $SyncButton.on('click', function(e) {
+            e.preventDefault();
+            // Only allow sync if not in cooldown
+            if (!IsInCooldown) {
+                performSync(false); // false = manual sync, will reload page
+            }
+        });
+
+        // No auto-sync on page load - user must click button manually
+        console.log('Sync button ready - waiting for user click');
+    })();
+[% END %]
+//]]></script>
+[% END %]

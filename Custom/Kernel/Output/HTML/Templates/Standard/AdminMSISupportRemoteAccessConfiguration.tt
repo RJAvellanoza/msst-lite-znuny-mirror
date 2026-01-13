@@ -1,0 +1,871 @@
+# --
+# Copyright (C) 2025 MSST, https://msst.com/
+# --
+# This software comes with ABSOLUTELY NO WARRANTY. For details, see
+# the enclosed file COPYING for license information (GPL). If you
+# did not receive this file, see https://www.gnu.org/licenses/gpl-3.0.txt.
+# --
+
+[% RenderBlockStart("Overview") %]
+<div class="MainBox ARIARoleMain LayoutFixedSidebar SidebarFirst ActionsSideBar">
+    <div class="SidebarColumn ActionsSideBarComp">
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Actions") | html %]</h2>
+            </div>
+            <div class="Content">
+                <ul class="ActionList">
+                    <li>
+                        <a href="[% Env("Baselink") %]Action=AdminSystemConfiguration;Subaction=View;Setting=MSI Support Remote AccessConfiguration%3A%3A%2A" class="CallForAction Fullsize Center">
+                            <span><i class="fa fa-cog"></i>[% Translate("System Configuration") | html %]</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Note") | html %]</h2>
+            </div>
+            <div class="Content">
+                <p class="FieldExplanation">
+                    [% Translate("Configure MSI Support Remote Access/BeyondTrust remote support integration.") | html %]
+                </p>
+                <p class="FieldExplanation">
+                    [% Translate("Control MSI Support Remote Access container via Proxmox API for enable/disable functionality.") | html %]
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="ContentColumn">
+        <h1>[% Translate("MSI Support Remote Access Remote Support Configuration") | html %]</h1>
+        
+        [% IF Data.Saved %]
+        <div class="MessageBox Notice">
+            <p>[% Translate("Configuration saved successfully.") | html %]</p>
+        </div>
+        [% END %]
+        
+        [% IF Data.SaveError %]
+        <div class="MessageBox Error">
+            <p>[% Translate("An error occurred while saving the configuration.") | html %]</p>
+        </div>
+        [% END %]
+        
+        [% IF Data.ConfigMissing %]
+        <div class="MessageBox Warning">
+            <p><strong>[% Translate("Warning: Proxmox API credentials are not configured!") | html %]</strong></p>
+            <p>[% Translate("The following configuration settings are missing in Config.pm:") | html %] <code>[% Data.MissingFields | html %]</code></p>
+            <p>[% Translate("Please contact your system administrator to configure the Proxmox API credentials in /opt/znuny-6.5.15/Kernel/Config.pm") | html %]</p>
+            <p>[% Translate("Example configuration:") | html %]</p>
+            <pre style="background: #f5f5f5; padding: 10px; border-radius: 3px; margin: 10px 0;">
+    # MSI Support Remote Access / Proxmox Configuration
+    $Self->{'MSISupportRemoteAccessConfiguration::ProxmoxHost'}        = 'proxmox.example.com';
+    $Self->{'MSISupportRemoteAccessConfiguration::ProxmoxPort'}        = '8006';
+    $Self->{'MSISupportRemoteAccessConfiguration::ProxmoxTokenID'}     = 'root@pam!api-token';
+    $Self->{'MSISupportRemoteAccessConfiguration::ProxmoxTokenSecret'} = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';</pre>
+        </div>
+        [% END %]
+        
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Current Status") | html %]</h2>
+            </div>
+            <div class="Content">
+                <fieldset class="TableLike">
+                    <label>[% Translate("Container Status") | html %]:</label>
+                    <div class="Field">
+                        <span id="CurrentStatus" class="Status [% Data.ContainerStatusClass | html %]">
+                            [% Data.ContainerStatus | html %]
+                        </span>
+                        <button type="button" id="RefreshStatus" class="CallForAction Small">
+                            <span><i class="fa fa-refresh"></i> [% Translate("Refresh") | html %]</span>
+                        </button>
+                        <p class="FieldExplanation" id="StatusMessage">[% Data.ContainerStatusMessage | html %]</p>
+                    </div>
+                    <div class="Clear"></div>
+                    
+                    <label>[% Translate("Container Control") | html %]:</label>
+                    <div class="Field">
+                        <button type="button" id="StartContainer" class="CallForAction">
+                            <span><i class="fa fa-play"></i> [% Translate("Start MSI Support Remote Access") | html %]</span>
+                        </button>
+                        <button type="button" id="StopContainer" class="CallForAction">
+                            <span><i class="fa fa-stop"></i> [% Translate("Stop MSI Support Remote Access") | html %]</span>
+                        </button>
+                        <span id="ContainerControlResult" class="Hidden"></span>
+                        <p class="FieldExplanation">
+                            [% Translate("Start or stop the MSI Support Remote Access container on the Proxmox host.") | html %]
+                        </p>
+                        <p class="FieldExplanation" style="color: #856404; font-style: italic;">
+                            <i class="fa fa-info-circle"></i> [% Translate("Note: After starting the container, it may take 2-3 minutes for the MSI Support Remote Access jump point server to fully initialize. Container status only reflects the LXC container state, not the MSI Support Remote Access service readiness.") | html %]
+                        </p>
+                    </div>
+                    <div class="Clear"></div>
+                </fieldset>
+            </div>
+        </div>
+
+        <form action="[% Env("CGIHandle") %]" method="post" id="AdminMSISupportRemoteAccessConfigurationForm" class="Validate PreventMultipleSubmits">
+            <input type="hidden" name="Action" value="[% Env("Action") %]"/>
+            <input type="hidden" name="Subaction" value="Save"/>
+            <input type="hidden" name="[% Env("SessionName") %]" value="[% Env("SessionID") %]"/>
+            <!-- Hidden fields for Token ID and Secret (from Config.pm) -->
+            <input type="hidden" name="ProxmoxTokenID" id="ProxmoxTokenID" value="[% Data.ProxmoxTokenID | html %]"/>
+            <input type="hidden" name="ProxmoxTokenSecret" id="ProxmoxTokenSecret" value="[% Data.ProxmoxTokenSecret | html %]"/>
+            
+            <!-- Step 1: Proxmox API Configuration Form -->
+            <div class="WidgetSimple">
+                <div class="Header">
+                    <h2>[% Translate("Step 1: Proxmox API Configuration") | html %]</h2>
+                </div>
+                <div class="Content">
+                    <fieldset class="TableLike">
+                        <label>[% Translate("API Credentials Status") | html %]:</label>
+                        <div class="Field">
+                            [% IF Data.ConfigMissing %]
+                                <p class="FieldExplanation" style="color: #ff6600;">
+                                    <i class="fa fa-warning"></i> <strong>[% Translate("Not Configured") | html %]</strong> - [% Translate("API credentials must be set in Config.pm") | html %]
+                                </p>
+                            [% ELSE %]
+                                <p class="FieldExplanation" style="color: #009900;">
+                                    <i class="fa fa-check-circle"></i> <strong>[% Translate("Configured") | html %]</strong> - [% Translate("API credentials are loaded from Config.pm") | html %]
+                                </p>
+                                <p class="FieldExplanation">
+                                    <strong>[% Translate("Token ID") | html %]:</strong> [% IF Data.ProxmoxTokenID %][% Data.ProxmoxTokenID | html %][% ELSE %]<span style="color: #ff6600;">[% Translate("Not set") | html %]</span>[% END %]<br>
+                                    <strong>[% Translate("Token Secret") | html %]:</strong> [% IF Data.ProxmoxTokenSecret %]********[% ELSE %]<span style="color: #ff6600;">[% Translate("Not set") | html %]</span>[% END %]
+                                </p>
+                            [% END %]
+                        </div>
+                        <div class="Clear"></div>
+                        
+                        <label class="Mandatory" for="ProxmoxHost">
+                            <span class="Marker">*</span>
+                            [% Translate("Proxmox Host") | html %]:
+                        </label>
+                        <div class="Field">
+                            <input type="text" name="ProxmoxHost" id="ProxmoxHost" value="[% Data.ProxmoxHost | html %]" 
+                                   class="W50pc Validate_Required [% Data.ProxmoxHostInvalid | html %]" 
+                                   maxlength="255"/>
+                            <div id="ProxmoxHostError" class="TooltipErrorMessage">
+                                <p>[% Translate("This field is required.") | html %]</p>
+                            </div>
+                            <div id="ProxmoxHostServerError" class="TooltipErrorMessage">
+                                <p>[% Translate("Invalid Proxmox host format.") | html %]</p>
+                            </div>
+                            <p class="FieldExplanation">[% Translate("Proxmox server hostname or IP address (e.g., proxmox.local)") | html %]</p>
+                        </div>
+                        <div class="Clear"></div>
+                        
+                        <label for="ProxmoxPort">
+                            [% Translate("Proxmox Port") | html %]:
+                        </label>
+                        <div class="Field">
+                            <input type="text" name="ProxmoxPort" id="ProxmoxPort" value="[% Data.ProxmoxPort | html %]" 
+                                   class="W25pc [% Data.ProxmoxPortInvalid | html %]" 
+                                   maxlength="5" pattern="^\d+$"/>
+                            <div id="ProxmoxPortError" class="TooltipErrorMessage">
+                                <p>[% Translate("Must be a valid port number.") | html %]</p>
+                            </div>
+                            <div id="ProxmoxPortServerError" class="TooltipErrorMessage">
+                                <p>[% Translate("Invalid port number.") | html %]</p>
+                            </div>
+                            <p class="FieldExplanation">[% Translate("Proxmox web interface port (default: 8006)") | html %]</p>
+                        </div>
+                        <div class="Clear"></div>
+                        
+                        <div class="Field SpacingTop">
+                            <button type="button" id="TestAPIConnection" class="CallForAction">
+                                <span><i class="fa fa-plug"></i> [% Translate("Test API Connection") | html %]</span>
+                            </button>
+                            <span id="APITestResult" class="Hidden"></span>
+                            <p class="FieldExplanation">
+                                [% Translate("Test your Proxmox API credentials and load container data.") | html %]
+                            </p>
+                        </div>
+                        <div class="Clear"></div>
+                    </fieldset>
+                </div>
+            </div>
+            
+            <!-- Step 2: Container Selection -->
+            <div class="WidgetSimple" id="ContainerSelectionWidget" style="display: none;">
+                <div class="Header">
+                    <h2>[% Translate("Step 2: Container Selection") | html %]</h2>
+                </div>
+                <div class="Content">
+                    <fieldset class="TableLike">
+                        <div class="Field SpacingTop">
+                            <button type="button" id="RefreshContainers" class="CallForAction Small">
+                                <span><i class="fa fa-refresh"></i> [% Translate("Refresh Container Data") | html %]</span>
+                            </button>
+                            <p class="FieldExplanation">
+                                [% Translate("Reload nodes and containers from Proxmox to get latest data.") | html %]
+                            </p>
+                        </div>
+                        <div class="Clear"></div>
+                        <label class="Mandatory" for="ContainerNode">
+                            <span class="Marker">*</span>
+                            [% Translate("Proxmox Node") | html %]:
+                        </label>
+                        <div class="Field">
+                            <select name="ContainerNode" id="ContainerNode" class="Modernize W50pc Validate_Required [% Data.ContainerNodeInvalid | html %]">
+                                <option value="">[% Translate("Select a node...") | html %]</option>
+                            </select>
+                            <div id="ContainerNodeError" class="TooltipErrorMessage">
+                                <p>[% Translate("This field is required.") | html %]</p>
+                            </div>
+                            <div id="ContainerNodeServerError" class="TooltipErrorMessage">
+                                <p>[% Translate("Please select a valid node.") | html %]</p>
+                            </div>
+                            <p class="FieldExplanation">[% Translate("Select the Proxmox node where the MSI Support Remote Access container is located") | html %]</p>
+                        </div>
+                        <div class="Clear"></div>
+                        
+                        <label class="Mandatory" for="ContainerID">
+                            <span class="Marker">*</span>
+                            [% Translate("MSI Support Remote Access Container/VM") | html %]:
+                        </label>
+                        <div class="Field">
+                            <select name="ContainerID" id="ContainerID" class="Modernize W50pc Validate_Required [% Data.ContainerIDInvalid | html %]">
+                                <option value="">[% Translate("Select a node first...") | html %]</option>
+                            </select>
+                            <div id="ContainerIDError" class="TooltipErrorMessage">
+                                <p>[% Translate("This field is required.") | html %]</p>
+                            </div>
+                            <div id="ContainerIDServerError" class="TooltipErrorMessage">
+                                <p>[% Translate("Please select a valid container.") | html %]</p>
+                            </div>
+                            <p class="FieldExplanation">[% Translate("Select the LXC container or QEMU VM running MSI Support Remote Access/BeyondTrust") | html %]</p>
+                        </div>
+                        <div class="Clear"></div>
+                    </fieldset>
+                </div>
+            </div>
+            
+            <!-- Save Configuration -->
+            <div class="WidgetSimple" id="SaveConfigurationWidget">
+                <div class="Header">
+                    <h2>[% Translate("Save Configuration") | html %]</h2>
+                </div>
+                <div class="Content">
+                    <fieldset class="TableLike">
+                        <div class="Field SpacingTop">
+                            <button class="Primary CallForAction" type="submit" value="[% Translate("Save") | html %]" id="SaveConfigButton" disabled>
+                                <span>[% Translate("Save Configuration") | html %]</span>
+                            </button>
+                            [% Translate("or") | html %]
+                            <a href="[% Env("Baselink") %]Action=Admin">[% Translate("Cancel") | html %]</a>
+                        </div>
+                        <div class="Clear"></div>
+                    </fieldset>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+[% WRAPPER JSOnDocumentComplete %]
+<script type="text/javascript">//<![CDATA[
+    var APITested = false;
+    var NodesLoaded = false;
+    
+    // HTML sanitization function
+    function sanitizeHTML(str) {
+        var temp = document.createElement('div');
+        temp.textContent = str;
+        return temp.innerHTML;
+    }
+    
+    // Safe HTML insertion
+    function safeHTML(element, content) {
+        $(element).text(content);
+    }
+    
+    // SIMPLE BUT BULLETPROOF: Single global lock
+    window.MSISupportRemoteAccessAPITesting = false;
+    
+    // Test API Connection - SINGLE FUNCTION CALL ONLY
+    function testAPIConnection() {
+        // ONLY ONE CHECK: Global lock
+        if (window.MSISupportRemoteAccessAPITesting) {
+            console.log('BLOCKED: API test already in progress');
+            return false;
+        }
+        
+        // Set global lock IMMEDIATELY
+        window.MSISupportRemoteAccessAPITesting = true;
+        console.log('STARTED: API test - lock set');
+        
+        var $TestBtn = $('#TestAPIConnection');
+        var $Result = $('#APITestResult');
+        
+        // Validate form fields first
+        var host = $('#ProxmoxHost').val().trim();
+        var tokenID = $('#ProxmoxTokenID').val().trim();
+        var tokenSecret = $('#ProxmoxTokenSecret').val().trim();
+        
+        if (!host || !tokenID || !tokenSecret) {
+            $Result.removeClass('Hidden Success').addClass('Error').html(
+                '<i class="fa fa-times"></i> ' + Core.Language.Translate('Please fill in all required API credential fields.')
+            );
+            window.MSISupportRemoteAccessAPITesting = false; // Release lock
+            console.log('VALIDATION FAILED: API test lock released');
+            return false;
+        }
+        
+        // Disable button and show loading
+        $TestBtn.prop('disabled', true);
+        $Result.removeClass('Hidden Error Success').html('<i class="fa fa-spinner fa-spin"></i> ' + Core.Language.Translate('Testing connection...'));
+        
+        var Data = {
+            Action: '[% Env("Action") %]',
+            Subaction: 'TestAPI',
+            ProxmoxHost: host,
+            ProxmoxPort: $('#ProxmoxPort').val() || '8006',
+            ProxmoxTokenID: tokenID,
+            ProxmoxTokenSecret: tokenSecret,
+            [% Env("SessionName") | html %]: '[% Env("SessionID") | html %]'
+        };
+        
+        console.log('SENDING: Single AJAX request to backend');
+        
+        Core.AJAX.FunctionCall(
+            Core.Config.Get('CGIHandle'),
+            Data,
+            function(Response) {
+                console.log('SUCCESS: API test response received, success:', Response.Success);
+                
+                if (Response.Success) {
+                    var version = Response.Version ? ' (Proxmox v' + sanitizeHTML(Response.Version) + ')' : '';
+                    $Result.removeClass('Error').addClass('Success').html(
+                        '<i class="fa fa-check"></i> ' + Core.Language.Translate('Connection successful!') + version
+                    );
+                    APITested = true;
+                    
+                    // Process nodes and containers from single response
+                    if (Response.Nodes) {
+                        populateNodes(Response.Nodes);
+                        if (Response.Containers) {
+                            populateAllContainers(Response.Containers);
+                        }
+                        showContainerSelection();
+                        showSaveConfiguration();
+                        
+                        // Enable save button when API test successful
+                        $('#SaveConfigButton').prop('disabled', false);
+                        
+                        // Set existing values if this is initial load
+                        var existingNode = '[% Data.ContainerNode | html %]';
+                        var existingContainer = '[% Data.ContainerID | html %]';
+                        if (existingNode && existingContainer) {
+                            setTimeout(function() {
+                                console.log('SETTING: Existing values - Node:', existingNode, 'Container:', existingContainer);
+                                $('#ContainerNode').val(existingNode).trigger('change');
+                                setTimeout(function() {
+                                    $('#ContainerID').val(existingContainer);
+                                }, 200);
+                            }, 200);
+                        }
+                    }
+                } else {
+                    var errorMsg = sanitizeHTML(Response.Message || 'Connection failed');
+                    $Result.removeClass('Success').addClass('Error').html(
+                        '<i class="fa fa-times"></i> ' + Core.Language.Translate('Connection failed: ') + errorMsg
+                    );
+                    APITested = false;
+                    hideContainerSelection();
+                    
+                    // Disable save button when API test fails
+                    $('#SaveConfigButton').prop('disabled', true);
+                }
+                
+                // Release lock and re-enable button
+                $TestBtn.prop('disabled', false);
+                window.MSISupportRemoteAccessAPITesting = false;
+                console.log('COMPLETED: API test lock released');
+            },
+            'json'
+        ).fail(function(jqXHR, textStatus) {
+            console.log('FAILED: API test AJAX error:', textStatus);
+            
+            if (textStatus !== 'abort') {
+                $Result.removeClass('Success').addClass('Error').html(
+                    '<i class="fa fa-times"></i> ' + Core.Language.Translate('Connection test failed - network error')
+                );
+            }
+            
+            // Release lock and re-enable button
+            $TestBtn.prop('disabled', false);
+            window.MSISupportRemoteAccessAPITesting = false;
+            console.log('ERROR: API test lock released');
+        });
+        
+        return true;
+    }
+    
+    // Populate nodes dropdown from TestAPI response
+    function populateNodes(nodes) {
+        var $NodeSelect = $('#ContainerNode');
+        $NodeSelect.empty().append('<option value="">' + Core.Language.Translate('Select a node...') + '</option>');
+        
+        var onlineNodes = [];
+        $.each(nodes, function(index, node) {
+            var nodeName = sanitizeHTML(node.Node || '');
+            var nodeStatus = sanitizeHTML(node.Status || 'unknown');
+            var statusIndicator = nodeStatus === 'online' ? ' ✓' : ' (' + nodeStatus + ')';
+            $NodeSelect.append('<option value="' + nodeName + '">' + nodeName + statusIndicator + '</option>');
+            
+            if (nodeStatus === 'online') {
+                onlineNodes.push(nodeName);
+            }
+        });
+        
+        // Auto-select first online node (or only one if there's just one)
+        if (onlineNodes.length >= 1) {
+            console.log('Auto-selecting first online node:', onlineNodes[0]);
+            $NodeSelect.val(onlineNodes[0]).trigger('change');
+        }
+    }
+    
+    // Store all containers from TestAPI response
+    var allContainersData = {};
+    function populateAllContainers(containers) {
+        allContainersData = containers;
+    }
+    
+    // Populate containers for selected node
+    function populateContainersForNode(nodeName) {
+        var $ContainerSelect = $('#ContainerID');
+        $ContainerSelect.empty().append('<option value="">' + Core.Language.Translate('Select a container...') + '</option>');
+        
+        if (allContainersData[nodeName]) {
+            var bomgarContainers = [];
+            $.each(allContainersData[nodeName], function(index, container) {
+                var vmid = sanitizeHTML(String(container.VMID || ''));
+                var containerName = container.Name || '';
+                var name = containerName ? ' (' + sanitizeHTML(containerName) + ')' : '';
+                var status = ' [' + sanitizeHTML(container.Status || 'unknown') + ']';
+                var type = container.Type === 'qemu' ? ' [VM]' : ' [LXC]';
+                
+                // Skip containers with "znuny" in the name (case insensitive)
+                if (containerName.toLowerCase().includes('znuny')) {
+                    return true; // continue to next iteration
+                }
+                
+                $ContainerSelect.append('<option value="' + vmid + '">' + 
+                    vmid + name + type + status + '</option>');
+                
+                if (container.IsBomgar) {
+                    bomgarContainers.push({vmid: vmid, name: container.Name});
+                }
+            });
+            
+            // Auto-select if only one MSI Support Remote Access container found
+            if (bomgarContainers.length === 1) {
+                $ContainerSelect.val(bomgarContainers[0].vmid);
+                $('#APITestResult').removeClass('Error').addClass('Success').html(
+                    '<i class="fa fa-check"></i> Auto-detected MSI Support Remote Access container: ' + bomgarContainers[0].vmid + ' (' + (bomgarContainers[0].name || 'unnamed') + ')'
+                );
+            }
+        }
+    }
+    
+    // Load available nodes - using form data like TestAPI does
+    function loadNodes() {
+        if (!APITested) return;
+        
+        // Get credentials from form (same as TestAPI does)
+        var host = $('#ProxmoxHost').val().trim();
+        var tokenID = $('#ProxmoxTokenID').val().trim();
+        var tokenSecret = $('#ProxmoxTokenSecret').val().trim();
+        
+        var Data = {
+            Action: '[% Env("Action") %]',
+            Subaction: 'GetNodes',
+            ProxmoxHost: host,
+            ProxmoxPort: $('#ProxmoxPort').val() || '8006',
+            ProxmoxTokenID: tokenID,
+            ProxmoxTokenSecret: tokenSecret,
+            [% Env("SessionName") | html %]: '[% Env("SessionID") | html %]'
+        };
+        
+        Core.AJAX.FunctionCall(
+            Core.Config.Get('CGIHandle'),
+            Data,
+            function(Response) {
+                var $NodeSelect = $('#ContainerNode');
+                $NodeSelect.empty().append('<option value="">' + Core.Language.Translate('Select a node...') + '</option>');
+                
+                if (Response.Success && Response.Nodes) {
+                    var onlineNodes = [];
+                    $.each(Response.Nodes, function(index, node) {
+                        var nodeName = sanitizeHTML(node.Node || '');
+                        var nodeStatus = sanitizeHTML(node.Status || 'unknown');
+                        var statusIndicator = nodeStatus === 'online' ? ' ✓' : ' (' + nodeStatus + ')';
+                        $NodeSelect.append('<option value="' + nodeName + '">' + nodeName + statusIndicator + '</option>');
+                        
+                        // Track online nodes for auto-selection
+                        if (nodeStatus === 'online') {
+                            onlineNodes.push(nodeName);
+                        }
+                    });
+                    
+                    NodesLoaded = true;
+                    showContainerSelection();
+                    
+                    // Auto-select if only one online node
+                    if (onlineNodes.length === 1) {
+                        console.log('Auto-selecting single online node:', onlineNodes[0]);
+                        $NodeSelect.val(onlineNodes[0]).trigger('change');
+                    }
+                } else {
+                    var errorMsg = sanitizeHTML(Response.Message || 'Unknown error');
+                    $('#APITestResult').removeClass('Success').addClass('Error').html(
+                        '<i class="fa fa-times"></i> ' + Core.Language.Translate('Failed to load nodes: ') + errorMsg
+                    );
+                }
+            },
+            'json'
+        );
+    }
+    
+    // Load containers for selected node
+    function loadContainers(node) {
+        var $ContainerSelect = $('#ContainerID');
+        $ContainerSelect.empty().append('<option value="">' + Core.Language.Translate('Loading containers...') + '</option>');
+        
+        var Data = {
+            Action: '[% Env("Action") %]',
+            Subaction: 'GetContainers',
+            Node: node,
+            [% Env("SessionName") | html %]: '[% Env("SessionID") | html %]'
+        };
+        
+        Core.AJAX.FunctionCall(
+            Core.Config.Get('CGIHandle'),
+            Data,
+            function(Response) {
+                $ContainerSelect.empty().append('<option value="">' + Core.Language.Translate('Select a container...') + '</option>');
+                
+                if (Response.Success && Response.Containers) {
+                    var bomgarContainers = [];
+                    $.each(Response.Containers, function(index, container) {
+                        var vmid = sanitizeHTML(String(container.VMID || ''));
+                        var name = container.Name ? ' (' + sanitizeHTML(container.Name) + ')' : '';
+                        var status = ' [' + sanitizeHTML(container.Status || 'unknown') + ']';
+                        var type = container.Type === 'qemu' ? ' [VM]' : ' [LXC]';
+                        var bomgarIndicator = container.IsBomgar ? ' ⭐' : '';
+                        
+                        $ContainerSelect.append('<option value="' + vmid + '">' + 
+                            vmid + name + type + status + bomgarIndicator + '</option>');
+                        
+                        // Track MSI Support Remote Access containers for auto-selection
+                        if (container.IsBomgar) {
+                            bomgarContainers.push({vmid: vmid, name: container.Name});
+                        }
+                    });
+                    
+                    showSaveConfiguration();
+                    
+                    // Auto-select if only one MSI Support Remote Access container found
+                    if (bomgarContainers.length === 1) {
+                        console.log('Auto-selecting MSI Support Remote Access container:', bomgarContainers[0].vmid, bomgarContainers[0].name);
+                        $ContainerSelect.val(bomgarContainers[0].vmid);
+                        
+                        // Show success message
+                        $('#APITestResult').removeClass('Error').addClass('Success').html(
+                            '<i class="fa fa-check"></i> Auto-detected MSI Support Remote Access container: ' + bomgarContainers[0].vmid + ' (' + (bomgarContainers[0].name || 'unnamed') + ')'
+                        );
+                    } else if (bomgarContainers.length > 1) {
+                        $('#APITestResult').removeClass('Error').addClass('Success').html(
+                            '<i class="fa fa-info"></i> Found ' + bomgarContainers.length + ' potential MSI Support Remote Access containers (marked with ⭐)'
+                        );
+                    }
+                }
+            },
+            'json'
+        );
+    }
+    
+    // Show container selection section
+    function showContainerSelection() {
+        $('#ContainerSelectionWidget').slideDown();
+    }
+    
+    // Hide container selection section
+    function hideContainerSelection() {
+        $('#ContainerSelectionWidget').slideUp();
+        $('#SaveConfigurationWidget').slideUp();
+    }
+    
+    // Show save configuration section
+    function showSaveConfiguration() {
+        $('#SaveConfigurationWidget').slideDown();
+    }
+    
+    // Container control functionality
+    function controlContainer(action) {
+        var $Result = $('#ContainerControlResult');
+        var $StartBtn = $('#StartContainer');
+        var $StopBtn = $('#StopContainer');
+        
+        $StartBtn.prop('disabled', true);
+        $StopBtn.prop('disabled', true);
+        $Result.removeClass('Hidden Error Success').html('<i class="fa fa-spinner fa-spin"></i> ' + Core.Language.Translate('Processing...'));
+        
+        var Data = {
+            Action: '[% Env("Action") %]',
+            Subaction: 'ContainerControl',
+            ContainerAction: action,
+            [% Env("SessionName") | html %]: '[% Env("SessionID") | html %]'
+        };
+        
+        Core.AJAX.FunctionCall(
+            Core.Config.Get('CGIHandle'),
+            Data,
+            function(Response) {
+                $StartBtn.prop('disabled', false);
+                $StopBtn.prop('disabled', false);
+                
+                if (Response.Success) {
+                    var successMsg = sanitizeHTML(Response.Message || 'Operation completed');
+                    $Result.removeClass('Error').addClass('Success').html(
+                        '<i class="fa fa-check"></i> ' + successMsg
+                    );
+                    setTimeout(checkStatus, 2000);
+                } else {
+                    var errorMsg = sanitizeHTML(Response.Message || 'Operation failed');
+                    $Result.removeClass('Success').addClass('Error').html(
+                        '<i class="fa fa-times"></i> ' + errorMsg
+                    );
+                }
+            },
+            'json'
+        );
+    }
+    
+    // Status check functionality
+    function checkStatus() {
+        var $Status = $('#CurrentStatus');
+        var $Message = $('#StatusMessage');
+        var $RefreshBtn = $('#RefreshStatus');
+        
+        $RefreshBtn.prop('disabled', true).find('i').addClass('fa-spin');
+        
+        var Data = {
+            Action: '[% Env("Action") %]',
+            Subaction: 'CheckStatus',
+            [% Env("SessionName") | html %]: '[% Env("SessionID") | html %]'
+        };
+        
+        Core.AJAX.FunctionCall(
+            Core.Config.Get('CGIHandle'),
+            Data,
+            function(Response) {
+                $RefreshBtn.prop('disabled', false).find('i').removeClass('fa-spin');
+                
+                if (Response) {
+                    var statusClass = sanitizeHTML(Response.StatusClass || 'unknown');
+                    var status = sanitizeHTML(Response.Status || 'unknown');
+                    var message = sanitizeHTML(Response.Message || 'No status information');
+                    
+                    $Status.removeClass('success error warning unknown').addClass(statusClass).text(status);
+                    $Message.text(message);
+                    
+                    // Update Start/Stop button states based on container status
+                    updateContainerButtons(status.toLowerCase());
+                }
+            },
+            'json'
+        );
+    }
+    
+    // Update container control buttons based on status
+    function updateContainerButtons(status) {
+        var $StartBtn = $('#StartContainer');
+        var $StopBtn = $('#StopContainer');
+        
+        if (status === 'running') {
+            // Container is running - only allow Stop
+            $StartBtn.prop('disabled', true).addClass('disabled');
+            $StopBtn.prop('disabled', false).removeClass('disabled');
+        } else if (status === 'stopped' || status === 'not_configured') {
+            // Container is stopped or not configured - only allow Start
+            $StartBtn.prop('disabled', false).removeClass('disabled');
+            $StopBtn.prop('disabled', true).addClass('disabled');
+        } else {
+            // Unknown status - disable both buttons
+            $StartBtn.prop('disabled', true).addClass('disabled');
+            $StopBtn.prop('disabled', true).addClass('disabled');
+        }
+    }
+    
+    // SIMPLE EVENT HANDLER: One handler, one lock
+    $(document).ready(function() {
+        // Remove any existing handlers
+        $(document).off('click', '#TestAPIConnection');
+        
+        // Single event handler
+        $(document).on('click', '#TestAPIConnection', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            console.log('CLICKED: Test API button');
+            testAPIConnection();
+            
+            return false;
+        });
+        
+        console.log('READY: Simple test button handler initialized');
+    });
+    
+    $('#ContainerNode').on('change', function() {
+        var selectedNode = $(this).val();
+        if (selectedNode) {
+            populateContainersForNode(selectedNode);
+        } else {
+            $('#ContainerID').empty().append('<option value="">' + Core.Language.Translate('Select a node first...') + '</option>');
+            $('#SaveConfigurationWidget').slideUp();
+        }
+    });
+    
+    $('#StartContainer').on('click', function() {
+        controlContainer('start');
+    });
+    
+    $('#StopContainer').on('click', function() {
+        controlContainer('stop');
+    });
+    
+    $('#RefreshStatus').on('click', function() {
+        checkStatus();
+    });
+    
+    // Refresh Containers button - same functionality as Test API
+    $('#RefreshContainers').on('click', function() {
+        console.log('CLICKED: Refresh Container Data button');
+        testAPIConnection();
+    });
+    
+    // Auto-refresh status every 30 seconds
+    setInterval(checkStatus, 30000);
+    
+    // Initialize if configuration exists
+    $(document).ready(function() {
+        var existingHost = '[% Data.ProxmoxHost | html %]';
+        var existingNode = '[% Data.ContainerNode | html %]';
+        var existingContainer = '[% Data.ContainerID | html %]';
+        var currentStatus = '[% Data.ContainerStatus | html %]';
+        
+        // Set initial button states based on current status
+        if (currentStatus) {
+            updateContainerButtons(currentStatus.toLowerCase());
+        }
+        
+        if (existingHost && existingNode && existingContainer) {
+            // Configuration exists, show all sections
+            APITested = true;
+            showContainerSelection();
+            showSaveConfiguration();
+            
+            // Enable save button for existing valid configuration
+            $('#SaveConfigButton').prop('disabled', false);
+            
+            // Pre-populate dropdowns by calling TestAPI to get all data
+            setTimeout(function() {
+                console.log('LOADING: Testing API to populate existing configuration');
+                testAPIConnection();
+            }, 500);
+        }
+    });
+//]]></script>
+[% END %]
+
+<style type="text/css">
+#ContainerControlResult, #APITestResult {
+    margin-left: 10px;
+    font-weight: bold;
+}
+#ContainerControlResult.Success, #APITestResult.Success {
+    color: #008000;
+}
+#ContainerControlResult.Error, #APITestResult.Error {
+    color: #ff0000;
+}
+
+.Status {
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 3px;
+    text-transform: uppercase;
+}
+.Status.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+.Status.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+.Status.warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+.Status.unknown {
+    background-color: #e2e3e5;
+    color: #383d41;
+    border: 1px solid #d6d8db;
+}
+
+#StartContainer, #StopContainer {
+    margin-right: 10px;
+}
+
+.WidgetSimple {
+    margin-bottom: 20px;
+}
+
+/* BULLETPROOF: Prevent any interaction when testing */
+#TestAPIConnection.processing,
+#TestAPIConnection[data-testing="true"] {
+    pointer-events: none !important;
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+    position: relative;
+}
+
+#TestAPIConnection.processing:after,
+#TestAPIConnection[data-testing="true"]:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.3);
+    z-index: 999;
+}
+
+/* Disabled save button styling */
+#SaveConfigButton:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+}
+
+/* Disabled container control buttons */
+#StartContainer:disabled,
+#StopContainer:disabled,
+#StartContainer.disabled,
+#StopContainer.disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+}
+</style>
+[% RenderBlockEnd("Overview") %]

@@ -1,0 +1,690 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Framework">
+
+    <!-- Frontend Module Registration for Unified Operational Reports -->
+    <Setting Name="Frontend::Module###AgentOperationalReports" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for the unified Operational Reports interface.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="GroupRo">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Description" Translatable="1">Operational Reports Dashboard</Item>
+                    <Item Key="Title" Translatable="1">Operational Reports</Item>
+                    <Item Key="NavBarName">Reports</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+
+    <!-- Navigation Registration (ONE menu item under Reports) -->
+    <Setting Name="Frontend::Navigation###AgentOperationalReports###001-OperationalReports" Required="0" Valid="1">
+        <Description Translatable="1">Main menu navigation for Operational Reports.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::MainMenu</Navigation>
+        <Value>
+            <Array>
+                <DefaultItem ValueType="FrontendNavigation">
+                    <Hash></Hash>
+                </DefaultItem>
+                <Item>
+                    <Hash>
+                        <Item Key="Group">
+                            <Array>
+                                <Item>stats</Item>
+                            </Array>
+                        </Item>
+                        <Item Key="GroupRo">
+                            <Array>
+                                <Item>stats</Item>
+                            </Array>
+                        </Item>
+                        <Item Key="Description" Translatable="1">View operational KPI reports including MTRD, MTTR, and dashboards.</Item>
+                        <Item Key="Link">Action=AgentActiveTicketsAssignment</Item>
+                        <Item Key="LinkOption"></Item>
+                        <Item Key="Name" Translatable="1">Operational Reports</Item>
+                        <Item Key="NavBar">Reports</Item>
+                        <Item Key="Prio">100</Item>
+                        <Item Key="Type"></Item>
+                    </Hash>
+                </Item>
+            </Array>
+        </Value>
+    </Setting>
+
+    <!-- Frontend Module Registration -->
+    <Setting Name="Frontend::Module###AgentOperationalKPIsReport" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for operational KPIs reports.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="GroupRo">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Module">Kernel::Modules::AgentOperationalKPIsReport</Item>
+                    <Item Key="Description" Translatable="1">Operational KPIs and performance reports.</Item>
+                    <Item Key="Title" Translatable="1">Operational KPIs</Item>
+                    <Item Key="NavBarName">Reports</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+
+    <!-- MTRD Report Frontend Module Registration -->
+    <Setting Name="Frontend::Module###AgentMTRDReport" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for MTRD (Mean Time to Respond) reports.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="GroupRo">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Module">Kernel::Modules::AgentMTRDReport</Item>
+                    <Item Key="Description" Translatable="1">MTRD Reports - Live Dashboard, Daily, Weekly, Monthly, Quarterly, Yearly views.</Item>
+                    <Item Key="Title" Translatable="1">MTRD Reports</Item>
+                    <Item Key="NavBarName">Reports</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+
+    <!-- MTRD Report Frontend Module Registration -->
+    <Setting Name="Frontend::Module###AgentMTTRReport" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for MTTR (Mean Time to Resolve) reports.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="GroupRo">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Module">Kernel::Modules::AgentMTTRReport</Item>
+                    <Item Key="Description" Translatable="1">MTTR Reports - Live Dashboard, Daily, Weekly, Monthly, Quarterly, Yearly views.</Item>
+                    <Item Key="Title" Translatable="1">MTTR Reports</Item>
+                    <Item Key="NavBarName">Reports</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+
+    <!-- MTTR Report Navigation (Submenu under Reports) -->
+    <Setting Name="Frontend::Navigation###AgentMTTRReport###002-MTTR" Required="0" Valid="0">
+        <Description Translatable="1">Main menu navigation for MTTR reports.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::MainMenu</Navigation>
+        <Value>
+            <Array>
+                <DefaultItem ValueType="FrontendNavigation">
+                    <Hash></Hash>
+                </DefaultItem>
+                <Item>
+                    <Hash>
+                        <Item Key="Group">
+                            <Array>
+                                <Item>stats</Item>
+                            </Array>
+                        </Item>
+                        <Item Key="GroupRo">
+                            <Array>
+                                <Item>stats</Item>
+                            </Array>
+                        </Item>
+                        <Item Key="Description" Translatable="1">MTTR Reports - Mean Time to Resolve with multiple time aggregations.</Item>
+                        <Item Key="Name" Translatable="1">MTTR Reports</Item>
+                        <Item Key="Link">Action=AgentMTTRReport</Item>
+                        <Item Key="LinkOption"></Item>
+                        <Item Key="NavBar">Reports</Item>
+                        <Item Key="Type">Submenu</Item>
+                        <Item Key="Block"></Item>
+                        <Item Key="AccessKey"></Item>
+                        <Item Key="Prio">105</Item>
+                    </Hash>
+                </Item>
+            </Array>
+        </Value>
+    </Setting>
+
+    <!-- Historical Trends Frontend Module Registration -->
+    <Setting Name="Frontend::Module###AgentHistoricalTrends" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for Historical Trends interface.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="GroupRo">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Module">Kernel::Modules::AgentHistoricalTrends</Item>
+                    <Item Key="Description" Translatable="1">Historical Trends - Active tickets trends by hour, day, week, month, quarter, year.</Item>
+                    <Item Key="Title" Translatable="1">Historical Trends</Item>
+                    <Item Key="NavBarName">Reports</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+
+    <!-- Historical Trends Navigation (Submenu under Reports) - DISABLED -->
+    <Setting Name="Frontend::Navigation###AgentHistoricalTrends###003-HistoricalTrends" Required="0" Valid="0">
+        <Description Translatable="1">Main menu navigation for Historical Trends.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::MainMenu</Navigation>
+        <Value>
+            <Array>
+                <DefaultItem ValueType="FrontendNavigation">
+                    <Hash></Hash>
+                </DefaultItem>
+                <Item>
+                    <Hash>
+                        <Item Key="Group">
+                            <Array>
+                                <Item>stats</Item>
+                            </Array>
+                        </Item>
+                        <Item Key="GroupRo">
+                            <Array>
+                                <Item>stats</Item>
+                            </Array>
+                        </Item>
+                        <Item Key="Description" Translatable="1">Historical Trends - Active tickets historical trends with multiple time views.</Item>
+                        <Item Key="Name" Translatable="1">Historical Trends</Item>
+                        <Item Key="Link">Action=AgentHistoricalTrends</Item>
+                        <Item Key="LinkOption"></Item>
+                        <Item Key="NavBar">Reports</Item>
+                        <Item Key="Type">Submenu</Item>
+                        <Item Key="Block"></Item>
+                        <Item Key="AccessKey"></Item>
+                        <Item Key="Prio">115</Item>
+                    </Hash>
+                </Item>
+            </Array>
+        </Value>
+    </Setting>
+
+    <!-- Active Tickets Frontend Module Registration -->
+    <Setting Name="Frontend::Module###AgentActiveTickets" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for Active Tickets Counts interface.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="GroupRo">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Module">Kernel::Modules::AgentActiveTickets</Item>
+                    <Item Key="Description" Translatable="1">Active Tickets Counts - Currently active incident tickets by priority.</Item>
+                    <Item Key="Title" Translatable="1">Active Tickets Counts</Item>
+                    <Item Key="NavBarName">Incidents</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+
+    <!-- Active Tickets Navigation (Standalone under Incidents) -->
+    <Setting Name="Frontend::Navigation###AgentActiveTickets###004-ActiveTickets" Required="0" Valid="1">
+        <Description Translatable="1">Main menu navigation for Active Tickets Counts.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::MainMenu</Navigation>
+        <Value>
+            <Array>
+                <DefaultItem ValueType="FrontendNavigation">
+                    <Hash></Hash>
+                </DefaultItem>
+                <Item>
+                    <Hash>
+                        <Item Key="Group">
+                            <Array>
+                                <Item>stats</Item>
+                            </Array>
+                        </Item>
+                        <Item Key="GroupRo">
+                            <Array>
+                                <Item>stats</Item>
+                            </Array>
+                        </Item>
+                        <Item Key="Description" Translatable="1">Active Tickets Counts - Currently active incident tickets with multiple time views.</Item>
+                        <Item Key="Name" Translatable="1">Active Tickets Counts</Item>
+                        <Item Key="Link">Action=AgentActiveTickets</Item>
+                        <Item Key="LinkOption"></Item>
+                        <Item Key="NavBar">Incidents</Item>
+                        <Item Key="Type">Submenu</Item>
+                        <Item Key="Block"></Item>
+                        <Item Key="AccessKey"></Item>
+                        <Item Key="Prio">120</Item>
+                    </Hash>
+                </Item>
+            </Array>
+        </Value>
+    </Setting>
+
+    <!-- Active Tickets Backlog Frontend Module Registration -->
+    <Setting Name="Frontend::Module###AgentActiveTicketsBacklog" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for Active Tickets Backlog interface.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="GroupRo">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Module">Kernel::Modules::AgentActiveTicketsBacklog</Item>
+                    <Item Key="Description" Translatable="1">Active Tickets Backlog - Sum of backlog days for active incident tickets by priority.</Item>
+                    <Item Key="Title" Translatable="1">Active Tickets Backlog</Item>
+                    <Item Key="NavBarName">Incidents</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+
+    <!-- Active Tickets Backlog Navigation (Standalone under Incidents) -->
+    <Setting Name="Frontend::Navigation###AgentActiveTicketsBacklog###005-ActiveTicketsBacklog" Required="0" Valid="1">
+        <Description Translatable="1">Main menu navigation for Active Tickets Backlog.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::MainMenu</Navigation>
+        <Value>
+            <Array>
+                <DefaultItem ValueType="FrontendNavigation">
+                    <Hash></Hash>
+                </DefaultItem>
+                <Item>
+                    <Hash>
+                        <Item Key="Group">
+                            <Array>
+                                <Item>stats</Item>
+                            </Array>
+                        </Item>
+                        <Item Key="GroupRo">
+                            <Array>
+                                <Item>stats</Item>
+                            </Array>
+                        </Item>
+                        <Item Key="Description" Translatable="1">Active Tickets Backlog - Sum of backlog days for active incidents with multiple time views.</Item>
+                        <Item Key="Name" Translatable="1">Active Tickets Backlog</Item>
+                        <Item Key="Link">Action=AgentActiveTicketsBacklog</Item>
+                        <Item Key="LinkOption"></Item>
+                        <Item Key="NavBar">Incidents</Item>
+                        <Item Key="Type">Submenu</Item>
+                        <Item Key="Block"></Item>
+                        <Item Key="AccessKey"></Item>
+                        <Item Key="Prio">125</Item>
+                    </Hash>
+                </Item>
+            </Array>
+        </Value>
+    </Setting>
+
+    <!-- MTRD Report Navigation (Submenu under Reports) -->
+    <Setting Name="Frontend::Navigation###AgentMTRDReport###001-MTRD" Required="0" Valid="0">
+        <Description Translatable="1">Main menu navigation for MTRD reports.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::MainMenu</Navigation>
+        <Value>
+            <Array>
+                <DefaultItem ValueType="FrontendNavigation">
+                    <Hash></Hash>
+                </DefaultItem>
+                <Item>
+                    <Hash>
+                        <Item Key="Group">
+                            <Array>
+                                <Item>stats</Item>
+                            </Array>
+                        </Item>
+                        <Item Key="GroupRo">
+                            <Array>
+                                <Item>stats</Item>
+                            </Array>
+                        </Item>
+                        <Item Key="Description" Translatable="1">MTRD Reports - Mean Time to Respond with multiple time aggregations.</Item>
+                        <Item Key="Name" Translatable="1">MTRD Reports</Item>
+                        <Item Key="Link">Action=AgentMTRDReport</Item>
+                        <Item Key="LinkOption"></Item>
+                        <Item Key="NavBar">Reports</Item>
+                        <Item Key="Type">Submenu</Item>
+                        <Item Key="Block"></Item>
+                        <Item Key="AccessKey"></Item>
+                        <Item Key="Prio">110</Item>
+                    </Hash>
+                </Item>
+            </Array>
+        </Value>
+    </Setting>
+
+    <!-- Navigation Registration (Submenu under Reports) - DISABLED in favor of unified AgentOperationalReports -->
+    <Setting Name="Frontend::Navigation###AgentOperationalKPIsReport###001-OperationalKPIs" Required="0" Valid="0">
+        <Description Translatable="1">Main menu navigation for operational KPIs reports.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::MainMenu</Navigation>
+        <Value>
+            <Array>
+                <DefaultItem ValueType="FrontendNavigation">
+                    <Hash></Hash>
+                </DefaultItem>
+                <Item>
+                    <Hash>
+                        <Item Key="Group">
+                            <Array>
+                                <Item>stats</Item>
+                            </Array>
+                        </Item>
+                        <Item Key="GroupRo">
+                            <Array>
+                                <Item>stats</Item>
+                            </Array>
+                        </Item>
+                        <Item Key="Description" Translatable="1">View operational KPIs and performance metrics.</Item>
+                        <Item Key="Name" Translatable="1">Operational KPIs</Item>
+                        <Item Key="Link">Action=AgentOperationalKPIsReport</Item>
+                        <Item Key="LinkOption"></Item>
+                        <Item Key="NavBar">Reports</Item>
+                        <Item Key="Type">Submenu</Item>
+                        <Item Key="Block"></Item>
+                        <Item Key="AccessKey"></Item>
+                        <Item Key="Prio">100</Item>
+                    </Hash>
+                </Item>
+            </Array>
+        </Value>
+    </Setting>
+
+    <!-- Configuration Settings -->
+    <Setting Name="OperationalKPIs::Enabled" Required="1" Valid="1">
+        <Description Translatable="1">Enable operational KPIs reporting module.</Description>
+        <Navigation>Core::OperationalKPIs</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">1</Item>
+        </Value>
+    </Setting>
+
+    <Setting Name="OperationalKPIs::DataRetentionDays" Required="1" Valid="1">
+        <Description Translatable="1">Number of days to retain in operational KPIs reports (default: 180).</Description>
+        <Navigation>Core::OperationalKPIs</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="^\d+$">180</Item>
+        </Value>
+    </Setting>
+
+    <Setting Name="OperationalKPIs::CacheEnabled" Required="1" Valid="1">
+        <Description Translatable="1">Enable caching for operational KPIs calculations.</Description>
+        <Navigation>Core::OperationalKPIs</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">1</Item>
+        </Value>
+    </Setting>
+
+    <Setting Name="OperationalKPIs::CacheTTL" Required="1" Valid="1">
+        <Description Translatable="1">Cache time-to-live in minutes for operational KPIs (default: 60).</Description>
+        <Navigation>Core::OperationalKPIs</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="^\d+$">60</Item>
+        </Value>
+    </Setting>
+
+    <Setting Name="OperationalKPIs::MaxRecordsPerPage" Required="1" Valid="1">
+        <Description Translatable="1">Maximum records per page in operational KPIs reports.</Description>
+        <Navigation>Core::OperationalKPIs</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="^\d+$">100</Item>
+        </Value>
+    </Setting>
+
+    <!-- JavaScript Module Loader Registration -->
+    <Setting Name="Loader::Module::AgentOperationalKPIsReport###002-Framework" Required="0" Valid="1">
+        <Description Translatable="1">List of JS files loaded for AgentOperationalKPIsReport frontend module.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::Loader</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="JavaScript">
+                    <Array>
+                        <Item>Core.Agent.OperationalKPIsReport.js</Item>
+                    </Array>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Daemon Cron Task for Automatic Aggregation -->
+    <Setting Name="Daemon::SchedulerCronTaskManager::Task###OperationalKPIsAggregation" Required="0" Valid="1">
+        <Description Translatable="1">Aggregate operational KPIs data daily for reporting and dashboard display.</Description>
+        <Navigation>Daemon::SchedulerCronTaskManager::Task</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="TaskName">OperationalKPIsAggregation</Item>
+                <Item Key="Schedule">0 2 * * *</Item> <!-- Daily at 2:00 AM -->
+                <Item Key="Module">Kernel::System::OperationalKPIs</Item>
+                <Item Key="Function">AggregateAllData</Item>
+                <Item Key="MaximumParallelInstances">1</Item>
+                <Item Key="Params">
+                    <Array>
+                        <!-- No parameters needed - method determines date ranges automatically -->
+                    </Array>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- AgentTicketResolution Frontend Module Registration -->
+    <Setting Name="Frontend::Module###AgentTicketResolution" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for Ticket Resolution status page with pie charts.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="GroupRo">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Module">Kernel::Modules::AgentTicketResolution</Item>
+                    <Item Key="Description" Translatable="1">Ticket Resolution - Resolution status with pie charts by priority.</Item>
+                    <Item Key="Title" Translatable="1">Ticket Resolution</Item>
+                    <Item Key="NavBarName">Reports</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+
+    <!-- AgentMTTR Frontend Module Registration -->
+    <Setting Name="Frontend::Module###AgentMTTR" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for MTTR Breakdown charts page.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="GroupRo">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Module">Kernel::Modules::AgentMTTR</Item>
+                    <Item Key="Description" Translatable="1">MTTR Breakdown - Average MTTR hours by time period.</Item>
+                    <Item Key="Title" Translatable="1">MTTR Breakdown</Item>
+                    <Item Key="NavBarName">Reports</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+
+    <!-- AgentMTRD Frontend Module Registration -->
+    <Setting Name="Frontend::Module###AgentMTRD" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for MTRD (Mean Time to Respond) pie chart page.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="GroupRo">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Module">Kernel::Modules::AgentMTRD</Item>
+                    <Item Key="Description" Translatable="1">MTRD - Active Tickets Response Status with pie charts.</Item>
+                    <Item Key="Title" Translatable="1">MTRD</Item>
+                    <Item Key="NavBarName">Reports</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+
+    <!-- AgentMTRDBacklog Frontend Module Registration -->
+    <Setting Name="Frontend::Module###AgentMTRDBacklog" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for MTRD Breakdown charts page.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="GroupRo">
+                        <Array>
+                            <Item>stats</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Module">Kernel::Modules::AgentMTRDBacklog</Item>
+                    <Item Key="Description" Translatable="1">MTRD Breakdown - Average MTRD hours by time period.</Item>
+                    <Item Key="Title" Translatable="1">MTRD Breakdown</Item>
+                    <Item Key="NavBarName">Reports</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+
+    <!-- Dashboard Widget: MTRD Summary -->
+    <Setting Name="DashboardBackend###0200-MTRDSummary" Required="0" Valid="1">
+        <Description Translatable="1">Dashboard backend for MTRD (Mean Time to Respond) summary widget.</Description>
+        <Navigation>Frontend::Agent::View::Dashboard</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Module">Kernel::Output::HTML::Dashboard::MTRDSummary</Item>
+                <Item Key="Title" Translatable="1">MTRD Summary</Item>
+                <Item Key="Description" Translatable="1">Current month average MTRD with priority breakdown</Item>
+                <Item Key="Group">
+                    <Array>
+                        <Item>stats</Item>
+                    </Array>
+                </Item>
+                <Item Key="Limit">10</Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Dashboard Widget: MTTR Summary -->
+    <Setting Name="DashboardBackend###0210-MTTRSummary" Required="0" Valid="1">
+        <Description Translatable="1">Dashboard backend for MTTR (Mean Time to Resolve) summary widget.</Description>
+        <Navigation>Frontend::Agent::View::Dashboard</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Module">Kernel::Output::HTML::Dashboard::MTTRSummary</Item>
+                <Item Key="Title" Translatable="1">MTTR Summary</Item>
+                <Item Key="Description" Translatable="1">Current month average MTTR with priority breakdown</Item>
+                <Item Key="Group">
+                    <Array>
+                        <Item>stats</Item>
+                    </Array>
+                </Item>
+                <Item Key="Limit">10</Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Dashboard Widget: Unassigned Incidents -->
+    <Setting Name="DashboardBackend###0220-UnassignedIncidents" Required="0" Valid="1">
+        <Description Translatable="1">Dashboard backend for unassigned incidents widget showing current unassigned incident count.</Description>
+        <Navigation>Frontend::Agent::View::Dashboard</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Module">Kernel::Output::HTML::Dashboard::UnassignedIncidents</Item>
+                <Item Key="Title" Translatable="1">Unassigned Incidents</Item>
+                <Item Key="Description" Translatable="1">Current unassigned incidents sorted by age and priority</Item>
+                <Item Key="Group">
+                    <Array>
+                        <Item>stats</Item>
+                    </Array>
+                </Item>
+                <Item Key="Limit">10</Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Dashboard Widget: Incident Trends -->
+    <Setting Name="DashboardBackend###0230-IncidentTrends" Required="0" Valid="1">
+        <Description Translatable="1">Dashboard backend for incident trends widget showing 30-day trend chart.</Description>
+        <Navigation>Frontend::Agent::View::Dashboard</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Module">Kernel::Output::HTML::Dashboard::IncidentTrends</Item>
+                <Item Key="Title" Translatable="1">Incident Trends</Item>
+                <Item Key="Description" Translatable="1">30-day incident creation trend chart with priority breakdown</Item>
+                <Item Key="Group">
+                    <Array>
+                        <Item>stats</Item>
+                    </Array>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+</otrs_config>

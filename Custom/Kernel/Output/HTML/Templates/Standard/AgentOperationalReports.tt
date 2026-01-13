@@ -1,0 +1,2259 @@
+# --
+# Copyright (C) 2025 MSST, https://msst.com/
+# --
+# This software comes with ABSOLUTELY NO WARRANTY.
+# --
+
+<div class="MainBox ARIARoleMain LayoutFixedSidebar SidebarFirst">
+
+    <!-- Side Navigation (Shared) -->
+    [% INCLUDE "AgentOperationalReportsSidebar.tt" ActiveSidebar = Data.Section || 'AllActiveTickets' %]
+
+    <!-- Main Content Area -->
+    <div class="ContentColumn">
+        [% IF Data.Section == 'ActiveTicketsAssignment' %]
+            [% INCLUDE ActiveTicketsAssignment %]
+        [% ELSIF Data.Section == 'AverageBacklog' %]
+            [% INCLUDE AverageBacklog %]
+        [% ELSIF Data.Section == 'AllActiveTickets' || !Data.Section %]
+            [% INCLUDE AllActiveTickets %]
+        [% END %]
+    </div>
+</div>
+
+[% BLOCK Dashboard %]
+<style>
+.MetricCards {
+    display: flex;
+    gap: 20px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.MetricCard {
+    flex: 1;
+    min-width: 200px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 25px 20px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.MetricCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.MetricValue {
+    font-size: 32px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.MetricLabel {
+    font-size: 14px;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.DashboardContent .WidgetSimple {
+    margin-bottom: 20px;
+}
+
+.DataTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.DataTable th {
+    background: #f8f9fa;
+    padding: 12px;
+    text-align: left;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+}
+
+.DataTable td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.DataTable tr:hover {
+    background: #f8f9fa;
+}
+</style>
+
+<div class="DashboardContent">
+
+    <!-- 30-Day Trend Chart -->
+    <div class="WidgetSimple">
+        <div class="Header">
+            <h2>[% Translate("30-Day Incident Trends") | html %]</h2>
+            <div class="ActionMenu">
+                <a href="#" id="ToggleTrendView" class="CallForAction" title="[% Translate("Toggle between chart and table view") | html %]">
+                    <span><i class="fa fa-table"></i> [% Translate("Show Table") | html %]</span>
+                </a>
+            </div>
+        </div>
+        <div class="Content">
+            <!-- Chart View (D3/NVD3) -->
+            <div id="TrendChartContainer" class="ChartContainer" style="display: block; overflow: visible !important;">
+                <svg id="TrendChart" style="height: 450px; width: 100%; overflow: visible !important;"></svg>
+            </div>
+
+            <!-- Table View (fallback/detailed view) -->
+            <div id="TrendTableContainer" class="TableContainer" style="display: none;">
+[% IF Data.TrendData %]
+                <table class="DataTable">
+                    <thead>
+                        <tr>
+                            <th>[% Translate("Date") | html %]</th>
+                            <th>[% Translate("P1-Critical") | html %]</th>
+                            <th>[% Translate("P2-High") | html %]</th>
+                            <th>[% Translate("P3-Medium") | html %]</th>
+                            <th>[% Translate("P4-Low") | html %]</th>
+                            <th>[% Translate("Total") | html %]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+[% FOREACH day IN Data.TrendData %]
+                        <tr>
+                            <td>[% day.Date | html %]</td>
+                            <td>[% day.PriorityBreakdown.P1 | html %]</td>
+                            <td>[% day.PriorityBreakdown.P2 | html %]</td>
+                            <td>[% day.PriorityBreakdown.P3 | html %]</td>
+                            <td>[% day.PriorityBreakdown.P4 | html %]</td>
+                            <td><strong>[% day.TotalCount | html %]</strong></td>
+                        </tr>
+[% END %]
+                    </tbody>
+                </table>
+[% ELSE %]
+                <p>[% Translate("No trend data available.") | html %]</p>
+[% END %]
+            </div>
+        </div>
+    </div>
+
+    <!-- Priority Breakdown Chart -->
+    <div class="WidgetSimple">
+        <div class="Header">
+            <h2>[% Translate("Priority Breakdown - Current Month") | html %]</h2>
+        </div>
+        <div class="Content">
+            <div id="PriorityChartContainer" class="ChartContainer" style="overflow: visible !important;">
+                <svg id="PriorityChart" style="height: 350px; width: 100%; overflow: visible !important;"></svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unassigned Incidents Widget -->
+    <div class="WidgetSimple">
+        <div class="Header">
+            <h2>[% Translate("Unassigned Incidents (Top 10 by Age)") | html %]</h2>
+        </div>
+        <div class="Content">
+[% IF Data.UnassignedIncidents %]
+            <table class="DataTable">
+                <thead>
+                    <tr>
+                        <th>[% Translate("Ticket#") | html %]</th>
+                        <th>[% Translate("Title") | html %]</th>
+                        <th>[% Translate("Priority") | html %]</th>
+                        <th>[% Translate("Age") | html %]</th>
+                        <th>[% Translate("Source") | html %]</th>
+                    </tr>
+                </thead>
+                <tbody>
+[% FOREACH incident IN Data.UnassignedIncidents %]
+                    <tr>
+                        <td>
+                            <a href="[% Env("Baselink") %]Action=AgentIncidentForm;Subaction=Update;IncidentNumber=[% incident.TicketNumber | uri %]" title="[% incident.Title | html %]">[% incident.TicketNumber | html %]</a>
+                        </td>
+                        <td>[% incident.Title | truncate(50) | html %]</td>
+                        <td>[% incident.Priority | html %]</td>
+                        <td>[% incident.Age | html %]</td>
+                        <td>[% incident.Source | html %]</td>
+                    </tr>
+[% END %]
+                </tbody>
+            </table>
+[% ELSE %]
+            <p>[% Translate("No unassigned incidents found.") | html %]</p>
+[% END %]
+        </div>
+    </div>
+
+</div>
+
+<!-- Load D3/NVD3 and custom chart JavaScript -->
+<link rel="stylesheet" href="[% Config("Frontend::WebPath") %]js/thirdparty/nvd3-1.7.1/nv.d3.css">
+<script src="[% Config("Frontend::WebPath") %]js/thirdparty/d3-3.5.7/d3.min.js"></script>
+<script src="[% Config("Frontend::WebPath") %]js/thirdparty/nvd3-1.7.1/nvd3.min.js"></script>
+<script src="[% Config("Frontend::WebPath") %]js/Core.Agent.OperationalReports.js"></script>
+
+<!-- Add JavaScript for chart toggle functionality -->
+<script type="text/javascript">
+// Wait for Core framework to be ready
+if (typeof Core !== 'undefined' && Core.App && Core.App.Ready) {
+    Core.App.Ready(function() {
+        // Initialize charts
+        if (typeof Core.Agent.OperationalReports !== 'undefined') {
+            Core.Agent.OperationalReports.Init();
+        }
+
+        // Chart toggle functionality
+        $('#ToggleTrendView').on('click', function(e) {
+            e.preventDefault();
+            var $chartContainer = $('#TrendChartContainer');
+            var $tableContainer = $('#TrendTableContainer');
+            var $toggleButton = $(this).find('span');
+
+            if ($chartContainer.is(':visible')) {
+                $chartContainer.hide();
+                $tableContainer.show();
+                $toggleButton.html('<i class="fa fa-bar-chart"></i> [% Translate("Show Chart") | html %]');
+            } else {
+                $chartContainer.show();
+                $tableContainer.hide();
+                $toggleButton.html('<i class="fa fa-table"></i> [% Translate("Show Table") | html %]');
+            }
+        });
+    });
+} else {
+    // Fallback if Core.App.Ready doesn't exist - use window.load
+    window.addEventListener('load', function() {
+        // Initialize charts
+        if (typeof Core !== 'undefined' &&
+            typeof Core.Agent !== 'undefined' &&
+            typeof Core.Agent.OperationalReports !== 'undefined') {
+            Core.Agent.OperationalReports.Init();
+        }
+
+        // Chart toggle functionality
+        if (typeof $ !== 'undefined') {
+            $('#ToggleTrendView').on('click', function(e) {
+                e.preventDefault();
+                var $chartContainer = $('#TrendChartContainer');
+                var $tableContainer = $('#TrendTableContainer');
+                var $toggleButton = $(this).find('span');
+
+                if ($chartContainer.is(':visible')) {
+                    $chartContainer.hide();
+                    $tableContainer.show();
+                    $toggleButton.html('<i class="fa fa-bar-chart"></i> [% Translate("Show Chart") | html %]');
+                } else {
+                    $chartContainer.show();
+                    $tableContainer.hide();
+                    $toggleButton.html('<i class="fa fa-table"></i> [% Translate("Show Table") | html %]');
+                }
+            });
+        }
+    });
+}
+</script>
+
+<style>
+    .ChartContainer {
+        padding: 20px 10px;
+        min-height: 400px;
+    }
+    .ChartContainer svg {
+        overflow: visible;
+    }
+    .TableContainer {
+        padding: 10px;
+    }
+    .ActionMenu {
+        float: right;
+        margin-top: -5px;
+    }
+    .ActionMenu .CallForAction {
+        font-size: 11px;
+        padding: 3px 8px;
+    }
+</style>
+
+[% END %]
+
+[% BLOCK MTRDReports %]
+<div class="WidgetSimple SidebarColumn">
+    <div class="Header">
+        <h2>[% Translate("MTRD Views") | html %]</h2>
+    </div>
+    <div class="Content">
+        <ul class="Tabs">
+            <li class="[% IF Data.View == 'Live' || !Data.View %]Active[% END %]">
+                <a href="[% Env("Baselink") %]Action=AgentOperationalReports;Section=MTRD;View=Live">
+                    [% Translate("Live Dashboard") | html %]
+                </a>
+            </li>
+            <li class="[% IF Data.View == 'Daily' %]Active[% END %]">
+                <a href="[% Env("Baselink") %]Action=AgentOperationalReports;Section=MTRD;View=Daily">
+                    [% Translate("Daily Report") | html %]
+                </a>
+            </li>
+            <li class="[% IF Data.View == 'Weekly' %]Active[% END %]">
+                <a href="[% Env("Baselink") %]Action=AgentOperationalReports;Section=MTRD;View=Weekly">
+                    [% Translate("Weekly Report") | html %]
+                </a>
+            </li>
+            <li class="[% IF Data.View == 'Monthly' %]Active[% END %]">
+                <a href="[% Env("Baselink") %]Action=AgentOperationalReports;Section=MTRD;View=Monthly">
+                    [% Translate("Monthly Report") | html %]
+                </a>
+            </li>
+            <li class="[% IF Data.View == 'Quarterly' %]Active[% END %]">
+                <a href="[% Env("Baselink") %]Action=AgentOperationalReports;Section=MTRD;View=Quarterly">
+                    [% Translate("Quarterly Report") | html %]
+                </a>
+            </li>
+            <li class="[% IF Data.View == 'Yearly' %]Active[% END %]">
+                <a href="[% Env("Baselink") %]Action=AgentOperationalReports;Section=MTRD;View=Yearly">
+                    [% Translate("Yearly Report") | html %]
+                </a>
+            </li>
+            <li class="[% IF Data.View == 'Tabular' %]Active[% END %]">
+                <a href="[% Env("Baselink") %]Action=AgentOperationalReports;Section=MTRD;View=Tabular">
+                    [% Translate("Export Data") | html %]
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="ContentColumn">
+    <div class="WidgetSimple">
+        <div class="Header">
+            <h2>
+                [% IF Data.View == 'Live' %]
+                    [% Translate("Live Unassigned Tickets Dashboard") | html %]
+                [% ELSIF Data.View == 'Daily' %]
+                    [% Translate("MTRD Daily Report - Hourly Breakdown") | html %]
+                [% ELSIF Data.View == 'Weekly' %]
+                    [% Translate("MTRD Weekly Report - Daily Breakdown") | html %]
+                [% ELSIF Data.View == 'Monthly' %]
+                    [% Translate("MTRD Monthly Report - Weekly Breakdown") | html %]
+                [% ELSIF Data.View == 'Quarterly' %]
+                    [% Translate("MTRD Quarterly Report - Monthly Breakdown") | html %]
+                [% ELSIF Data.View == 'Yearly' %]
+                    [% Translate("MTRD Yearly Report - Monthly Breakdown") | html %]
+                [% ELSIF Data.View == 'Tabular' %]
+                    [% Translate("MTRD Tabular Export") | html %]
+                [% END %]
+            </h2>
+        </div>
+        <div class="Content">
+
+            [% IF Data.View == 'Live' %]
+                [% INCLUDE _MTRDLiveDashboard %]
+            [% ELSIF Data.View == 'Daily' %]
+                [% INCLUDE _MTRDDailyReport %]
+            [% ELSIF Data.View == 'Weekly' %]
+                [% INCLUDE _MTRDWeeklyReport %]
+            [% ELSIF Data.View == 'Monthly' %]
+                [% INCLUDE _MTRDMonthlyReport %]
+            [% ELSIF Data.View == 'Quarterly' %]
+                [% INCLUDE _MTRDQuarterlyReport %]
+            [% ELSIF Data.View == 'Yearly' %]
+                [% INCLUDE _MTRDYearlyReport %]
+            [% ELSIF Data.View == 'Tabular' %]
+                [% INCLUDE _MTRDTabularReport %]
+            [% END %]
+
+        </div>
+    </div>
+</div>
+[% END %]
+
+[% BLOCK _MTRDLiveDashboard %]
+    <div class="MTRDLiveDashboard">
+        <h3>[% Translate("Current Unassigned Incidents") | html %]: [% Data.TotalUnassigned | html %]</h3>
+
+        [% IF Data.UnassignedTickets && Data.UnassignedTickets.size > 0 %]
+            <table class="DataTable">
+                <thead>
+                    <tr>
+                        <th>[% Translate("Ticket Number") | html %]</th>
+                        <th>[% Translate("Priority") | html %]</th>
+                        <th>[% Translate("Title") | html %]</th>
+                        <th>[% Translate("Created") | html %]</th>
+                        <th>[% Translate("Age") | html %]</th>
+                        <th>[% Translate("Source") | html %]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    [% FOREACH Ticket IN Data.UnassignedTickets %]
+                    <tr>
+                        <td>
+                            <a href="[% Env("Baselink") %]Action=AgentTicketZoom;TicketID=[% Ticket.TicketID | uri %]">
+                                [% Ticket.TicketNumber | html %]
+                            </a>
+                        </td>
+                        <td>
+                            <span class="Priority[% Ticket.Priority | replace('-', '') %]">
+                                [% Ticket.Priority | html %]
+                            </span>
+                        </td>
+                        <td>[% Ticket.Title | html %]</td>
+                        <td>[% Ticket.CreatedTime | html %]</td>
+                        <td><strong>[% Ticket.Age | html %]</strong></td>
+                        <td>[% Ticket.Source | html %]</td>
+                    </tr>
+                    [% END %]
+                </tbody>
+            </table>
+        [% ELSE %]
+            <p class="Notice">[% Translate("No unassigned incidents found.") | html %]</p>
+        [% END %]
+    </div>
+[% END %]
+
+[% BLOCK _MTRDDailyReport %]
+    <form action="[% Env("CGIHandle") %]" method="get">
+        <input type="hidden" name="Action" value="AgentOperationalReports" />
+        <input type="hidden" name="Section" value="MTRD" />
+        <input type="hidden" name="View" value="Daily" />
+
+        <fieldset class="TableLike">
+            <label for="SelectedDate">[% Translate("Select Date") | html %]:</label>
+            <div class="Field">
+                <input type="date" id="SelectedDate" name="SelectedDate" value="[% Data.SelectedDate | html %]" />
+            </div>
+            <div class="Field">
+                <button class="Primary CallForAction" type="submit" value="[% Translate("Generate Report") | html %]">
+                    <span>[% Translate("Generate Report") | html %]</span>
+                </button>
+            </div>
+        </fieldset>
+    </form>
+
+    [% IF Data.HourlyBreakdown %]
+        <h3>[% Translate("Summary for") | html %] [% Data.Date | html %]</h3>
+        <div class="MTRDSummary">
+            <p><strong>[% Translate("Total Incidents") | html %]:</strong> [% Data.Summary.Total | html %]</p>
+            <p><strong>[% Translate("Assigned") | html %]:</strong> [% Data.Summary.Assigned | html %]</p>
+            <p><strong>[% Translate("Unassigned") | html %]:</strong> [% Data.Summary.Unassigned | html %]</p>
+            <p><strong>[% Translate("Average MTRD") | html %]:</strong> [% Data.Summary.AverageMTRDFormatted | html %]</p>
+            <p><strong>[% Translate("Priority Breakdown") | html %]:</strong> P1:[% Data.Summary.P1 | html %], P2:[% Data.Summary.P2 | html %], P3:[% Data.Summary.P3 | html %], P4:[% Data.Summary.P4 | html %]</p>
+        </div>
+
+        <h3>[% Translate("Hourly Breakdown") | html %]</h3>
+        <table class="DataTable">
+            <thead>
+                <tr>
+                    <th>[% Translate("Hour") | html %]</th>
+                    <th>[% Translate("Total") | html %]</th>
+                    <th>[% Translate("Assigned") | html %]</th>
+                    <th>[% Translate("Unassigned") | html %]</th>
+                    <th>[% Translate("Avg MTRD") | html %]</th>
+                    <th>[% Translate("P1") | html %]</th>
+                    <th>[% Translate("P2") | html %]</th>
+                    <th>[% Translate("P3") | html %]</th>
+                    <th>[% Translate("P4") | html %]</th>
+                </tr>
+            </thead>
+            <tbody>
+                [% FOREACH Hour IN Data.HourlyBreakdown %]
+                <tr>
+                    <td>[% Hour.Hour | html %]:00</td>
+                    <td>[% Hour.Total | html %]</td>
+                    <td>[% Hour.Assigned | html %]</td>
+                    <td>[% Hour.Unassigned | html %]</td>
+                    <td>[% Hour.AverageMTRDFormatted | html %]</td>
+                    <td>[% Hour.P1 | html %]</td>
+                    <td>[% Hour.P2 | html %]</td>
+                    <td>[% Hour.P3 | html %]</td>
+                    <td>[% Hour.P4 | html %]</td>
+                </tr>
+                [% END %]
+            </tbody>
+        </table>
+    [% END %]
+[% END %]
+
+[% BLOCK _MTRDWeeklyReport %]
+    <form action="[% Env("CGIHandle") %]" method="get">
+        <input type="hidden" name="Action" value="AgentOperationalReports" />
+        <input type="hidden" name="Section" value="MTRD" />
+        <input type="hidden" name="View" value="Weekly" />
+
+        <fieldset class="TableLike">
+            <label for="StartDate">[% Translate("Week Start Date") | html %]:</label>
+            <div class="Field">
+                <input type="date" id="StartDate" name="StartDate" value="[% Data.StartDate | html %]" />
+            </div>
+            <label for="EndDate">[% Translate("Week End Date") | html %]:</label>
+            <div class="Field">
+                <input type="date" id="EndDate" name="EndDate" value="[% Data.EndDate | html %]" />
+            </div>
+            <div class="Field">
+                <button class="Primary CallForAction" type="submit" value="[% Translate("Generate Report") | html %]">
+                    <span>[% Translate("Generate Report") | html %]</span>
+                </button>
+            </div>
+        </fieldset>
+    </form>
+
+    [% IF Data.DailyBreakdown %]
+        <h3>[% Translate("Summary") | html %]</h3>
+        <div class="MTRDSummary">
+            <p><strong>[% Translate("Total Incidents") | html %]:</strong> [% Data.Summary.Total | html %]</p>
+            <p><strong>[% Translate("Average MTRD") | html %]:</strong> [% Data.Summary.AverageMTRDFormatted | html %]</p>
+            <p><strong>[% Translate("Priority Breakdown") | html %]:</strong> P1:[% Data.Summary.P1 | html %], P2:[% Data.Summary.P2 | html %], P3:[% Data.Summary.P3 | html %], P4:[% Data.Summary.P4 | html %]</p>
+        </div>
+
+        <h3>[% Translate("Daily Breakdown") | html %]</h3>
+        <table class="DataTable">
+            <thead>
+                <tr>
+                    <th>[% Translate("Day") | html %]</th>
+                    <th>[% Translate("Date") | html %]</th>
+                    <th>[% Translate("Total") | html %]</th>
+                    <th>[% Translate("Avg MTRD") | html %]</th>
+                    <th>[% Translate("P1") | html %]</th>
+                    <th>[% Translate("P2") | html %]</th>
+                    <th>[% Translate("P3") | html %]</th>
+                    <th>[% Translate("P4") | html %]</th>
+                </tr>
+            </thead>
+            <tbody>
+                [% FOREACH Day IN Data.DailyBreakdown %]
+                <tr>
+                    <td>[% Day.Weekday | html %]</td>
+                    <td>[% Day.Date | html %]</td>
+                    <td>[% Day.Total | html %]</td>
+                    <td><strong>[% Day.AverageMTRDFormatted | html %]</strong></td>
+                    <td>[% Day.P1 | html %]</td>
+                    <td>[% Day.P2 | html %]</td>
+                    <td>[% Day.P3 | html %]</td>
+                    <td>[% Day.P4 | html %]</td>
+                </tr>
+                [% END %]
+            </tbody>
+        </table>
+    [% END %]
+[% END %]
+
+[% BLOCK _MTRDMonthlyReport %]
+    <form action="[% Env("CGIHandle") %]" method="get">
+        <input type="hidden" name="Action" value="AgentOperationalReports" />
+        <input type="hidden" name="Section" value="MTRD" />
+        <input type="hidden" name="View" value="Monthly" />
+
+        <fieldset class="TableLike">
+            <label for="Year">[% Translate("Year") | html %]:</label>
+            <div class="Field">
+                <input type="number" id="Year" name="Year" value="[% Data.Year || '2025' | html %]" min="2020" max="2030" />
+            </div>
+            <label for="Month">[% Translate("Month") | html %]:</label>
+            <div class="Field">
+                <select id="Month" name="Month">
+                    <option value="1" [% IF Data.Month == 1 %]selected[% END %]>January</option>
+                    <option value="2" [% IF Data.Month == 2 %]selected[% END %]>February</option>
+                    <option value="3" [% IF Data.Month == 3 %]selected[% END %]>March</option>
+                    <option value="4" [% IF Data.Month == 4 %]selected[% END %]>April</option>
+                    <option value="5" [% IF Data.Month == 5 %]selected[% END %]>May</option>
+                    <option value="6" [% IF Data.Month == 6 %]selected[% END %]>June</option>
+                    <option value="7" [% IF Data.Month == 7 %]selected[% END %]>July</option>
+                    <option value="8" [% IF Data.Month == 8 %]selected[% END %]>August</option>
+                    <option value="9" [% IF Data.Month == 9 %]selected[% END %]>September</option>
+                    <option value="10" [% IF Data.Month == 10 %]selected[% END %]>October</option>
+                    <option value="11" [% IF Data.Month == 11 %]selected[% END %]>November</option>
+                    <option value="12" [% IF Data.Month == 12 %]selected[% END %]>December</option>
+                </select>
+            </div>
+            <div class="Field">
+                <button class="Primary CallForAction" type="submit" value="[% Translate("Generate Report") | html %]">
+                    <span>[% Translate("Generate Report") | html %]</span>
+                </button>
+            </div>
+        </fieldset>
+    </form>
+
+    [% IF Data.WeeklyBreakdown %]
+        <h3>[% Translate("Summary") | html %]</h3>
+        <div class="MTRDSummary">
+            <p><strong>[% Translate("Year") | html %]:</strong> [% Data.Year | html %]</p>
+            <p><strong>[% Translate("Month") | html %]:</strong> [% Data.Month | html %]</p>
+            <p><strong>[% Translate("Total Incidents") | html %]:</strong> [% Data.Summary.Total | html %]</p>
+            <p><strong>[% Translate("Average MTRD") | html %]:</strong> [% Data.Summary.AverageMTRDFormatted | html %]</p>
+            <p><strong>[% Translate("Priority Breakdown") | html %]:</strong> P1:[% Data.Summary.P1 | html %], P2:[% Data.Summary.P2 | html %], P3:[% Data.Summary.P3 | html %], P4:[% Data.Summary.P4 | html %]</p>
+        </div>
+
+        <h3>[% Translate("Weekly Breakdown") | html %]</h3>
+        <table class="DataTable">
+            <thead>
+                <tr>
+                    <th>[% Translate("Week") | html %]</th>
+                    <th>[% Translate("Week Start") | html %]</th>
+                    <th>[% Translate("Total") | html %]</th>
+                    <th>[% Translate("Avg MTRD") | html %]</th>
+                    <th>[% Translate("P1") | html %]</th>
+                    <th>[% Translate("P2") | html %]</th>
+                    <th>[% Translate("P3") | html %]</th>
+                    <th>[% Translate("P4") | html %]</th>
+                </tr>
+            </thead>
+            <tbody>
+                [% FOREACH Week IN Data.WeeklyBreakdown %]
+                <tr>
+                    <td>Week [% Week.WeekNumber | html %]</td>
+                    <td>[% Week.WeekStart | html %]</td>
+                    <td>[% Week.Total | html %]</td>
+                    <td><strong>[% Week.AverageMTRDFormatted | html %]</strong></td>
+                    <td>[% Week.P1 | html %]</td>
+                    <td>[% Week.P2 | html %]</td>
+                    <td>[% Week.P3 | html %]</td>
+                    <td>[% Week.P4 | html %]</td>
+                </tr>
+                [% END %]
+            </tbody>
+        </table>
+    [% END %]
+[% END %]
+
+[% BLOCK _MTRDQuarterlyReport %]
+    <form action="[% Env("CGIHandle") %]" method="get">
+        <input type="hidden" name="Action" value="AgentOperationalReports" />
+        <input type="hidden" name="Section" value="MTRD" />
+        <input type="hidden" name="View" value="Quarterly" />
+
+        <fieldset class="TableLike">
+            <label for="Year">[% Translate("Year") | html %]:</label>
+            <div class="Field">
+                <input type="number" id="Year" name="Year" value="[% Data.Year || '2025' | html %]" min="2020" max="2030" />
+            </div>
+            <label for="Quarter">[% Translate("Quarter") | html %]:</label>
+            <div class="Field">
+                <select id="Quarter" name="Quarter">
+                    <option value="1" [% IF Data.Quarter == 1 %]selected[% END %]>Q1 (Jan-Mar)</option>
+                    <option value="2" [% IF Data.Quarter == 2 %]selected[% END %]>Q2 (Apr-Jun)</option>
+                    <option value="3" [% IF Data.Quarter == 3 %]selected[% END %]>Q3 (Jul-Sep)</option>
+                    <option value="4" [% IF Data.Quarter == 4 %]selected[% END %]>Q4 (Oct-Dec)</option>
+                </select>
+            </div>
+            <div class="Field">
+                <button class="Primary CallForAction" type="submit" value="[% Translate("Generate Report") | html %]">
+                    <span>[% Translate("Generate Report") | html %]</span>
+                </button>
+            </div>
+        </fieldset>
+    </form>
+
+    [% IF Data.MonthlyBreakdown %]
+        <h3>[% Translate("Summary") | html %]</h3>
+        <div class="MTRDSummary">
+            <p><strong>[% Translate("Year") | html %]:</strong> [% Data.Year | html %]</p>
+            <p><strong>[% Translate("Quarter") | html %]:</strong> Q[% Data.Quarter | html %]</p>
+            <p><strong>[% Translate("Total Incidents") | html %]:</strong> [% Data.Summary.Total | html %]</p>
+            <p><strong>[% Translate("Average MTRD") | html %]:</strong> [% Data.Summary.AverageMTRDFormatted | html %]</p>
+            <p><strong>[% Translate("Priority Breakdown") | html %]:</strong> P1:[% Data.Summary.P1 | html %], P2:[% Data.Summary.P2 | html %], P3:[% Data.Summary.P3 | html %], P4:[% Data.Summary.P4 | html %]</p>
+        </div>
+
+        <h3>[% Translate("Monthly Breakdown") | html %]</h3>
+        <table class="DataTable">
+            <thead>
+                <tr>
+                    <th>[% Translate("Month") | html %]</th>
+                    <th>[% Translate("Total") | html %]</th>
+                    <th>[% Translate("Avg MTRD") | html %]</th>
+                    <th>[% Translate("P1") | html %]</th>
+                    <th>[% Translate("P2") | html %]</th>
+                    <th>[% Translate("P3") | html %]</th>
+                    <th>[% Translate("P4") | html %]</th>
+                </tr>
+            </thead>
+            <tbody>
+                [% FOREACH Month IN Data.MonthlyBreakdown %]
+                <tr>
+                    <td>[% Month.MonthName | html %]</td>
+                    <td>[% Month.Total | html %]</td>
+                    <td><strong>[% Month.AverageMTRDFormatted | html %]</strong></td>
+                    <td>[% Month.P1 | html %]</td>
+                    <td>[% Month.P2 | html %]</td>
+                    <td>[% Month.P3 | html %]</td>
+                    <td>[% Month.P4 | html %]</td>
+                </tr>
+                [% END %]
+            </tbody>
+        </table>
+    [% END %]
+[% END %]
+
+[% BLOCK _MTRDYearlyReport %]
+    <form action="[% Env("CGIHandle") %]" method="get">
+        <input type="hidden" name="Action" value="AgentOperationalReports" />
+        <input type="hidden" name="Section" value="MTRD" />
+        <input type="hidden" name="View" value="Yearly" />
+
+        <fieldset class="TableLike">
+            <label for="Year">[% Translate("Year") | html %]:</label>
+            <div class="Field">
+                <input type="number" id="Year" name="Year" value="[% Data.Year || '2025' | html %]" min="2020" max="2030" />
+            </div>
+            <div class="Field">
+                <button class="Primary CallForAction" type="submit" value="[% Translate("Generate Report") | html %]">
+                    <span>[% Translate("Generate Report") | html %]</span>
+                </button>
+            </div>
+        </fieldset>
+    </form>
+
+    [% IF Data.MonthlyBreakdown %]
+        <h3>[% Translate("Summary for Year") | html %] [% Data.Year | html %]</h3>
+        <div class="MTRDSummary">
+            <p><strong>[% Translate("Total Incidents") | html %]:</strong> [% Data.Summary.Total | html %]</p>
+            <p><strong>[% Translate("Average MTRD") | html %]:</strong> [% Data.Summary.AverageMTRDFormatted | html %]</p>
+            <p><strong>[% Translate("Priority Breakdown") | html %]:</strong> P1:[% Data.Summary.P1 | html %], P2:[% Data.Summary.P2 | html %], P3:[% Data.Summary.P3 | html %], P4:[% Data.Summary.P4 | html %]</p>
+        </div>
+
+        <h3>[% Translate("Monthly Breakdown") | html %]</h3>
+        <table class="DataTable">
+            <thead>
+                <tr>
+                    <th>[% Translate("Month") | html %]</th>
+                    <th>[% Translate("Total") | html %]</th>
+                    <th>[% Translate("Avg MTRD") | html %]</th>
+                    <th>[% Translate("P1") | html %]</th>
+                    <th>[% Translate("P2") | html %]</th>
+                    <th>[% Translate("P3") | html %]</th>
+                    <th>[% Translate("P4") | html %]</th>
+                </tr>
+            </thead>
+            <tbody>
+                [% FOREACH Month IN Data.MonthlyBreakdown %]
+                <tr>
+                    <td>[% Month.MonthName | html %]</td>
+                    <td>[% Month.Total | html %]</td>
+                    <td><strong>[% Month.AverageMTRDFormatted | html %]</strong></td>
+                    <td>[% Month.P1 | html %]</td>
+                    <td>[% Month.P2 | html %]</td>
+                    <td>[% Month.P3 | html %]</td>
+                    <td>[% Month.P4 | html %]</td>
+                </tr>
+                [% END %]
+            </tbody>
+        </table>
+    [% END %]
+[% END %]
+
+[% BLOCK _MTRDTabularReport %]
+    <form action="[% Env("CGIHandle") %]" method="get">
+        <input type="hidden" name="Action" value="AgentOperationalReports" />
+        <input type="hidden" name="Section" value="MTRD" />
+        <input type="hidden" name="View" value="Tabular" />
+
+        <fieldset class="TableLike">
+            <label for="StartDate">[% Translate("Start Date") | html %]:</label>
+            <div class="Field">
+                <input type="date" id="StartDate" name="StartDate" value="[% Data.StartDate | html %]" />
+            </div>
+            <label for="EndDate">[% Translate("End Date") | html %]:</label>
+            <div class="Field">
+                <input type="date" id="EndDate" name="EndDate" value="[% Data.EndDate | html %]" />
+            </div>
+            <div class="Field">
+                <button class="Primary CallForAction" type="submit" value="[% Translate("Generate Report") | html %]">
+                    <span>[% Translate("View Data") | html %]</span>
+                </button>
+            </div>
+        </fieldset>
+    </form>
+
+    [% IF Data.TabularData %]
+        <h3>[% Translate("Total Records") | html %]: [% Data.TotalRecords | html %]</h3>
+
+        <div class="MTRDActions">
+            <a href="[% Env("Baselink") %]Action=AgentOperationalReports;Section=MTRD;View=Tabular;Export=1;StartDate=[% Data.StartDate | uri %];EndDate=[% Data.EndDate | uri %]" class="CallForAction">
+                <span>[% Translate("Download CSV") | html %]</span>
+            </a>
+        </div>
+
+        <table class="DataTable">
+            <thead>
+                <tr>
+                    <th>[% Translate("Incident Number") | html %]</th>
+                    <th>[% Translate("Summary") | html %]</th>
+                    <th>[% Translate("Start Date") | html %]</th>
+                    <th>[% Translate("MTRD") | html %]</th>
+                    <th>[% Translate("Priority") | html %]</th>
+                    <th>[% Translate("Status") | html %]</th>
+                    <th>[% Translate("Assigned To") | html %]</th>
+                    <th>[% Translate("Source") | html %]</th>
+                </tr>
+            </thead>
+            <tbody>
+                [% FOREACH Record IN Data.TabularData %]
+                <tr>
+                    <td>
+                        <a href="[% Env("Baselink") %]Action=AgentTicketZoom;TicketNumber=[% Record.TicketNumber | uri %]">
+                            [% Record.TicketNumber | html %]
+                        </a>
+                    </td>
+                    <td>[% Record.Title | html | truncate(50) %]</td>
+                    <td>[% Record.StartDate | html %]</td>
+                    <td><strong>[% Record.MTRDFormatted | html %]</strong></td>
+                    <td>[% Record.Priority | html %]</td>
+                    <td>[% Record.Status | html %]</td>
+                    <td>[% Record.AssignedTo | html %]</td>
+                    <td>[% Record.Source | html %]</td>
+                </tr>
+                [% END %]
+            </tbody>
+        </table>
+    [% END %]
+[% END %]
+
+[% BLOCK MTTRReports %]
+<div class="WidgetSimple SidebarColumn">
+    <div class="Header">
+        <h2>[% Translate("MTTR Views") | html %]</h2>
+    </div>
+    <div class="Content">
+        <ul class="Tabs">
+            <li class="[% IF Data.View == 'Live' || !Data.View %]Active[% END %]">
+                <a href="[% Env("Baselink") %]Action=AgentOperationalReports;Section=MTTR;View=Live">
+                    [% Translate("Live Dashboard") | html %]
+                </a>
+            </li>
+            <li class="[% IF Data.View == 'Daily' %]Active[% END %]">
+                <a href="[% Env("Baselink") %]Action=AgentOperationalReports;Section=MTTR;View=Daily">
+                    [% Translate("Daily Report") | html %]
+                </a>
+            </li>
+            <li class="[% IF Data.View == 'Weekly' %]Active[% END %]">
+                <a href="[% Env("Baselink") %]Action=AgentOperationalReports;Section=MTTR;View=Weekly">
+                    [% Translate("Weekly Report") | html %]
+                </a>
+            </li>
+            <li class="[% IF Data.View == 'Monthly' %]Active[% END %]">
+                <a href="[% Env("Baselink") %]Action=AgentOperationalReports;Section=MTTR;View=Monthly">
+                    [% Translate("Monthly Report") | html %]
+                </a>
+            </li>
+            <li class="[% IF Data.View == 'Quarterly' %]Active[% END %]">
+                <a href="[% Env("Baselink") %]Action=AgentOperationalReports;Section=MTTR;View=Quarterly">
+                    [% Translate("Quarterly Report") | html %]
+                </a>
+            </li>
+            <li class="[% IF Data.View == 'Yearly' %]Active[% END %]">
+                <a href="[% Env("Baselink") %]Action=AgentOperationalReports;Section=MTTR;View=Yearly">
+                    [% Translate("Yearly Report") | html %]
+                </a>
+            </li>
+            <li class="[% IF Data.View == 'Tabular' %]Active[% END %]">
+                <a href="[% Env("Baselink") %]Action=AgentOperationalReports;Section=MTTR;View=Tabular">
+                    [% Translate("Export Data") | html %]
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="ContentColumn">
+    <div class="WidgetSimple">
+        <div class="Header">
+            <h2>
+                [% IF Data.View == 'Live' %]
+                    [% Translate("Live Unresolved Tickets Dashboard") | html %]
+                [% ELSIF Data.View == 'Daily' %]
+                    [% Translate("MTTR Daily Report - Hourly Breakdown") | html %]
+                [% ELSIF Data.View == 'Weekly' %]
+                    [% Translate("MTTR Weekly Report - Daily Breakdown") | html %]
+                [% ELSIF Data.View == 'Monthly' %]
+                    [% Translate("MTTR Monthly Report - Weekly Breakdown") | html %]
+                [% ELSIF Data.View == 'Quarterly' %]
+                    [% Translate("MTTR Quarterly Report - Monthly Breakdown") | html %]
+                [% ELSIF Data.View == 'Yearly' %]
+                    [% Translate("MTTR Yearly Report - Monthly Breakdown") | html %]
+                [% ELSIF Data.View == 'Tabular' %]
+                    [% Translate("MTTR Tabular Export") | html %]
+                [% END %]
+            </h2>
+        </div>
+        <div class="Content">
+
+            [% IF Data.View == 'Live' %]
+                [% INCLUDE _MTTRLiveDashboard %]
+            [% ELSIF Data.View == 'Daily' %]
+                [% INCLUDE _MTTRDailyReport %]
+            [% ELSIF Data.View == 'Weekly' %]
+                [% INCLUDE _MTTRWeeklyReport %]
+            [% ELSIF Data.View == 'Monthly' %]
+                [% INCLUDE _MTTRMonthlyReport %]
+            [% ELSIF Data.View == 'Quarterly' %]
+                [% INCLUDE _MTTRQuarterlyReport %]
+            [% ELSIF Data.View == 'Yearly' %]
+                [% INCLUDE _MTTRYearlyReport %]
+            [% ELSIF Data.View == 'Tabular' %]
+                [% INCLUDE _MTTRTabularReport %]
+            [% END %]
+
+        </div>
+    </div>
+</div>
+[% END %]
+
+[% BLOCK _MTTRLiveDashboard %]
+    <div class="MTTRLiveDashboard">
+        <h3>[% Translate("Current Unassigned Incidents") | html %]: [% Data.TotalUnassigned | html %]</h3>
+
+        [% IF Data.UnassignedTickets && Data.UnassignedTickets.size > 0 %]
+            <table class="DataTable">
+                <thead>
+                    <tr>
+                        <th>[% Translate("Ticket Number") | html %]</th>
+                        <th>[% Translate("Priority") | html %]</th>
+                        <th>[% Translate("Title") | html %]</th>
+                        <th>[% Translate("Created") | html %]</th>
+                        <th>[% Translate("Age") | html %]</th>
+                        <th>[% Translate("Source") | html %]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    [% FOREACH Ticket IN Data.UnassignedTickets %]
+                    <tr>
+                        <td>
+                            <a href="[% Env("Baselink") %]Action=AgentTicketZoom;TicketID=[% Ticket.TicketID | uri %]">
+                                [% Ticket.TicketNumber | html %]
+                            </a>
+                        </td>
+                        <td>
+                            <span class="Priority[% Ticket.Priority | replace('-', '') %]">
+                                [% Ticket.Priority | html %]
+                            </span>
+                        </td>
+                        <td>[% Ticket.Title | html %]</td>
+                        <td>[% Ticket.CreatedTime | html %]</td>
+                        <td><strong>[% Ticket.Age | html %]</strong></td>
+                        <td>[% Ticket.Source | html %]</td>
+                    </tr>
+                    [% END %]
+                </tbody>
+            </table>
+        [% ELSE %]
+            <p class="Notice">[% Translate("No unresolved incidents found.") | html %]</p>
+        [% END %]
+    </div>
+[% END %]
+
+[% BLOCK _MTTRDailyReport %]
+    <form action="[% Env("CGIHandle") %]" method="get">
+        <input type="hidden" name="Action" value="AgentOperationalReports" />
+        <input type="hidden" name="Section" value="MTTR" />
+        <input type="hidden" name="View" value="Daily" />
+
+        <fieldset class="TableLike">
+            <label for="SelectedDate">[% Translate("Select Date") | html %]:</label>
+            <div class="Field">
+                <input type="date" id="SelectedDate" name="SelectedDate" value="[% Data.SelectedDate | html %]" />
+            </div>
+            <div class="Field">
+                <button class="Primary CallForAction" type="submit" value="[% Translate("Generate Report") | html %]">
+                    <span>[% Translate("Generate Report") | html %]</span>
+                </button>
+            </div>
+        </fieldset>
+    </form>
+
+    [% IF Data.HourlyBreakdown %]
+        <h3>[% Translate("Summary for") | html %] [% Data.Date | html %]</h3>
+        <div class="MTTRSummary">
+            <p><strong>[% Translate("Total Resolved") | html %]:</strong> [% Data.Summary.Total | html %]</p>
+            <p><strong>[% Translate("Average MTTR") | html %]:</strong> [% Data.Summary.AverageMTTRFormatted | html %]</p>
+            <p><strong>[% Translate("Priority Breakdown") | html %]:</strong> P1:[% Data.Summary.P1 | html %], P2:[% Data.Summary.P2 | html %], P3:[% Data.Summary.P3 | html %], P4:[% Data.Summary.P4 | html %]</p>
+        </div>
+
+        <h3>[% Translate("Hourly Breakdown") | html %]</h3>
+        <table class="DataTable">
+            <thead>
+                <tr>
+                    <th>[% Translate("Hour") | html %]</th>
+                    <th>[% Translate("Total") | html %]</th>
+                    <th>[% Translate("Avg MTTR") | html %]</th>
+                    <th>[% Translate("P1") | html %]</th>
+                    <th>[% Translate("P2") | html %]</th>
+                    <th>[% Translate("P3") | html %]</th>
+                    <th>[% Translate("P4") | html %]</th>
+                </tr>
+            </thead>
+            <tbody>
+                [% FOREACH Hour IN Data.HourlyBreakdown %]
+                <tr>
+                    <td>[% Hour.Hour | html %]:00</td>
+                    <td>[% Hour.Total | html %]</td>
+                    <td>[% Hour.AverageMTTRFormatted | html %]</td>
+                    <td>[% Hour.P1 | html %]</td>
+                    <td>[% Hour.P2 | html %]</td>
+                    <td>[% Hour.P3 | html %]</td>
+                    <td>[% Hour.P4 | html %]</td>
+                </tr>
+                [% END %]
+            </tbody>
+        </table>
+    [% END %]
+[% END %]
+
+[% BLOCK _MTTRWeeklyReport %]
+    <form action="[% Env("CGIHandle") %]" method="get">
+        <input type="hidden" name="Action" value="AgentOperationalReports" />
+        <input type="hidden" name="Section" value="MTTR" />
+        <input type="hidden" name="View" value="Weekly" />
+
+        <fieldset class="TableLike">
+            <label for="StartDate">[% Translate("Week Start Date") | html %]:</label>
+            <div class="Field">
+                <input type="date" id="StartDate" name="StartDate" value="[% Data.StartDate | html %]" />
+            </div>
+            <label for="EndDate">[% Translate("Week End Date") | html %]:</label>
+            <div class="Field">
+                <input type="date" id="EndDate" name="EndDate" value="[% Data.EndDate | html %]" />
+            </div>
+            <div class="Field">
+                <button class="Primary CallForAction" type="submit" value="[% Translate("Generate Report") | html %]">
+                    <span>[% Translate("Generate Report") | html %]</span>
+                </button>
+            </div>
+        </fieldset>
+    </form>
+
+    [% IF Data.DailyBreakdown %]
+        <h3>[% Translate("Summary") | html %]</h3>
+        <div class="MTTRSummary">
+            <p><strong>[% Translate("Total Resolved") | html %]:</strong> [% Data.Summary.Total | html %]</p>
+            <p><strong>[% Translate("Average MTTR") | html %]:</strong> [% Data.Summary.AverageMTTRFormatted | html %]</p>
+            <p><strong>[% Translate("Priority Breakdown") | html %]:</strong> P1:[% Data.Summary.P1 | html %], P2:[% Data.Summary.P2 | html %], P3:[% Data.Summary.P3 | html %], P4:[% Data.Summary.P4 | html %]</p>
+        </div>
+
+        <h3>[% Translate("Daily Breakdown") | html %]</h3>
+        <table class="DataTable">
+            <thead>
+                <tr>
+                    <th>[% Translate("Day") | html %]</th>
+                    <th>[% Translate("Date") | html %]</th>
+                    <th>[% Translate("Total") | html %]</th>
+                    <th>[% Translate("Avg MTTR") | html %]</th>
+                    <th>[% Translate("P1") | html %]</th>
+                    <th>[% Translate("P2") | html %]</th>
+                    <th>[% Translate("P3") | html %]</th>
+                    <th>[% Translate("P4") | html %]</th>
+                </tr>
+            </thead>
+            <tbody>
+                [% FOREACH Day IN Data.DailyBreakdown %]
+                <tr>
+                    <td>[% Day.Weekday | html %]</td>
+                    <td>[% Day.Date | html %]</td>
+                    <td>[% Day.Total | html %]</td>
+                    <td><strong>[% Day.AverageMTTRFormatted | html %]</strong></td>
+                    <td>[% Day.P1 | html %]</td>
+                    <td>[% Day.P2 | html %]</td>
+                    <td>[% Day.P3 | html %]</td>
+                    <td>[% Day.P4 | html %]</td>
+                </tr>
+                [% END %]
+            </tbody>
+        </table>
+    [% END %]
+[% END %]
+
+[% BLOCK _MTTRMonthlyReport %]
+    <form action="[% Env("CGIHandle") %]" method="get">
+        <input type="hidden" name="Action" value="AgentOperationalReports" />
+        <input type="hidden" name="Section" value="MTTR" />
+        <input type="hidden" name="View" value="Monthly" />
+
+        <fieldset class="TableLike">
+            <label for="Year">[% Translate("Year") | html %]:</label>
+            <div class="Field">
+                <input type="number" id="Year" name="Year" value="[% Data.Year || '2025' | html %]" min="2020" max="2030" />
+            </div>
+            <label for="Month">[% Translate("Month") | html %]:</label>
+            <div class="Field">
+                <select id="Month" name="Month">
+                    <option value="1" [% IF Data.Month == 1 %]selected[% END %]>January</option>
+                    <option value="2" [% IF Data.Month == 2 %]selected[% END %]>February</option>
+                    <option value="3" [% IF Data.Month == 3 %]selected[% END %]>March</option>
+                    <option value="4" [% IF Data.Month == 4 %]selected[% END %]>April</option>
+                    <option value="5" [% IF Data.Month == 5 %]selected[% END %]>May</option>
+                    <option value="6" [% IF Data.Month == 6 %]selected[% END %]>June</option>
+                    <option value="7" [% IF Data.Month == 7 %]selected[% END %]>July</option>
+                    <option value="8" [% IF Data.Month == 8 %]selected[% END %]>August</option>
+                    <option value="9" [% IF Data.Month == 9 %]selected[% END %]>September</option>
+                    <option value="10" [% IF Data.Month == 10 %]selected[% END %]>October</option>
+                    <option value="11" [% IF Data.Month == 11 %]selected[% END %]>November</option>
+                    <option value="12" [% IF Data.Month == 12 %]selected[% END %]>December</option>
+                </select>
+            </div>
+            <div class="Field">
+                <button class="Primary CallForAction" type="submit" value="[% Translate("Generate Report") | html %]">
+                    <span>[% Translate("Generate Report") | html %]</span>
+                </button>
+            </div>
+        </fieldset>
+    </form>
+
+    [% IF Data.WeeklyBreakdown %]
+        <h3>[% Translate("Summary") | html %]</h3>
+        <div class="MTTRSummary">
+            <p><strong>[% Translate("Year") | html %]:</strong> [% Data.Year | html %]</p>
+            <p><strong>[% Translate("Month") | html %]:</strong> [% Data.Month | html %]</p>
+            <p><strong>[% Translate("Total Resolved") | html %]:</strong> [% Data.Summary.Total | html %]</p>
+            <p><strong>[% Translate("Average MTTR") | html %]:</strong> [% Data.Summary.AverageMTTRFormatted | html %]</p>
+            <p><strong>[% Translate("Priority Breakdown") | html %]:</strong> P1:[% Data.Summary.P1 | html %], P2:[% Data.Summary.P2 | html %], P3:[% Data.Summary.P3 | html %], P4:[% Data.Summary.P4 | html %]</p>
+        </div>
+
+        <h3>[% Translate("Weekly Breakdown") | html %]</h3>
+        <table class="DataTable">
+            <thead>
+                <tr>
+                    <th>[% Translate("Week") | html %]</th>
+                    <th>[% Translate("Week Start") | html %]</th>
+                    <th>[% Translate("Total") | html %]</th>
+                    <th>[% Translate("Avg MTTR") | html %]</th>
+                    <th>[% Translate("P1") | html %]</th>
+                    <th>[% Translate("P2") | html %]</th>
+                    <th>[% Translate("P3") | html %]</th>
+                    <th>[% Translate("P4") | html %]</th>
+                </tr>
+            </thead>
+            <tbody>
+                [% FOREACH Week IN Data.WeeklyBreakdown %]
+                <tr>
+                    <td>Week [% Week.WeekNumber | html %]</td>
+                    <td>[% Week.WeekStart | html %]</td>
+                    <td>[% Week.Total | html %]</td>
+                    <td><strong>[% Week.AverageMTTRFormatted | html %]</strong></td>
+                    <td>[% Week.P1 | html %]</td>
+                    <td>[% Week.P2 | html %]</td>
+                    <td>[% Week.P3 | html %]</td>
+                    <td>[% Week.P4 | html %]</td>
+                </tr>
+                [% END %]
+            </tbody>
+        </table>
+    [% END %]
+[% END %]
+
+[% BLOCK _MTTRQuarterlyReport %]
+    <form action="[% Env("CGIHandle") %]" method="get">
+        <input type="hidden" name="Action" value="AgentOperationalReports" />
+        <input type="hidden" name="Section" value="MTTR" />
+        <input type="hidden" name="View" value="Quarterly" />
+
+        <fieldset class="TableLike">
+            <label for="Year">[% Translate("Year") | html %]:</label>
+            <div class="Field">
+                <input type="number" id="Year" name="Year" value="[% Data.Year || '2025' | html %]" min="2020" max="2030" />
+            </div>
+            <label for="Quarter">[% Translate("Quarter") | html %]:</label>
+            <div class="Field">
+                <select id="Quarter" name="Quarter">
+                    <option value="1" [% IF Data.Quarter == 1 %]selected[% END %]>Q1 (Jan-Mar)</option>
+                    <option value="2" [% IF Data.Quarter == 2 %]selected[% END %]>Q2 (Apr-Jun)</option>
+                    <option value="3" [% IF Data.Quarter == 3 %]selected[% END %]>Q3 (Jul-Sep)</option>
+                    <option value="4" [% IF Data.Quarter == 4 %]selected[% END %]>Q4 (Oct-Dec)</option>
+                </select>
+            </div>
+            <div class="Field">
+                <button class="Primary CallForAction" type="submit" value="[% Translate("Generate Report") | html %]">
+                    <span>[% Translate("Generate Report") | html %]</span>
+                </button>
+            </div>
+        </fieldset>
+    </form>
+
+    [% IF Data.MonthlyBreakdown %]
+        <h3>[% Translate("Summary") | html %]</h3>
+        <div class="MTTRSummary">
+            <p><strong>[% Translate("Year") | html %]:</strong> [% Data.Year | html %]</p>
+            <p><strong>[% Translate("Quarter") | html %]:</strong> Q[% Data.Quarter | html %]</p>
+            <p><strong>[% Translate("Total Resolved") | html %]:</strong> [% Data.Summary.Total | html %]</p>
+            <p><strong>[% Translate("Average MTTR") | html %]:</strong> [% Data.Summary.AverageMTTRFormatted | html %]</p>
+            <p><strong>[% Translate("Priority Breakdown") | html %]:</strong> P1:[% Data.Summary.P1 | html %], P2:[% Data.Summary.P2 | html %], P3:[% Data.Summary.P3 | html %], P4:[% Data.Summary.P4 | html %]</p>
+        </div>
+
+        <h3>[% Translate("Monthly Breakdown") | html %]</h3>
+        <table class="DataTable">
+            <thead>
+                <tr>
+                    <th>[% Translate("Month") | html %]</th>
+                    <th>[% Translate("Total") | html %]</th>
+                    <th>[% Translate("Avg MTTR") | html %]</th>
+                    <th>[% Translate("P1") | html %]</th>
+                    <th>[% Translate("P2") | html %]</th>
+                    <th>[% Translate("P3") | html %]</th>
+                    <th>[% Translate("P4") | html %]</th>
+                </tr>
+            </thead>
+            <tbody>
+                [% FOREACH Month IN Data.MonthlyBreakdown %]
+                <tr>
+                    <td>[% Month.MonthName | html %]</td>
+                    <td>[% Month.Total | html %]</td>
+                    <td><strong>[% Month.AverageMTTRFormatted | html %]</strong></td>
+                    <td>[% Month.P1 | html %]</td>
+                    <td>[% Month.P2 | html %]</td>
+                    <td>[% Month.P3 | html %]</td>
+                    <td>[% Month.P4 | html %]</td>
+                </tr>
+                [% END %]
+            </tbody>
+        </table>
+    [% END %]
+[% END %]
+
+[% BLOCK _MTTRYearlyReport %]
+    <form action="[% Env("CGIHandle") %]" method="get">
+        <input type="hidden" name="Action" value="AgentOperationalReports" />
+        <input type="hidden" name="Section" value="MTTR" />
+        <input type="hidden" name="View" value="Yearly" />
+
+        <fieldset class="TableLike">
+            <label for="Year">[% Translate("Year") | html %]:</label>
+            <div class="Field">
+                <input type="number" id="Year" name="Year" value="[% Data.Year || '2025' | html %]" min="2020" max="2030" />
+            </div>
+            <div class="Field">
+                <button class="Primary CallForAction" type="submit" value="[% Translate("Generate Report") | html %]">
+                    <span>[% Translate("Generate Report") | html %]</span>
+                </button>
+            </div>
+        </fieldset>
+    </form>
+
+    [% IF Data.MonthlyBreakdown %]
+        <h3>[% Translate("Summary for Year") | html %] [% Data.Year | html %]</h3>
+        <div class="MTTRSummary">
+            <p><strong>[% Translate("Total Resolved") | html %]:</strong> [% Data.Summary.Total | html %]</p>
+            <p><strong>[% Translate("Average MTTR") | html %]:</strong> [% Data.Summary.AverageMTTRFormatted | html %]</p>
+            <p><strong>[% Translate("Priority Breakdown") | html %]:</strong> P1:[% Data.Summary.P1 | html %], P2:[% Data.Summary.P2 | html %], P3:[% Data.Summary.P3 | html %], P4:[% Data.Summary.P4 | html %]</p>
+        </div>
+
+        <h3>[% Translate("Monthly Breakdown") | html %]</h3>
+        <table class="DataTable">
+            <thead>
+                <tr>
+                    <th>[% Translate("Month") | html %]</th>
+                    <th>[% Translate("Total") | html %]</th>
+                    <th>[% Translate("Avg MTTR") | html %]</th>
+                    <th>[% Translate("P1") | html %]</th>
+                    <th>[% Translate("P2") | html %]</th>
+                    <th>[% Translate("P3") | html %]</th>
+                    <th>[% Translate("P4") | html %]</th>
+                </tr>
+            </thead>
+            <tbody>
+                [% FOREACH Month IN Data.MonthlyBreakdown %]
+                <tr>
+                    <td>[% Month.MonthName | html %]</td>
+                    <td>[% Month.Total | html %]</td>
+                    <td><strong>[% Month.AverageMTTRFormatted | html %]</strong></td>
+                    <td>[% Month.P1 | html %]</td>
+                    <td>[% Month.P2 | html %]</td>
+                    <td>[% Month.P3 | html %]</td>
+                    <td>[% Month.P4 | html %]</td>
+                </tr>
+                [% END %]
+            </tbody>
+        </table>
+    [% END %]
+[% END %]
+
+[% BLOCK _MTTRTabularReport %]
+    <form action="[% Env("CGIHandle") %]" method="get">
+        <input type="hidden" name="Action" value="AgentOperationalReports" />
+        <input type="hidden" name="Section" value="MTTR" />
+        <input type="hidden" name="View" value="Tabular" />
+
+        <fieldset class="TableLike">
+            <label for="StartDate">[% Translate("Start Date") | html %]:</label>
+            <div class="Field">
+                <input type="date" id="StartDate" name="StartDate" value="[% Data.StartDate | html %]" />
+            </div>
+            <label for="EndDate">[% Translate("End Date") | html %]:</label>
+            <div class="Field">
+                <input type="date" id="EndDate" name="EndDate" value="[% Data.EndDate | html %]" />
+            </div>
+            <div class="Field">
+                <button class="Primary CallForAction" type="submit" value="[% Translate("Generate Report") | html %]">
+                    <span>[% Translate("View Data") | html %]</span>
+                </button>
+            </div>
+        </fieldset>
+    </form>
+
+    [% IF Data.TabularData %]
+        <h3>[% Translate("Total Records") | html %]: [% Data.TotalRecords | html %]</h3>
+
+        <div class="MTTRActions">
+            <a href="[% Env("Baselink") %]Action=AgentOperationalReports;Section=MTTR;View=Tabular;Export=1;StartDate=[% Data.StartDate | uri %];EndDate=[% Data.EndDate | uri %]" class="CallForAction">
+                <span>[% Translate("Download CSV") | html %]</span>
+            </a>
+        </div>
+
+        <table class="DataTable">
+            <thead>
+                <tr>
+                    <th>[% Translate("Incident Number") | html %]</th>
+                    <th>[% Translate("Summary") | html %]</th>
+                    <th>[% Translate("Start Date") | html %]</th>
+                    <th>[% Translate("MTTR") | html %]</th>
+                    <th>[% Translate("Priority") | html %]</th>
+                    <th>[% Translate("Status") | html %]</th>
+                    <th>[% Translate("Assigned To") | html %]</th>
+                    <th>[% Translate("Source") | html %]</th>
+                </tr>
+            </thead>
+            <tbody>
+                [% FOREACH Record IN Data.TabularData %]
+                <tr>
+                    <td>
+                        <a href="[% Env("Baselink") %]Action=AgentTicketZoom;TicketNumber=[% Record.TicketNumber | uri %]">
+                            [% Record.TicketNumber | html %]
+                        </a>
+                    </td>
+                    <td>[% Record.Title | html | truncate(50) %]</td>
+                    <td>[% Record.StartDate | html %]</td>
+                    <td><strong>[% Record.MTTRFormatted | html %]</strong></td>
+                    <td>[% Record.Priority | html %]</td>
+                    <td>[% Record.Status | html %]</td>
+                    <td>[% Record.AssignedTo | html %]</td>
+                    <td>[% Record.Source | html %]</td>
+                </tr>
+                [% END %]
+            </tbody>
+        </table>
+    [% END %]
+[% END %]
+
+[% BLOCK ActiveTicketsAssignment %]
+<div class="WidgetSimple">
+    <div class="Header">
+        <h2>[% Translate("Active Tickets Assignment Status Dashboard") | html %]</h2>
+    </div>
+    <div class="Content">
+
+        <!-- Time Filter -->
+        <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 4px; border: 1px solid #dee2e6;">
+            <div style="margin-bottom: 12px;">
+                <label style="font-weight: bold; font-size: 14px; margin-right: 15px;">
+                    [% Translate("Filter Type") | html %]:
+                </label>
+                <label style="margin-right: 15px; font-weight: normal;">
+                    <input type="radio" name="FilterType" value="day" id="FilterTypeDay" [% IF !Data.FilterType || Data.FilterType == 'day' %]checked[% END %]>
+                    [% Translate("Day") | html %]
+                </label>
+                <label style="margin-right: 15px; font-weight: normal;">
+                    <input type="radio" name="FilterType" value="week" id="FilterTypeWeek" [% IF Data.FilterType == 'week' %]checked[% END %]>
+                    [% Translate("Week") | html %]
+                </label>
+                <label style="margin-right: 15px; font-weight: normal;">
+                    <input type="radio" name="FilterType" value="month" id="FilterTypeMonth" [% IF Data.FilterType == 'month' %]checked[% END %]>
+                    [% Translate("Month") | html %]
+                </label>
+                <label style="margin-right: 15px; font-weight: normal;">
+                    <input type="radio" name="FilterType" value="year" id="FilterTypeYear" [% IF Data.FilterType == 'year' %]checked[% END %]>
+                    [% Translate("Year") | html %]
+                </label>
+                <span id="FilterLoadingIndicator" style="margin-left: 10px; display: none;">
+                    <i class="fa fa-spinner fa-spin"></i> [% Translate("Loading...") | html %]
+                </span>
+            </div>
+
+            <!-- Day Selector -->
+            <div id="DaySelector" style="display: none;">
+                <label style="font-weight: bold; margin-right: 10px;">[% Translate("Select Date") | html %]:</label>
+                <input type="date" id="SelectedDate" name="SelectedDate" value="[% Data.SelectedDate | html %]" style="padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+
+            <!-- Week Selector -->
+            <div id="WeekSelector" style="display: none;">
+                <label style="font-weight: bold; margin-right: 10px;">[% Translate("Select Week") | html %]:</label>
+                <select id="SelectedWeek" name="SelectedWeek" style="padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px;">
+                    [% FOREACH week IN Data.WeekOptions %]
+                        <option value="[% week.Value %]" [% IF week.Value == Data.SelectedWeek %]selected[% END %]>
+                            [% week.Label | html %]
+                        </option>
+                    [% END %]
+                </select>
+            </div>
+
+            <!-- Month Selector -->
+            <div id="MonthSelector" style="display: none;">
+                <label style="font-weight: bold; margin-right: 10px;">[% Translate("Month") | html %]:</label>
+                <select id="SelectedMonth" name="SelectedMonth" style="padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; margin-right: 15px;">
+                    [% FOREACH month IN Data.MonthOptions %]
+                        <option value="[% month.Value %]" [% IF month.Value == Data.SelectedMonth %]selected[% END %]>
+                            [% month.Label | html %]
+                        </option>
+                    [% END %]
+                </select>
+                <label style="font-weight: bold; margin-right: 10px;">[% Translate("Year") | html %]:</label>
+                <select id="SelectedYearMonthly" name="SelectedYear" style="padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px;">
+                    [% FOREACH year IN Data.YearOptionsMonthly %]
+                        <option value="[% year.Value %]" [% IF year.Value == Data.SelectedYear %]selected[% END %]>
+                            [% year.Label | html %]
+                        </option>
+                    [% END %]
+                </select>
+            </div>
+
+            <!-- Year Selector -->
+            <div id="YearSelector" style="display: none;">
+                <label style="font-weight: bold; margin-right: 10px;">[% Translate("Select Year") | html %]:</label>
+                <select id="SelectedYearYearly" name="SelectedYear" style="padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px;">
+                    [% FOREACH year IN Data.YearOptionsYearly %]
+                        <option value="[% year.Value %]" [% IF year.Value == Data.SelectedYear %]selected[% END %]>
+                            [% year.Label | html %]
+                        </option>
+                    [% END %]
+                </select>
+            </div>
+        </div>
+
+        <!-- TOP: 4 Pie Charts - 2 rows, 2 charts per row -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px;">
+            <!-- P1 Chart -->
+            <div style="border: 1px solid #dee2e6; padding: 15px; text-align: center; border-radius: 4px;">
+                <h3 style="margin-top: 0;">P1</h3>
+                <svg id="chartP1Critical"></svg>
+                <div style="margin-top: 10px; font-size: 11px;">
+                    <span style="color: #4285F4;">●</span> Assigned
+                    <span style="color: #EA4335; margin-left: 10px;">●</span> Unassigned
+                </div>
+            </div>
+
+            <!-- P2 Chart -->
+            <div style="border: 1px solid #dee2e6; padding: 15px; text-align: center; border-radius: 4px;">
+                <h3 style="margin-top: 0;">P2</h3>
+                <svg id="chartP2High"></svg>
+                <div style="margin-top: 10px; font-size: 11px;">
+                    <span style="color: #4285F4;">●</span> Assigned
+                    <span style="color: #EA4335; margin-left: 10px;">●</span> Unassigned
+                </div>
+            </div>
+
+            <!-- P3 Chart -->
+            <div style="border: 1px solid #dee2e6; padding: 15px; text-align: center; border-radius: 4px;">
+                <h3 style="margin-top: 0;">P3</h3>
+                <svg id="chartP3Medium"></svg>
+                <div style="margin-top: 10px; font-size: 11px;">
+                    <span style="color: #4285F4;">●</span> Assigned
+                    <span style="color: #EA4335; margin-left: 10px;">●</span> Unassigned
+                </div>
+            </div>
+
+            <!-- P4 Chart -->
+            <div style="border: 1px solid #dee2e6; padding: 15px; text-align: center; border-radius: 4px;">
+                <h3 style="margin-top: 0;">P4</h3>
+                <svg id="chartP4Low"></svg>
+                <div style="margin-top: 10px; font-size: 11px;">
+                    <span style="color: #4285F4;">●</span> Assigned
+                    <span style="color: #EA4335; margin-left: 10px;">●</span> Unassigned
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM: Summary Table -->
+        <div>
+            <table class="DataTable" style="width: auto; min-width: 500px;">
+                <thead>
+                    <tr>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: left;">[% Translate("Assignee State") | html %]</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: center;">P1</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: center;">P2</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: center;">P3</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: center;">P4</th>
+                        <th style="background: #f8f9fa; padding: 12px; text-align: center;">[% Translate("Total") | html %]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 10px 12px;">[% Translate("Assigned") | html %]</td>
+                        <td id="assignedP1" style="padding: 10px 12px; text-align: center;">[% Data.ByPriority.item('P1-Critical').Assigned || 0 %]</td>
+                        <td id="assignedP2" style="padding: 10px 12px; text-align: center;">[% Data.ByPriority.item('P2-High').Assigned || 0 %]</td>
+                        <td id="assignedP3" style="padding: 10px 12px; text-align: center;">[% Data.ByPriority.item('P3-Medium').Assigned || 0 %]</td>
+                        <td id="assignedP4" style="padding: 10px 12px; text-align: center;">[% Data.ByPriority.item('P4-Low').Assigned || 0 %]</td>
+                        <td id="assignedTotal" style="padding: 10px 12px; text-align: center;">[% Data.TotalAssigned || 0 %]</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px 12px;">[% Translate("Unassigned") | html %]</td>
+                        <td id="unassignedP1" style="padding: 10px 12px; text-align: center;">[% Data.ByPriority.item('P1-Critical').Unassigned || 0 %]</td>
+                        <td id="unassignedP2" style="padding: 10px 12px; text-align: center;">[% Data.ByPriority.item('P2-High').Unassigned || 0 %]</td>
+                        <td id="unassignedP3" style="padding: 10px 12px; text-align: center;">[% Data.ByPriority.item('P3-Medium').Unassigned || 0 %]</td>
+                        <td id="unassignedP4" style="padding: 10px 12px; text-align: center;">[% Data.ByPriority.item('P4-Low').Unassigned || 0 %]</td>
+                        <td id="unassignedTotal" style="padding: 10px 12px; text-align: center;">[% Data.TotalUnassigned || 0 %]</td>
+                    </tr>
+                    <tr style="font-weight: bold; border-top: 2px solid #dee2e6;">
+                        <td style="padding: 10px 12px;">[% Translate("Grand Total") | html %]</td>
+                        <td id="totalP1" style="padding: 10px 12px; text-align: center;">[% Data.ByPriority.item('P1-Critical').Total || 0 %]</td>
+                        <td id="totalP2" style="padding: 10px 12px; text-align: center;">[% Data.ByPriority.item('P2-High').Total || 0 %]</td>
+                        <td id="totalP3" style="padding: 10px 12px; text-align: center;">[% Data.ByPriority.item('P3-Medium').Total || 0 %]</td>
+                        <td id="totalP4" style="padding: 10px 12px; text-align: center;">[% Data.ByPriority.item('P4-Low').Total || 0 %]</td>
+                        <td id="grandTotal" style="padding: 10px 12px; text-align: center;">[% Data.GrandTotal || 0 %]</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p style="margin-top: 15px; font-size: 12px;">
+                <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;OwnerIDs=99" style="color: #EA4335; text-decoration: underline;">
+                    [% Translate("View All Unassigned Incidents") | html %]
+                </a>
+            </p>
+        </div>
+
+    </div>
+</div>
+
+<!-- D3.js Library (already in Znuny) -->
+<script src="[% Config("Frontend::WebPath") %]js/thirdparty/d3-3.5.7/d3.min.js"></script>
+<script type="text/javascript">
+(function() {
+    // Wait for DOM to be ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCharts);
+    } else {
+        initCharts();
+    }
+
+    function initCharts() {
+        // Chart data from backend
+        var chartData = {
+            'P1-Critical': {
+                assigned: [% Data.ByPriority.item('P1-Critical').Assigned || 0 %],
+                unassigned: [% Data.ByPriority.item('P1-Critical').Unassigned || 0 %],
+                assignedPct: [% Data.ByPriority.item('P1-Critical').AssignedPct || 0 %],
+                unassignedPct: [% Data.ByPriority.item('P1-Critical').UnassignedPct || 0 %]
+            },
+            'P2-High': {
+                assigned: [% Data.ByPriority.item('P2-High').Assigned || 0 %],
+                unassigned: [% Data.ByPriority.item('P2-High').Unassigned || 0 %],
+                assignedPct: [% Data.ByPriority.item('P2-High').AssignedPct || 0 %],
+                unassignedPct: [% Data.ByPriority.item('P2-High').UnassignedPct || 0 %]
+            },
+            'P3-Medium': {
+                assigned: [% Data.ByPriority.item('P3-Medium').Assigned || 0 %],
+                unassigned: [% Data.ByPriority.item('P3-Medium').Unassigned || 0 %],
+                assignedPct: [% Data.ByPriority.item('P3-Medium').AssignedPct || 0 %],
+                unassignedPct: [% Data.ByPriority.item('P3-Medium').UnassignedPct || 0 %]
+            },
+            'P4-Low': {
+                assigned: [% Data.ByPriority.item('P4-Low').Assigned || 0 %],
+                unassigned: [% Data.ByPriority.item('P4-Low').Unassigned || 0 %],
+                assignedPct: [% Data.ByPriority.item('P4-Low').AssignedPct || 0 %],
+                unassignedPct: [% Data.ByPriority.item('P4-Low').UnassignedPct || 0 %]
+            }
+        };
+
+        // Priority name mapping for search URLs
+        var prioritySearchNames = {
+            'P1-Critical': 'P1-Critical',
+            'P2-High': 'P2-High',
+            'P3-Medium': 'P3-Medium',
+            'P4-Low': 'P4-Low'
+        };
+
+        // Create charts with D3.js
+        var charts = {
+            'P1-Critical': 'chartP1Critical',
+            'P2-High': 'chartP2High',
+            'P3-Medium': 'chartP3Medium',
+            'P4-Low': 'chartP4Low'
+        };
+
+        Object.keys(charts).forEach(function(priority) {
+            var canvasId = charts[priority];
+            var data = chartData[priority];
+
+            // Skip if no data
+            if (data.assigned === 0 && data.unassigned === 0) {
+                d3.select('#' + canvasId).append('text')
+                    .attr('x', 90)
+                    .attr('y', 90)
+                    .attr('text-anchor', 'middle')
+                    .style('font-size', '14px')
+                    .text('No Data');
+                return;
+            }
+
+            createPieChart(canvasId, data, priority, prioritySearchNames[priority]);
+        });
+
+        // Setup filter handlers
+        setupFilterHandlers(chartData, charts, prioritySearchNames);
+
+        // Initialize selector visibility
+        updateSelectorVisibility();
+    }
+
+    function createPieChart(canvasId, data, priorityName, prioritySearchValue) {
+        var width = 180;
+        var height = 180;
+        var radius = Math.min(width, height) / 2;
+
+        var svg = d3.select('#' + canvasId)
+            .attr('width', width)
+            .attr('height', height)
+            .append('g')
+            .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')');
+
+        var color = d3.scale.ordinal()
+            .range(['#4285F4', '#EA4335']);
+
+        var pie = d3.layout.pie()
+            .sort(null)
+            .value(function(d) { return d.value; });
+
+        var arc = d3.svg.arc()
+            .outerRadius(radius - 10)
+            .innerRadius(0);
+
+        var pieData = [
+            { label: 'Assigned', value: data.assigned, pct: data.assignedPct },
+            { label: 'Unassigned', value: data.unassigned, pct: data.unassignedPct }
+        ];
+
+        var g = svg.selectAll('.arc')
+            .data(pie(pieData))
+            .enter().append('g')
+            .attr('class', 'arc');
+
+        g.append('path')
+            .attr('d', arc)
+            .style('fill', function(d, i) { return color(i); })
+            .style('stroke', '#fff')
+            .style('stroke-width', '2px');
+
+        g.append('text')
+            .attr('transform', function(d) { return 'translate(' + arc.centroid(d) + ')'; })
+            .attr('dy', '.35em')
+            .style('text-anchor', 'middle')
+            .style('font-size', '12px')
+            .style('font-weight', 'bold')
+            .style('fill', '#fff')
+            .text(function(d) {
+                return d.data.value > 0 ? d.data.value + ' (' + d.data.pct + '%)' : '';
+            });
+    }
+
+    function updateSelectorVisibility() {
+        var filterType = $('input[name="FilterType"]:checked').val();
+
+        $('#DaySelector, #WeekSelector, #MonthSelector, #YearSelector').hide();
+
+        if (filterType === 'day') {
+            $('#DaySelector').show();
+        } else if (filterType === 'week') {
+            $('#WeekSelector').show();
+        } else if (filterType === 'month') {
+            $('#MonthSelector').show();
+        } else if (filterType === 'year') {
+            $('#YearSelector').show();
+        }
+    }
+
+    function setupFilterHandlers(initialChartData, charts, prioritySearchNames) {
+        var $loadingIndicator = $('#FilterLoadingIndicator');
+
+        // Handle filter type change (radio buttons)
+        $('input[name="FilterType"]').on('change', function() {
+            updateSelectorVisibility();
+            // Automatically load data for new filter type with current selection
+            loadFilteredData(charts, prioritySearchNames);
+        });
+
+        // Handle day selection change
+        $('#SelectedDate').on('change', function() {
+            loadFilteredData(charts, prioritySearchNames);
+        });
+
+        // Handle week selection change
+        $('#SelectedWeek').on('change', function() {
+            loadFilteredData(charts, prioritySearchNames);
+        });
+
+        // Handle month/year selection change
+        $('#SelectedMonth, #SelectedYearMonthly').on('change', function() {
+            loadFilteredData(charts, prioritySearchNames);
+        });
+
+        // Handle year selection change
+        $('#SelectedYearYearly').on('change', function() {
+            loadFilteredData(charts, prioritySearchNames);
+        });
+
+        function loadFilteredData(charts, prioritySearchNames) {
+            var filterType = $('input[name="FilterType"]:checked').val();
+            var ajaxData = {
+                Action: 'AgentOperationalReports',
+                Subaction: 'GetActiveTicketsData',
+                FilterType: filterType
+            };
+
+            // Add specific parameters based on filter type
+            if (filterType === 'day') {
+                ajaxData.SelectedDate = $('#SelectedDate').val();
+            } else if (filterType === 'week') {
+                ajaxData.SelectedWeek = $('#SelectedWeek').val();
+            } else if (filterType === 'month') {
+                ajaxData.SelectedMonth = $('#SelectedMonth').val();
+                ajaxData.SelectedYear = $('#SelectedYearMonthly').val();
+            } else if (filterType === 'year') {
+                ajaxData.SelectedYear = $('#SelectedYearYearly').val();
+            }
+
+            // Show loading indicator
+            $loadingIndicator.show();
+            $('input[name="FilterType"], select').prop('disabled', true);
+
+            // Make AJAX request
+            $.ajax({
+                url: Core.Config.Get('Baselink'),
+                type: 'POST',
+                data: ajaxData,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.Success && response.Data) {
+                        updateChartsAndTable(response.Data, charts, prioritySearchNames);
+                    } else {
+                        alert('Failed to load data: ' + (response.ErrorMessage || 'Unknown error'));
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('Failed to load data. Please try again.');
+                    console.error('AJAX error:', error);
+                },
+                complete: function() {
+                    // Hide loading indicator
+                    $loadingIndicator.hide();
+                    $('input[name="FilterType"], select').prop('disabled', false);
+                }
+            });
+        }
+    }
+
+    function updateChartsAndTable(data, charts, prioritySearchNames) {
+        // Clear existing charts
+        d3.select('#chartP1Critical').selectAll('*').remove();
+        d3.select('#chartP2High').selectAll('*').remove();
+        d3.select('#chartP3Medium').selectAll('*').remove();
+        d3.select('#chartP4Low').selectAll('*').remove();
+
+        // Redraw charts with new data
+        Object.keys(charts).forEach(function(priority) {
+            var canvasId = charts[priority];
+            var chartData = data[priority];
+
+            if (!chartData) {
+                return;
+            }
+
+            // Skip if no data
+            if (chartData.Assigned === 0 && chartData.Unassigned === 0) {
+                d3.select('#' + canvasId).append('text')
+                    .attr('x', 90)
+                    .attr('y', 90)
+                    .attr('text-anchor', 'middle')
+                    .style('font-size', '14px')
+                    .text('No Data');
+                return;
+            }
+
+            // Create chart data in expected format
+            var formattedData = {
+                assigned: chartData.Assigned || 0,
+                unassigned: chartData.Unassigned || 0,
+                assignedPct: chartData.AssignedPct || 0,
+                unassignedPct: chartData.UnassignedPct || 0
+            };
+
+            createPieChart(canvasId, formattedData, priority, prioritySearchNames[priority]);
+        });
+
+        // Update table
+        updateTableCells(data);
+    }
+
+    function updateTableCells(data) {
+        // Map priority keys to simple names for IDs
+        var priorityMap = {
+            'P1-Critical': 'P1',
+            'P2-High': 'P2',
+            'P3-Medium': 'P3',
+            'P4-Low': 'P4'
+        };
+
+        Object.keys(priorityMap).forEach(function(priorityKey) {
+            var shortName = priorityMap[priorityKey];
+            var priorityData = data[priorityKey] || { Assigned: 0, Unassigned: 0, Total: 0 };
+
+            $('#assigned' + shortName).text(priorityData.Assigned || 0);
+            $('#unassigned' + shortName).text(priorityData.Unassigned || 0);
+            $('#total' + shortName).text(priorityData.Total || 0);
+        });
+    }
+})();
+</script>
+
+[% END %]
+
+[% BLOCK AllActiveTickets %]
+<!-- Section 1: Active Tickets Assignment Report -->
+<div class="WidgetSimple">
+    <div class="Header">
+        <h2>[% Translate("Active Tickets Assignment Report") | html %]</h2>
+    </div>
+    <div class="Content">
+
+        <!-- Charts with Legend on right -->
+        <div style="display: flex; gap: 20px;">
+            <!-- 4 Pie Charts - 2x2 grid -->
+            <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <!-- P1 Chart -->
+                <div style="border: 1px solid #dee2e6; padding: 15px; text-align: center; border-radius: 4px;">
+                    <h3 style="margin-top: 0;">P1</h3>
+                    <svg id="allChartP1Critical"></svg>
+                </div>
+
+                <!-- P2 Chart -->
+                <div style="border: 1px solid #dee2e6; padding: 15px; text-align: center; border-radius: 4px;">
+                    <h3 style="margin-top: 0;">P2</h3>
+                    <svg id="allChartP2High"></svg>
+                </div>
+
+                <!-- P3 Chart -->
+                <div style="border: 1px solid #dee2e6; padding: 15px; text-align: center; border-radius: 4px;">
+                    <h3 style="margin-top: 0;">P3</h3>
+                    <svg id="allChartP3Medium"></svg>
+                </div>
+
+                <!-- P4 Chart -->
+                <div style="border: 1px solid #dee2e6; padding: 15px; text-align: center; border-radius: 4px;">
+                    <h3 style="margin-top: 0;">P4</h3>
+                    <svg id="allChartP4Low"></svg>
+                </div>
+            </div>
+
+            <!-- Right: Color Code Legend -->
+            <div style="flex: 0 0 180px;">
+                <h4 style="margin-top: 0;">[% Translate("Legend") | html %]</h4>
+                <div style="padding: 10px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px;">
+                    <div style="margin-bottom: 10px;">
+                        <div style="display: inline-block; width: 20px; height: 20px; background: #4285F4; margin-right: 8px; vertical-align: middle;"></div>
+                        <span>[% Translate("Assigned") | html %]</span>
+                    </div>
+                    <div>
+                        <div style="display: inline-block; width: 20px; height: 20px; background: #EA4335; margin-right: 8px; vertical-align: middle;"></div>
+                        <span>[% Translate("Unassigned") | html %]</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Section 2: Breakdown -->
+<div class="WidgetSimple" style="margin-top: 20px;">
+    <div class="Header">
+        <h2>[% Translate("Breakdown") | html %]</h2>
+    </div>
+    <div class="Content">
+        <table class="DataTable" style="width: auto; min-width: 500px;">
+            <thead>
+                <tr>
+                    <th style="background: #f8f9fa; padding: 12px; text-align: left;">[% Translate("Assignee State") | html %]</th>
+                    <th style="background: #f8f9fa; padding: 12px; text-align: center;">P1</th>
+                    <th style="background: #f8f9fa; padding: 12px; text-align: center;">P2</th>
+                    <th style="background: #f8f9fa; padding: 12px; text-align: center;">P3</th>
+                    <th style="background: #f8f9fa; padding: 12px; text-align: center;">P4</th>
+                    <th style="background: #f8f9fa; padding: 12px; text-align: center;">[% Translate("Total") | html %]</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding: 10px 12px;">[% Translate("Assigned") | html %]</td>
+                    <td style="padding: 10px 12px; text-align: center;">
+                        <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P1-Critical;AssignedOnly=1" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P1-Critical').Assigned || 0 %]</a>
+                    </td>
+                    <td style="padding: 10px 12px; text-align: center;">
+                        <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P2-High;AssignedOnly=1" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P2-High').Assigned || 0 %]</a>
+                    </td>
+                    <td style="padding: 10px 12px; text-align: center;">
+                        <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P3-Medium;AssignedOnly=1" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P3-Medium').Assigned || 0 %]</a>
+                    </td>
+                    <td style="padding: 10px 12px; text-align: center;">
+                        <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P4-Low;AssignedOnly=1" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P4-Low').Assigned || 0 %]</a>
+                    </td>
+                    <td style="padding: 10px 12px; text-align: center;">
+                        <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;AssignedOnly=1" style="color: #007bff; text-decoration: none;">[% Data.TotalAssigned || 0 %]</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px 12px;">[% Translate("Unassigned") | html %]</td>
+                    <td style="padding: 10px 12px; text-align: center;">
+                        <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P1-Critical;OwnerIDs=99" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P1-Critical').Unassigned || 0 %]</a>
+                    </td>
+                    <td style="padding: 10px 12px; text-align: center;">
+                        <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P2-High;OwnerIDs=99" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P2-High').Unassigned || 0 %]</a>
+                    </td>
+                    <td style="padding: 10px 12px; text-align: center;">
+                        <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P3-Medium;OwnerIDs=99" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P3-Medium').Unassigned || 0 %]</a>
+                    </td>
+                    <td style="padding: 10px 12px; text-align: center;">
+                        <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P4-Low;OwnerIDs=99" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P4-Low').Unassigned || 0 %]</a>
+                    </td>
+                    <td style="padding: 10px 12px; text-align: center;">
+                        <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;OwnerIDs=99" style="color: #007bff; text-decoration: none;">[% Data.TotalUnassigned || 0 %]</a>
+                    </td>
+                </tr>
+                <tr style="font-weight: bold; border-top: 2px solid #dee2e6;">
+                    <td style="padding: 10px 12px;">[% Translate("Grand Total") | html %]</td>
+                    <td style="padding: 10px 12px; text-align: center;">
+                        <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P1-Critical" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P1-Critical').Total || 0 %]</a>
+                    </td>
+                    <td style="padding: 10px 12px; text-align: center;">
+                        <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P2-High" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P2-High').Total || 0 %]</a>
+                    </td>
+                    <td style="padding: 10px 12px; text-align: center;">
+                        <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P3-Medium" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P3-Medium').Total || 0 %]</a>
+                    </td>
+                    <td style="padding: 10px 12px; text-align: center;">
+                        <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P4-Low" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P4-Low').Total || 0 %]</a>
+                    </td>
+                    <td style="padding: 10px 12px; text-align: center;">
+                        <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open" style="color: #007bff; text-decoration: none;">[% Data.GrandTotal || 0 %]</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p style="margin-top: 15px; font-size: 12px;">
+            <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;OwnerIDs=99" style="color: #EA4335; text-decoration: underline;">
+                [% Translate("View All Unassigned Incidents") | html %]
+            </a>
+        </p>
+    </div>
+</div>
+
+<!-- D3.js Library -->
+<script src="[% Config("Frontend::WebPath") %]js/thirdparty/d3-3.5.7/d3.min.js"></script>
+<script type="text/javascript">
+(function() {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initAllActiveCharts);
+    } else {
+        initAllActiveCharts();
+    }
+
+    function initAllActiveCharts() {
+        var chartData = {
+            'P1-Critical': {
+                assigned: [% Data.ByPriority.item('P1-Critical').Assigned || 0 %],
+                unassigned: [% Data.ByPriority.item('P1-Critical').Unassigned || 0 %],
+                assignedPct: [% Data.ByPriority.item('P1-Critical').AssignedPct || 0 %],
+                unassignedPct: [% Data.ByPriority.item('P1-Critical').UnassignedPct || 0 %]
+            },
+            'P2-High': {
+                assigned: [% Data.ByPriority.item('P2-High').Assigned || 0 %],
+                unassigned: [% Data.ByPriority.item('P2-High').Unassigned || 0 %],
+                assignedPct: [% Data.ByPriority.item('P2-High').AssignedPct || 0 %],
+                unassignedPct: [% Data.ByPriority.item('P2-High').UnassignedPct || 0 %]
+            },
+            'P3-Medium': {
+                assigned: [% Data.ByPriority.item('P3-Medium').Assigned || 0 %],
+                unassigned: [% Data.ByPriority.item('P3-Medium').Unassigned || 0 %],
+                assignedPct: [% Data.ByPriority.item('P3-Medium').AssignedPct || 0 %],
+                unassignedPct: [% Data.ByPriority.item('P3-Medium').UnassignedPct || 0 %]
+            },
+            'P4-Low': {
+                assigned: [% Data.ByPriority.item('P4-Low').Assigned || 0 %],
+                unassigned: [% Data.ByPriority.item('P4-Low').Unassigned || 0 %],
+                assignedPct: [% Data.ByPriority.item('P4-Low').AssignedPct || 0 %],
+                unassignedPct: [% Data.ByPriority.item('P4-Low').UnassignedPct || 0 %]
+            }
+        };
+
+        var prioritySearchNames = {
+            'P1-Critical': 'P1-Critical',
+            'P2-High': 'P2-High',
+            'P3-Medium': 'P3-Medium',
+            'P4-Low': 'P4-Low'
+        };
+
+        var charts = {
+            'P1-Critical': 'allChartP1Critical',
+            'P2-High': 'allChartP2High',
+            'P3-Medium': 'allChartP3Medium',
+            'P4-Low': 'allChartP4Low'
+        };
+
+        Object.keys(charts).forEach(function(priority) {
+            var canvasId = charts[priority];
+            var data = chartData[priority];
+
+            if (data.assigned === 0 && data.unassigned === 0) {
+                d3.select('#' + canvasId).append('text')
+                    .attr('x', 90)
+                    .attr('y', 90)
+                    .attr('text-anchor', 'middle')
+                    .style('font-size', '14px')
+                    .text('No Data');
+                return;
+            }
+
+            createAllPieChart(canvasId, data, priority, prioritySearchNames[priority]);
+        });
+    }
+
+    function createAllPieChart(canvasId, data, priorityName, prioritySearchValue) {
+        var width = 180;
+        var height = 180;
+        var radius = Math.min(width, height) / 2;
+
+        var svg = d3.select('#' + canvasId)
+            .attr('width', width)
+            .attr('height', height)
+            .append('g')
+            .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')');
+
+        var color = d3.scale.ordinal()
+            .range(['#4285F4', '#EA4335']);
+
+        var pie = d3.layout.pie()
+            .sort(null)
+            .value(function(d) { return d.value; });
+
+        var arc = d3.svg.arc()
+            .outerRadius(radius - 10)
+            .innerRadius(0);
+
+        var pieData = [
+            { label: 'Assigned', value: data.assigned, pct: data.assignedPct },
+            { label: 'Unassigned', value: data.unassigned, pct: data.unassignedPct }
+        ];
+
+        var g = svg.selectAll('.arc')
+            .data(pie(pieData))
+            .enter().append('g')
+            .attr('class', 'arc');
+
+        g.append('path')
+            .attr('d', arc)
+            .style('fill', function(d, i) { return color(i); })
+            .style('stroke', '#fff')
+            .style('stroke-width', '2px');
+
+        g.append('text')
+            .attr('transform', function(d) { return 'translate(' + arc.centroid(d) + ')'; })
+            .attr('dy', '.35em')
+            .style('text-anchor', 'middle')
+            .style('font-size', '12px')
+            .style('font-weight', 'bold')
+            .style('fill', '#fff')
+            .text(function(d) {
+                return d.data.value > 0 ? d.data.value + ' (' + d.data.pct + '%)' : '';
+            });
+    }
+})();
+</script>
+
+[% END %]
+
+[% BLOCK AverageBacklog %]
+<!-- Section 1: Active Tickets Average Backlog -->
+<div class="WidgetSimple">
+    <div class="Header">
+        <h2>[% Translate("Active Tickets Average Backlog") | html %]</h2>
+    </div>
+    <div class="Content">
+
+        <!-- Charts with Legend on right -->
+        <div style="display: flex; gap: 20px;">
+            <!-- 4 Charts - 2x2 grid -->
+            <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <!-- P1 Chart -->
+                <div style="border: 1px solid #dee2e6; padding: 15px; text-align: center; border-radius: 4px;">
+                    <h3 style="margin-top: 0;">P1</h3>
+                    <svg id="backlogChartP1"></svg>
+                </div>
+
+                <!-- P2 Chart -->
+                <div style="border: 1px solid #dee2e6; padding: 15px; text-align: center; border-radius: 4px;">
+                    <h3 style="margin-top: 0;">P2</h3>
+                    <svg id="backlogChartP2"></svg>
+                </div>
+
+                <!-- P3 Chart -->
+                <div style="border: 1px solid #dee2e6; padding: 15px; text-align: center; border-radius: 4px;">
+                    <h3 style="margin-top: 0;">P3</h3>
+                    <svg id="backlogChartP3"></svg>
+                </div>
+
+                <!-- P4 Chart -->
+                <div style="border: 1px solid #dee2e6; padding: 15px; text-align: center; border-radius: 4px;">
+                    <h3 style="margin-top: 0;">P4</h3>
+                    <svg id="backlogChartP4"></svg>
+                </div>
+            </div>
+
+            <!-- Right: Color Code Legend -->
+            <div style="flex: 0 0 180px;">
+                <h4 style="margin-top: 0;">[% Translate("Legend") | html %]</h4>
+                <div style="padding: 10px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px;">
+                    <div>
+                        <div style="display: inline-block; width: 20px; height: 20px; background: #4285F4; margin-right: 8px; vertical-align: middle;"></div>
+                        <span>[% Translate("Active") | html %]</span>
+                    </div>
+                </div>
+                <p style="margin-top: 10px; font-size: 11px; color: #666;">[% Translate("Values in days") | html %]</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Section 2: Breakdown -->
+<div class="WidgetSimple" style="margin-top: 20px;">
+    <div class="Header">
+        <h2>[% Translate("Breakdown") | html %] ([% Translate("Average Days") | html %])</h2>
+    </div>
+    <div class="Content">
+        <table class="DataTable" style="width: auto; min-width: 500px;">
+            <thead>
+                <tr>
+                    <th style="background: #f8f9fa; padding: 12px; text-align: left;">[% Translate("Ticket State") | html %]</th>
+                    <th style="background: #f8f9fa; padding: 12px; text-align: center;">P1</th>
+                    <th style="background: #f8f9fa; padding: 12px; text-align: center;">P2</th>
+                    <th style="background: #f8f9fa; padding: 12px; text-align: center;">P3</th>
+                    <th style="background: #f8f9fa; padding: 12px; text-align: center;">P4</th>
+                    <th style="background: #f8f9fa; padding: 12px; text-align: center;">[% Translate("Total") | html %]</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding: 10px 12px;">[% Translate("Average Days") | html %]</td>
+                    <td style="padding: 10px 12px; text-align: center;">
+                        <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P1-Critical" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P1-Critical').AvgDays || 0 %]</a>
+                    </td>
+                    <td style="padding: 10px 12px; text-align: center;">
+                        <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P2-High" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P2-High').AvgDays || 0 %]</a>
+                    </td>
+                    <td style="padding: 10px 12px; text-align: center;">
+                        <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P3-Medium" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P3-Medium').AvgDays || 0 %]</a>
+                    </td>
+                    <td style="padding: 10px 12px; text-align: center;">
+                        <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P4-Low" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P4-Low').AvgDays || 0 %]</a>
+                    </td>
+                    <td style="padding: 10px 12px; text-align: center;">
+                        <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open" style="color: #007bff; text-decoration: none;">[% Data.OverallAvgDays || 0 %]</a>
+                    </td>
+                </tr>
+                <tr style="font-weight: bold; border-top: 2px solid #dee2e6;">
+                    <td style="padding: 10px 12px;">[% Translate("Ticket Count") | html %]</td>
+                    <td style="padding: 10px 12px; text-align: center;">
+                        <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P1-Critical" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P1-Critical').Count || 0 %]</a>
+                    </td>
+                    <td style="padding: 10px 12px; text-align: center;">
+                        <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P2-High" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P2-High').Count || 0 %]</a>
+                    </td>
+                    <td style="padding: 10px 12px; text-align: center;">
+                        <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P3-Medium" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P3-Medium').Count || 0 %]</a>
+                    </td>
+                    <td style="padding: 10px 12px; text-align: center;">
+                        <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open;Priorities=P4-Low" style="color: #007bff; text-decoration: none;">[% Data.ByPriority.item('P4-Low').Count || 0 %]</a>
+                    </td>
+                    <td style="padding: 10px 12px; text-align: center;">
+                        <a href="[% Env("Baselink") %]Action=AgentReportTickets;StateType=Open" style="color: #007bff; text-decoration: none;">[% Data.TotalCount || 0 %]</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- D3.js Library -->
+<script src="[% Config("Frontend::WebPath") %]js/thirdparty/d3-3.5.7/d3.min.js"></script>
+<script type="text/javascript">
+(function() {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initBacklogCharts);
+    } else {
+        initBacklogCharts();
+    }
+
+    function initBacklogCharts() {
+        var chartData = {
+            'P1-Critical': { avgDays: [% Data.ByPriority.item('P1-Critical').AvgDays || 0 %] },
+            'P2-High': { avgDays: [% Data.ByPriority.item('P2-High').AvgDays || 0 %] },
+            'P3-Medium': { avgDays: [% Data.ByPriority.item('P3-Medium').AvgDays || 0 %] },
+            'P4-Low': { avgDays: [% Data.ByPriority.item('P4-Low').AvgDays || 0 %] }
+        };
+
+        var charts = {
+            'P1-Critical': 'backlogChartP1',
+            'P2-High': 'backlogChartP2',
+            'P3-Medium': 'backlogChartP3',
+            'P4-Low': 'backlogChartP4'
+        };
+
+        Object.keys(charts).forEach(function(priority) {
+            var canvasId = charts[priority];
+            var data = chartData[priority];
+            createBacklogChart(canvasId, data.avgDays);
+        });
+    }
+
+    function createBacklogChart(canvasId, avgDays) {
+        var width = 180;
+        var height = 180;
+        var radius = Math.min(width, height) / 2;
+
+        var svg = d3.select('#' + canvasId)
+            .attr('width', width)
+            .attr('height', height)
+            .append('g')
+            .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')');
+
+        // Create a single solid circle
+        var arc = d3.svg.arc()
+            .outerRadius(radius - 10)
+            .innerRadius(0);
+
+        var pie = d3.layout.pie()
+            .sort(null)
+            .value(function(d) { return d; });
+
+        // Single segment = 100%
+        var g = svg.selectAll('.arc')
+            .data(pie([1]))
+            .enter().append('g')
+            .attr('class', 'arc');
+
+        g.append('path')
+            .attr('d', arc)
+            .style('fill', '#4285F4')
+            .style('stroke', '#fff')
+            .style('stroke-width', '2px');
+
+        // Add the average days text in center
+        svg.append('text')
+            .attr('x', 0)
+            .attr('y', 5)
+            .attr('text-anchor', 'middle')
+            .style('font-size', '24px')
+            .style('font-weight', 'bold')
+            .style('fill', '#fff')
+            .text(avgDays);
+    }
+})();
+</script>
+
+[% END %]

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Framework">
+
+    <!-- Navigation Module Registration -->
+    <Setting Name="Frontend::NavigationModule###AdminEBondingConfiguration" Required="0" Valid="1">
+        <Description Translatable="1">Admin area navigation for the Easy MSI Escalation integration interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration::AdminOverview</Navigation>
+        <Value>
+            <Hash>
+                <!-- Group permissions managed in ZZZZZNOCAdminNavigation.pm -->
+                <Item Key="Module">Kernel::Output::HTML::NavBar::ModuleAdmin</Item>
+                <Item Key="Name" Translatable="1">Easy MSI Escalation Configuration</Item>
+                <Item Key="Block">MSSTLite</Item>
+                <Item Key="Description" Translatable="1">Configure Easy MSI Escalation ServiceNow integration for incident synchronization.</Item>
+                <Item Key="IconBig">fa-exchange</Item>
+                <Item Key="IconSmall">fa-exchange</Item>
+                <Item Key="Prio">925</Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Frontend Module Registration -->
+    <Setting Name="Frontend::Module###AdminEBondingConfiguration" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for the Easy MSI Escalation ServiceNow integration configuration admin interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <!-- Group permissions managed in ZZZZZNOCAdminNavigation.pm -->
+                    <Item Key="Module">Kernel::Modules::AdminEBondingConfiguration</Item>
+                    <Item Key="Description" Translatable="1">Configure Easy MSI Escalation ServiceNow integration for incident synchronization.</Item>
+                    <Item Key="Title" Translatable="1">Easy MSI Escalation Configuration</Item>
+                    <Item Key="NavBarName">Admin</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+
+    <!-- Easy MSI Escalation Integration Configuration Settings -->
+    <Setting Name="EBondingIntegration::Enabled" Required="0" Valid="1" UserModificationPossible="1" UserModificationActive="1">
+        <Description Translatable="1">Enable or disable the Easy MSI Escalation ServiceNow integration.</Description>
+        <Navigation>Core::EBondingIntegration::Config</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">1</Item>
+        </Value>
+    </Setting>
+
+    <Setting Name="EBondingIntegration::Environment" Required="0" Valid="1" UserModificationPossible="1" UserModificationActive="1">
+        <Description Translatable="1">Select the ServiceNow environment to use for Easy MSI Escalation integration. Reference is used by default.</Description>
+        <Navigation>Core::EBondingIntegration::Config</Navigation>
+        <Value>
+            <Item ValueType="Select" SelectedID="reference">
+                <Item ValueType="Option" Value="reference" Translatable="1">Reference</Item>
+                <Item ValueType="Option" Value="production" Translatable="1">Production</Item>
+            </Item>
+        </Value>
+    </Setting>
+
+    <Setting Name="EBondingIntegration::APIURL" Required="0" Valid="1">
+        <Description Translatable="1">ServiceNow API URL endpoint (stored in Config.pm, configured by system administrator).</Description>
+        <Navigation>Core::EBondingIntegration::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex=""></Item>
+        </Value>
+    </Setting>
+
+    <Setting Name="EBondingIntegration::APIUser" Required="0" Valid="1">
+        <Description Translatable="1">ServiceNow API username (stored in Config.pm, configured by system administrator).</Description>
+        <Navigation>Core::EBondingIntegration::Config</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex=""></Item>
+        </Value>
+    </Setting>
+
+    <Setting Name="EBondingIntegration::APIPassword" Required="0" Valid="1">
+        <Description Translatable="1">ServiceNow API password (stored in Config.pm, configured by system administrator).</Description>
+        <Navigation>Core::EBondingIntegration::Config</Navigation>
+        <Value>
+            <Item ValueType="Password" ValueRegex=""></Item>
+        </Value>
+    </Setting>
+
+    <!-- JavaScript Module Loader Registration -->
+    <Setting Name="Loader::Module::AdminEBondingConfiguration###002-Framework" Required="0" Valid="1">
+        <Description Translatable="1">List of JS files loaded for AdminEBondingConfiguration frontend module.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration::Loader</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="JavaScript">
+                    <Array>
+                        <Item>Core.Agent.Admin.EBondingConfiguration.js</Item>
+                    </Array>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Admin Groups for Easy MSI Escalation Configuration -->
+    <Setting Name="EBondingIntegration::AdminGroups" Required="1" Valid="1">
+        <Description Translatable="1">Groups that can manage Easy MSI Escalation ServiceNow integration.</Description>
+        <Navigation>Core::MSSTLite::EBondingIntegration</Navigation>
+        <Value>
+            <Array>
+                <Item>admin</Item>
+                <Item>MSIAdmin</Item>
+                <Item>NOCAdmin</Item>
+            </Array>
+        </Value>
+    </Setting>
+
+</otrs_config>

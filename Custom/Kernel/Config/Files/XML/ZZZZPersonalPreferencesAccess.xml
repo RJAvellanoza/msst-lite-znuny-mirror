@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Framework">
+    <!-- Blocked groups for Personal Preferences access -->
+    <Setting Name="PersonalPreferences::BlockedGroups" Required="0" Valid="1">
+        <Description Translatable="1">Groups that are blocked from accessing Personal Preferences.</Description>
+        <Navigation>Frontend::Agent::Preferences</Navigation>
+        <Value>
+            <Array>
+                <Item>MSIAdmin</Item>
+            </Array>
+        </Value>
+    </Setting>
+
+    <!-- Removed TicketZoom articles per page override; allow default behavior -->
+    <!-- Force default language to English (United States) and hide selector -->
+    <Setting Name="DefaultLanguage" Required="0" Valid="1">
+        <Description Translatable="1">Default language for agents.</Description>
+        <Navigation>Frontend::Agent::General</Navigation>
+        <Value>
+            <Item ValueType="String">en_US</Item>
+        </Value>
+    </Setting>
+
+    <!-- Disable original Language module configuration -->
+    <Setting Name="PreferencesGroups###LanguageOriginal" Required="0" Valid="1">
+        <Description Translatable="1">Disable original language module configuration.</Description>
+        <Navigation>Frontend::Agent::View::Preferences</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Module">Kernel::Output::HTML::Preferences::Language</Item>
+                <Item Key="PreferenceGroup">UserProfile</Item>
+                <Item Key="Label" Translatable="1">Language</Item>
+                <Item Key="Key" Translatable="1">Language</Item>
+                <Item Key="Active">0</Item>
+                <Item Key="PrefKey">UserLanguage</Item>
+                <Item Key="Prio">2000</Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <Setting Name="PreferencesGroups###Language" Required="0" Valid="1">
+        <Description Translatable="1">Make language selector read-only in Personal Preferences.</Description>
+        <Navigation>Frontend::Agent::View::Preferences</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Module">Kernel::Output::HTML::Preferences::Language</Item>
+                <Item Key="PreferenceGroup">UserProfile</Item>
+                <Item Key="Label" Translatable="1">Language</Item>
+                <Item Key="Key" Translatable="1">Language</Item>
+                <Item Key="Active">1</Item>
+                <Item Key="PrefKey">UserLanguage</Item>
+                <Item Key="DataSelected">en</Item>
+                <Item Key="Prio">25</Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Disable Out of Office time in Personal Preferences -->
+    <Setting Name="PreferencesGroups###OutOfOffice" Required="0" Valid="1">
+        <Description Translatable="1">Disable out of office settings in Personal Preferences.</Description>
+        <Navigation>Frontend::Agent::View::Preferences</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Module">Kernel::Output::HTML::Preferences::Generic</Item>
+                <Item Key="PreferenceGroup">UserProfile</Item>
+                <Item Key="Label" Translatable="1">Out of office time</Item>
+                <Item Key="Key" Translatable="1">OutOfOffice</Item>
+                <Item Key="Active">0</Item>
+                <Item Key="Prio">2001</Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Output filter to hide Personal Preferences links in UI for blocked users -->
+    <Setting Name="Frontend::Output::FilterContent###HidePersonalPreferences" Required="0" Valid="1">
+        <Description Translatable="1">Hide Personal Preferences links for blocked groups.</Description>
+        <Navigation>Frontend::Base::OutputFilter</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Module">Kernel::Output::HTML::FilterContent::HidePersonalPreferences</Item>
+                <Item Key="Templates">
+                    <Hash>
+                        <Item Key="ALL">1</Item>
+                    </Hash>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- PreApplication gate to block AgentPreferences by group -->
+    <Setting Name="PreApplicationModule###AgentPreferencesGate" Required="0" Valid="1">
+        <Description Translatable="1">Pre-application gate to restrict access to AgentPreferences for specific groups.</Description>
+        <Navigation>Frontend::Base</Navigation>
+        <Value>
+            <Item ValueType="String">Kernel::Modules::PreApplicationPersonalPreferencesGate</Item>
+        </Value>
+    </Setting>
+
+    <!-- Disable TicketZoom Max articles per page (Miscellaneous) -->
+    <Setting Name="PreferencesGroups###MaxArticlesPerPage" Required="0" Valid="1">
+        <Description Translatable="1">Disable TicketZoom max articles per page in Personal Preferences.</Description>
+        <Navigation>Frontend::Agent::View::Preferences</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Module">Kernel::Output::HTML::Preferences::MaxArticlesPerPage</Item>
+                <Item Key="PreferenceGroup">Miscellaneous</Item>
+                <Item Key="Label" Translatable="1">Max. number of articles per page in TicketZoom</Item>
+                <Item Key="Key" Translatable="1">TicketZoom::MaxArticlesPerPage</Item>
+                <Item Key="Active">0</Item>
+                <Item Key="Prio">50</Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Make Skin selection read-only in Personal Preferences -->
+    <Setting Name="PreferencesGroups###Skin" Required="0" Valid="1">
+        <Description Translatable="1">Make skin selection read-only for users in Personal Preferences.</Description>
+        <Navigation>Frontend::Agent::View::Preferences</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Active">1</Item>
+                <Item Key="Module">Kernel::Output::HTML::Preferences::Skin</Item>
+                <Item Key="PreferenceGroup">Miscellaneous</Item>
+                <Item Key="Label" Translatable="1">Skin</Item>
+                <Item Key="Desc" Translatable="1">Your current skin (managed by system administrators).</Item>
+                <Item Key="Key" Translatable="1"></Item>
+                <Item Key="PrefKey">UserSkin</Item>
+                <Item Key="NeedsReload">1</Item>
+                <Item Key="Prio">100</Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Make Overview Refresh Time read-only in Personal Preferences -->
+    <Setting Name="PreferencesGroups###RefreshTime" Required="0" Valid="1">
+        <Description Translatable="1">Make overview refresh time read-only for users in Personal Preferences.</Description>
+        <Navigation>Frontend::Agent::View::Preferences</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Active">1</Item>
+                <Item Key="Module">Kernel::Output::HTML::Preferences::Generic</Item>
+                <Item Key="PreferenceGroup">Miscellaneous</Item>
+                <Item Key="Label" Translatable="1">Overview Refresh Time</Item>
+                <Item Key="Desc" Translatable="1">Your current refresh time (managed by system administrators).</Item>
+                <Item Key="Key" Translatable="1"></Item>
+                <Item Key="PrefKey">UserRefreshTime</Item>
+                <Item Key="Prio">100</Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Make Screen after new ticket read-only in Personal Preferences -->
+    <Setting Name="PreferencesGroups###CreateNextMask" Required="0" Valid="1">
+        <Description Translatable="1">Make screen after new ticket read-only for users in Personal Preferences.</Description>
+        <Navigation>Frontend::Agent::View::Preferences</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Active">1</Item>
+                <Item Key="Module">Kernel::Output::HTML::Preferences::Generic</Item>
+                <Item Key="PreferenceGroup">Miscellaneous</Item>
+                <Item Key="Label" Translatable="1">Screen after new ticket</Item>
+                <Item Key="Desc" Translatable="1">Your current screen setting (managed by system administrators).</Item>
+                <Item Key="Key" Translatable="1"></Item>
+                <Item Key="PrefKey">UserCreateNextMask</Item>
+                <Item Key="Prio">200</Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Make Last view limit read-only in Personal Preferences -->
+    <Setting Name="PreferencesGroups###LastViewsLimit" Required="0" Valid="1">
+        <Description Translatable="1">Make last view limit read-only for users in Personal Preferences.</Description>
+        <Navigation>Frontend::Agent::View::Preferences</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Active">1</Item>
+                <Item Key="Module">Kernel::Output::HTML::Preferences::Generic</Item>
+                <Item Key="PreferenceGroup">Miscellaneous</Item>
+                <Item Key="Label" Translatable="1">Last view - limit</Item>
+                <Item Key="Desc" Translatable="1">Your current view limit (managed by system administrators).</Item>
+                <Item Key="Key" Translatable="1">Limit</Item>
+                <Item Key="PrefKey">UserLastViewsLimit</Item>
+                <Item Key="Prio">300</Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Make Last view position read-only in Personal Preferences -->
+    <Setting Name="PreferencesGroups###LastViewsPosition" Required="0" Valid="1">
+        <Description Translatable="1">Make last view position read-only for users in Personal Preferences.</Description>
+        <Navigation>Frontend::Agent::View::Preferences</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Active">1</Item>
+                <Item Key="Module">Kernel::Output::HTML::Preferences::Generic</Item>
+                <Item Key="PreferenceGroup">Miscellaneous</Item>
+                <Item Key="Label" Translatable="1">Last view - position</Item>
+                <Item Key="Desc" Translatable="1">Your current view position (managed by system administrators).</Item>
+                <Item Key="Key" Translatable="1"></Item>
+                <Item Key="PrefKey">UserLastViewsPosition</Item>
+                <Item Key="Prio">400</Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Make Last view types read-only in Personal Preferences -->
+    <Setting Name="PreferencesGroups###LastViewsType" Required="0" Valid="1">
+        <Description Translatable="1">Make last view types read-only for users in Personal Preferences.</Description>
+        <Navigation>Frontend::Agent::View::Preferences</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Active">1</Item>
+                <Item Key="Module">Kernel::Output::HTML::Preferences::Generic</Item>
+                <Item Key="PreferenceGroup">Miscellaneous</Item>
+                <Item Key="Label" Translatable="1">Last view - types</Item>
+                <Item Key="Desc" Translatable="1">Your current view types (managed by system administrators).</Item>
+                <Item Key="Key" Translatable="1">Types</Item>
+                <Item Key="PrefKey">UserLastViewsTypes</Item>
+                <Item Key="Prio">500</Item>
+            </Hash>
+        </Value>
+    </Setting>
+</otrs_config>
+

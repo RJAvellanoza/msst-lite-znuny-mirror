@@ -1,0 +1,308 @@
+---
+- ChangeBy: 1
+  ChangeTime: 2025-06-26 12:45:18
+  Comment: 'Notification when ticket is resolved'
+  CreateBy: 1
+  CreateTime: 2025-06-26 13:10:00
+  Data:
+    AgentEnabledByDefault:
+    - Email
+    ArticleAttachmentInclude:
+    - '0'
+    Events:
+    - TicketStateUpdate
+    LanguageID:
+    - de
+    - en
+    - es_MX
+    - hu
+    - pt_BR
+    - sr_Cyrl
+    - sr_Latn
+    - zh_CN
+    Recipients:
+    - Customer
+    - AgentOwner
+    SendOnOutOfOffice:
+    - '1'
+    TransportEmailTemplate:
+    - Default
+    Transports:
+    - Email
+    VisibleForAgent:
+    - '1'
+    VisibleForAgentTooltip:
+    - You will receive a notification when a ticket is resolved.
+  ID: 1
+  Message:
+    de:
+      Body: |-
+        &nbsp; Dear &lt;OTRS_NOTIFICATION_RECIPIENT_UserFirstname&gt;,<br />
+        <br />
+        &nbsp; Your support ticket has been resolved:<br />
+        <br />
+        &nbsp; Ticket Information:<br />
+        &nbsp; ------------------<br />
+        &nbsp; Ticket Number:<br />
+        &nbsp; &lt;OTRS_CONFIG_Ticket::Hook&gt;&lt;OTRS_CONFIG_Ticket::HookDivider&gt;&lt;OTRS_TICKET_TicketNumber&gt;<br />
+        &nbsp; Title: &lt;OTRS_TICKET_Title&gt;<br />
+        &nbsp; Site: &lt;OTRS_TICKET_DynamicField_Site&gt;<br />
+        &nbsp; Impacted CI: &lt;OTRS_TICKET_DynamicField_ImpactedCI&gt;<br />
+        &nbsp; Priority: &lt;OTRS_TICKET_Priority&gt;<br />
+        &nbsp; Status: &lt;OTRS_TICKET_State&gt;<br />
+        &nbsp; Queue: &lt;OTRS_TICKET_Queue&gt;<br />
+        &nbsp; Created: &lt;OTRS_TICKET_Created&gt;<br />
+        &nbsp; Resolved: &lt;OTRS_TICKET_Changed&gt;<br />
+        <br />
+        &nbsp; Requestor Details:<br />
+        &nbsp; -----------------<br />
+        &nbsp; Name: &lt;OTRS_CUSTOMER_REALNAME&gt;<br />
+        &nbsp; Email: &lt;OTRS_CUSTOMER_UserEmail&gt;<br />
+        &nbsp; Customer ID: &lt;OTRS_CUSTOMER_UserCustomerID&gt;<br />
+        <br />
+        &nbsp; Thank you for using our support system.<br />
+        <br />
+        &nbsp; View Ticket: &lt;OTRS_CONFIG_HttpType&gt;://&lt;OTRS_CONFIG_FQDN&gt;/&lt;OTRS_CONFIG_ScriptAlias&gt;index.pl?Action=AgentTicketZoom;TicketID=&lt;OTRS_TICKET_TicketID&gt;<br />
+        <br />
+        &nbsp; Best regards,<br />
+        &nbsp; &lt;OTRS_CONFIG_NotificationSenderName&gt;
+      ContentType: text/html
+      Subject: 'Ticket erstellt: <OTRS_TICKET_Title>'
+    en:
+      Body: |-
+        &nbsp; Dear &lt;OTRS_NOTIFICATION_RECIPIENT_UserFirstname&gt;,<br />
+        <br />
+        &nbsp; Your support ticket has been resolved:<br />
+        <br />
+        &nbsp; Ticket Information:<br />
+        &nbsp; ------------------<br />
+        &nbsp; Ticket Number:<br />
+        &nbsp; &lt;OTRS_CONFIG_Ticket::Hook&gt;&lt;OTRS_CONFIG_Ticket::HookDivider&gt;&lt;OTRS_TICKET_TicketNumber&gt;<br />
+        &nbsp; Title: &lt;OTRS_TICKET_Title&gt;<br />
+        &nbsp; Site: &lt;OTRS_TICKET_DynamicField_Site&gt;<br />
+        &nbsp; Impacted CI: &lt;OTRS_TICKET_DynamicField_ImpactedCI&gt;<br />
+        &nbsp; Priority: &lt;OTRS_TICKET_Priority&gt;<br />
+        &nbsp; Status: &lt;OTRS_TICKET_State&gt;<br />
+        &nbsp; Queue: &lt;OTRS_TICKET_Queue&gt;<br />
+        &nbsp; Created: &lt;OTRS_TICKET_Created&gt;<br />
+        &nbsp; Resolved: &lt;OTRS_TICKET_Changed&gt;<br />
+        <br />
+        &nbsp; Requestor Details:<br />
+        &nbsp; -----------------<br />
+        &nbsp; Name: &lt;OTRS_CUSTOMER_REALNAME&gt;<br />
+        &nbsp; Email: &lt;OTRS_CUSTOMER_UserEmail&gt;<br />
+        &nbsp; Customer ID: &lt;OTRS_CUSTOMER_UserCustomerID&gt;<br />
+        <br />
+        &nbsp; Thank you for using our support system.<br />
+        <br />
+        &nbsp; View Ticket: &lt;OTRS_CONFIG_HttpType&gt;://&lt;OTRS_CONFIG_FQDN&gt;/&lt;OTRS_CONFIG_ScriptAlias&gt;index.pl?Action=AgentTicketZoom;TicketID=&lt;OTRS_TICKET_TicketID&gt;<br />
+        <br />
+        &nbsp; Best regards,<br />
+        &nbsp; &lt;OTRS_CONFIG_NotificationSenderName&gt;
+      ContentType: text/html
+      Subject: '[Ticket#<OTRS_TICKET_TicketNumber>] RESOLVED: <OTRS_TICKET_Title>'
+    es_MX:
+      Body: |-
+        &nbsp; Dear &lt;OTRS_NOTIFICATION_RECIPIENT_UserFirstname&gt;,<br />
+        <br />
+        &nbsp; Your support ticket has been resolved:<br />
+        <br />
+        &nbsp; Ticket Information:<br />
+        &nbsp; ------------------<br />
+        &nbsp; Ticket Number:<br />
+        &nbsp; &lt;OTRS_CONFIG_Ticket::Hook&gt;&lt;OTRS_CONFIG_Ticket::HookDivider&gt;&lt;OTRS_TICKET_TicketNumber&gt;<br />
+        &nbsp; Title: &lt;OTRS_TICKET_Title&gt;<br />
+        &nbsp; Site: &lt;OTRS_TICKET_DynamicField_Site&gt;<br />
+        &nbsp; Impacted CI: &lt;OTRS_TICKET_DynamicField_ImpactedCI&gt;<br />
+        &nbsp; Priority: &lt;OTRS_TICKET_Priority&gt;<br />
+        &nbsp; Status: &lt;OTRS_TICKET_State&gt;<br />
+        &nbsp; Queue: &lt;OTRS_TICKET_Queue&gt;<br />
+        &nbsp; Created: &lt;OTRS_TICKET_Created&gt;<br />
+        &nbsp; Resolved: &lt;OTRS_TICKET_Changed&gt;<br />
+        <br />
+        &nbsp; Requestor Details:<br />
+        &nbsp; -----------------<br />
+        &nbsp; Name: &lt;OTRS_CUSTOMER_REALNAME&gt;<br />
+        &nbsp; Email: &lt;OTRS_CUSTOMER_UserEmail&gt;<br />
+        &nbsp; Customer ID: &lt;OTRS_CUSTOMER_UserCustomerID&gt;<br />
+        <br />
+        &nbsp; Thank you for using our support system.<br />
+        <br />
+        &nbsp; View Ticket: &lt;OTRS_CONFIG_HttpType&gt;://&lt;OTRS_CONFIG_FQDN&gt;/&lt;OTRS_CONFIG_ScriptAlias&gt;index.pl?Action=AgentTicketZoom;TicketID=&lt;OTRS_TICKET_TicketID&gt;<br />
+        <br />
+        &nbsp; Best regards,<br />
+        &nbsp; &lt;OTRS_CONFIG_NotificationSenderName&gt;
+      ContentType: text/html
+      Subject: 'Se ha creado un ticket: <OTRS_TICKET_Title>'
+    hu:
+      Body: |-
+        &nbsp; Dear &lt;OTRS_NOTIFICATION_RECIPIENT_UserFirstname&gt;,<br />
+        <br />
+        &nbsp; Your support ticket has been resolved:<br />
+        <br />
+        &nbsp; Ticket Information:<br />
+        &nbsp; ------------------<br />
+        &nbsp; Ticket Number:<br />
+        &nbsp; &lt;OTRS_CONFIG_Ticket::Hook&gt;&lt;OTRS_CONFIG_Ticket::HookDivider&gt;&lt;OTRS_TICKET_TicketNumber&gt;<br />
+        &nbsp; Title: &lt;OTRS_TICKET_Title&gt;<br />
+        &nbsp; Site: &lt;OTRS_TICKET_DynamicField_Site&gt;<br />
+        &nbsp; Impacted CI: &lt;OTRS_TICKET_DynamicField_ImpactedCI&gt;<br />
+        &nbsp; Priority: &lt;OTRS_TICKET_Priority&gt;<br />
+        &nbsp; Status: &lt;OTRS_TICKET_State&gt;<br />
+        &nbsp; Queue: &lt;OTRS_TICKET_Queue&gt;<br />
+        &nbsp; Created: &lt;OTRS_TICKET_Created&gt;<br />
+        &nbsp; Resolved: &lt;OTRS_TICKET_Changed&gt;<br />
+        <br />
+        &nbsp; Requestor Details:<br />
+        &nbsp; -----------------<br />
+        &nbsp; Name: &lt;OTRS_CUSTOMER_REALNAME&gt;<br />
+        &nbsp; Email: &lt;OTRS_CUSTOMER_UserEmail&gt;<br />
+        &nbsp; Customer ID: &lt;OTRS_CUSTOMER_UserCustomerID&gt;<br />
+        <br />
+        &nbsp; Thank you for using our support system.<br />
+        <br />
+        &nbsp; View Ticket: &lt;OTRS_CONFIG_HttpType&gt;://&lt;OTRS_CONFIG_FQDN&gt;/&lt;OTRS_CONFIG_ScriptAlias&gt;index<br />
+        &nbsp; .pl?Action=AgentTicketZoom;TicketID=&lt;OTRS_TICKET_TicketID&gt;<br />
+        <br />
+        &nbsp; Best regards,<br />
+        &nbsp; &lt;OTRS_CONFIG_NotificationSenderName&gt;
+      ContentType: text/html
+      Subject: 'Jegy létrehozva: <OTRS_TICKET_Title>'
+    pt_BR:
+      Body: |-
+        &nbsp; Dear &lt;OTRS_NOTIFICATION_RECIPIENT_UserFirstname&gt;,<br />
+        <br />
+        &nbsp; Your support ticket has been resolved:<br />
+        <br />
+        &nbsp; Ticket Information:<br />
+        &nbsp; ------------------<br />
+        &nbsp; Ticket Number:<br />
+        &nbsp; &lt;OTRS_CONFIG_Ticket::Hook&gt;&lt;OTRS_CONFIG_Ticket::HookDivider&gt;&lt;OTRS_TICKET_TicketNumber&gt;<br />
+        &nbsp; Title: &lt;OTRS_TICKET_Title&gt;<br />
+        &nbsp; Site: &lt;OTRS_TICKET_DynamicField_Site&gt;<br />
+        &nbsp; Impacted CI: &lt;OTRS_TICKET_DynamicField_ImpactedCI&gt;<br />
+        &nbsp; Priority: &lt;OTRS_TICKET_Priority&gt;<br />
+        &nbsp; Status: &lt;OTRS_TICKET_State&gt;<br />
+        &nbsp; Queue: &lt;OTRS_TICKET_Queue&gt;<br />
+        &nbsp; Created: &lt;OTRS_TICKET_Created&gt;<br />
+        &nbsp; Resolved: &lt;OTRS_TICKET_Changed&gt;<br />
+        <br />
+        &nbsp; Requestor Details:<br />
+        &nbsp; -----------------<br />
+        &nbsp; Name: &lt;OTRS_CUSTOMER_REALNAME&gt;<br />
+        &nbsp; Email: &lt;OTRS_CUSTOMER_UserEmail&gt;<br />
+        &nbsp; Customer ID: &lt;OTRS_CUSTOMER_UserCustomerID&gt;<br />
+        <br />
+        &nbsp; Thank you for using our support system.<br />
+        <br />
+        &nbsp; View Ticket: &lt;OTRS_CONFIG_HttpType&gt;://&lt;OTRS_CONFIG_FQDN&gt;/&lt;OTRS_CONFIG_ScriptAlias&gt;index<br />
+        &nbsp; .pl?Action=AgentTicketZoom;TicketID=&lt;OTRS_TICKET_TicketID&gt;<br />
+        <br />
+        &nbsp; Best regards,<br />
+        &nbsp; &lt;OTRS_CONFIG_NotificationSenderName&gt;
+      ContentType: text/html
+      Subject: 'Ticket criado: <OTRS_TICKET_Title>'
+    sr_Cyrl:
+      Body: |-
+        &nbsp; Dear &lt;OTRS_NOTIFICATION_RECIPIENT_UserFirstname&gt;,<br />
+        <br />
+        &nbsp; Your support ticket has been resolved:<br />
+        <br />
+        &nbsp; Ticket Information:<br />
+        &nbsp; ------------------<br />
+        &nbsp; Ticket Number:<br />
+        &nbsp; &lt;OTRS_CONFIG_Ticket::Hook&gt;&lt;OTRS_CONFIG_Ticket::HookDivider&gt;&lt;OTRS_TICKET_TicketNumber&gt;<br />
+        &nbsp; Title: &lt;OTRS_TICKET_Title&gt;<br />
+        &nbsp; Site: &lt;OTRS_TICKET_DynamicField_Site&gt;<br />
+        &nbsp; Impacted CI: &lt;OTRS_TICKET_DynamicField_ImpactedCI&gt;<br />
+        &nbsp; Priority: &lt;OTRS_TICKET_Priority&gt;<br />
+        &nbsp; Status: &lt;OTRS_TICKET_State&gt;<br />
+        &nbsp; Queue: &lt;OTRS_TICKET_Queue&gt;<br />
+        &nbsp; Created: &lt;OTRS_TICKET_Created&gt;<br />
+        &nbsp; Resolved: &lt;OTRS_TICKET_Changed&gt;<br />
+        <br />
+        &nbsp; Requestor Details:<br />
+        &nbsp; -----------------<br />
+        &nbsp; Name: &lt;OTRS_CUSTOMER_REALNAME&gt;<br />
+        &nbsp; Email: &lt;OTRS_CUSTOMER_UserEmail&gt;<br />
+        &nbsp; Customer ID: &lt;OTRS_CUSTOMER_UserCustomerID&gt;<br />
+        <br />
+        &nbsp; Thank you for using our support system.<br />
+        <br />
+        &nbsp; View Ticket: &lt;OTRS_CONFIG_HttpType&gt;://&lt;OTRS_CONFIG_FQDN&gt;/&lt;OTRS_CONFIG_ScriptAlias&gt;index<br />
+        &nbsp; .pl?Action=AgentTicketZoom;TicketID=&lt;OTRS_TICKET_TicketID&gt;<br />
+        <br />
+        &nbsp; Best regards,<br />
+        &nbsp; &lt;OTRS_CONFIG_NotificationSenderName&gt;
+      ContentType: text/html
+      Subject: 'Oтворен тикет: <OTRS_TICKET_Title>'
+    sr_Latn:
+      Body: |-
+        &nbsp; Dear &lt;OTRS_NOTIFICATION_RECIPIENT_UserFirstname&gt;,<br />
+        <br />
+        &nbsp; Your support ticket has been resolved:<br />
+        <br />
+        &nbsp; Ticket Information:<br />
+        &nbsp; ------------------<br />
+        &nbsp; Ticket Number:<br />
+        &nbsp; &lt;OTRS_CONFIG_Ticket::Hook&gt;&lt;OTRS_CONFIG_Ticket::HookDivider&gt;&lt;OTRS_TICKET_TicketNumber&gt;<br />
+        &nbsp; Title: &lt;OTRS_TICKET_Title&gt;<br />
+        &nbsp; Site: &lt;OTRS_TICKET_DynamicField_Site&gt;<br />
+        &nbsp; Impacted CI: &lt;OTRS_TICKET_DynamicField_ImpactedCI&gt;<br />
+        &nbsp; Priority: &lt;OTRS_TICKET_Priority&gt;<br />
+        &nbsp; Status: &lt;OTRS_TICKET_State&gt;<br />
+        &nbsp; Queue: &lt;OTRS_TICKET_Queue&gt;<br />
+        &nbsp; Created: &lt;OTRS_TICKET_Created&gt;<br />
+        &nbsp; Resolved: &lt;OTRS_TICKET_Changed&gt;<br />
+        <br />
+        &nbsp; Requestor Details:<br />
+        &nbsp; -----------------<br />
+        &nbsp; Name: &lt;OTRS_CUSTOMER_REALNAME&gt;<br />
+        &nbsp; Email: &lt;OTRS_CUSTOMER_UserEmail&gt;<br />
+        &nbsp; Customer ID: &lt;OTRS_CUSTOMER_UserCustomerID&gt;<br />
+        <br />
+        &nbsp; Thank you for using our support system.<br />
+        <br />
+        &nbsp; View Ticket: &lt;OTRS_CONFIG_HttpType&gt;://&lt;OTRS_CONFIG_FQDN&gt;/&lt;OTRS_CONFIG_ScriptAlias&gt;index<br />
+        &nbsp; .pl?Action=AgentTicketZoom;TicketID=&lt;OTRS_TICKET_TicketID&gt;<br />
+        <br />
+        &nbsp; Best regards,<br />
+        &nbsp; &lt;OTRS_CONFIG_NotificationSenderName&gt;
+      ContentType: text/html
+      Subject: 'Otvoren tiket: <OTRS_TICKET_Title>'
+    zh_CN:
+      Body: |-
+        &nbsp; Dear &lt;OTRS_NOTIFICATION_RECIPIENT_UserFirstname&gt;,<br />
+        <br />
+        &nbsp; Your support ticket has been resolved:<br />
+        <br />
+        &nbsp; Ticket Information:<br />
+        &nbsp; ------------------<br />
+        &nbsp; Ticket Number:<br />
+        &nbsp; &lt;OTRS_CONFIG_Ticket::Hook&gt;&lt;OTRS_CONFIG_Ticket::HookDivider&gt;&lt;OTRS_TICKET_TicketNumber&gt;<br />
+        &nbsp; Title: &lt;OTRS_TICKET_Title&gt;<br />
+        &nbsp; Site: &lt;OTRS_TICKET_DynamicField_Site&gt;<br />
+        &nbsp; Impacted CI: &lt;OTRS_TICKET_DynamicField_ImpactedCI&gt;<br />
+        &nbsp; Priority: &lt;OTRS_TICKET_Priority&gt;<br />
+        &nbsp; Status: &lt;OTRS_TICKET_State&gt;<br />
+        &nbsp; Queue: &lt;OTRS_TICKET_Queue&gt;<br />
+        &nbsp; Created: &lt;OTRS_TICKET_Created&gt;<br />
+        &nbsp; Resolved: &lt;OTRS_TICKET_Changed&gt;<br />
+        <br />
+        &nbsp; Requestor Details:<br />
+        &nbsp; -----------------<br />
+        &nbsp; Name: &lt;OTRS_CUSTOMER_REALNAME&gt;<br />
+        &nbsp; Email: &lt;OTRS_CUSTOMER_UserEmail&gt;<br />
+        &nbsp; Customer ID: &lt;OTRS_CUSTOMER_UserCustomerID&gt;<br />
+        <br />
+        &nbsp; Thank you for using our support system.<br />
+        <br />
+        &nbsp; View Ticket: &lt;OTRS_CONFIG_HttpType&gt;://&lt;OTRS_CONFIG_FQDN&gt;/&lt;OTRS_CONFIG_ScriptAlias&gt;index<br />
+        &nbsp; .pl?Action=AgentTicketZoom;TicketID=&lt;OTRS_TICKET_TicketID&gt;<br />
+        <br />
+        &nbsp; Best regards,<br />
+        &nbsp; &lt;OTRS_CONFIG_NotificationSenderName&gt;
+      ContentType: text/html
+      Subject: 票据编制 工单已创建：<OTRS_TICKET_Title>
+  Name: Ticket resolved notification
+  ValidID: 1

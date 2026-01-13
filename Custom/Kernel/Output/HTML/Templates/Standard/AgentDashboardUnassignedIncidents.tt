@@ -1,0 +1,230 @@
+# --
+# Copyright (C) 2025 MSST, https://msst.com/
+# --
+# This software comes with ABSOLUTELY NO WARRANTY.
+# --
+
+<div class="DashboardUnassignedIncidents">
+    <h3>[% Translate("Unassigned Incidents") | html %]</h3>
+
+[% RenderBlockStart("Summary") %]
+    <div class="UnassignedSummary">
+        <span class="TotalCount">[% Data.TotalCount | html %]</span>
+        <span class="SummaryText">[% Translate("unassigned incidents") | html %]</span>
+        [% IF Data.TotalCount > Data.DisplayedCount %]
+            <span class="MoreText">([% Translate("showing") | html %] [% Data.DisplayedCount | html %])</span>
+        [% END %]
+    </div>
+
+    <table class="DataTable UnassignedTable">
+        <thead>
+            <tr>
+                <th>[% Translate("Ticket") | html %]</th>
+                <th>[% Translate("Title") | html %]</th>
+                <th>[% Translate("Priority") | html %]</th>
+                <th>[% Translate("Age") | html %]</th>
+                <th>[% Translate("Source") | html %]</th>
+            </tr>
+        </thead>
+        <tbody>
+[% RenderBlockStart("IncidentRow") %]
+            <tr class="[% Data.PriorityClass | html %]">
+                <td class="TicketNumber">
+                    <a href="[% Env("Baselink") %][% Data.TicketLink | uri %]" title="[% Data.Title | html %]">
+                        [% Data.TicketNumber | html %]
+                    </a>
+                </td>
+                <td class="TicketTitle">
+                    <span title="[% Data.Title | html %]">[% Data.Title | truncate(40) | html %]</span>
+                </td>
+                <td class="Priority">
+                    <span class="PriorityBadge [% Data.Priority | html %]">[% Data.Priority | html %]</span>
+                </td>
+                <td class="Age">
+                    [% Data.Age | html %]
+                </td>
+                <td class="Source">
+                    [% Data.Source | html %]
+                </td>
+            </tr>
+[% RenderBlockEnd("IncidentRow") %]
+        </tbody>
+    </table>
+
+[% RenderBlockStart("ViewAll") %]
+    <div class="ViewAllLink">
+        <a href="[% Env("Baselink") %]Action=AgentIncidentSearch" class="Button Small">
+            [% Translate("View all") | html %] ([% Data.RemainingCount | html %] [% Translate("more") | html %])
+        </a>
+    </div>
+[% RenderBlockEnd("ViewAll") %]
+
+[% RenderBlockEnd("Summary") %]
+
+[% RenderBlockStart("NoUnassigned") %]
+    <div class="NoUnassignedMessage">
+        <p>[% Translate("No unassigned incidents.") | html %]</p>
+        <span class="GreenCheck">&#10003;</span>
+    </div>
+[% RenderBlockEnd("NoUnassigned") %]
+
+</div>
+
+<style>
+    .DashboardUnassignedIncidents {
+        padding: 15px;
+    }
+
+    .DashboardUnassignedIncidents h3 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    .UnassignedSummary {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 15px;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-radius: 4px;
+        font-weight: bold;
+    }
+
+    .TotalCount {
+        font-size: 1.5em;
+        color: #e24a3d;
+    }
+
+    .SummaryText {
+        color: #666;
+    }
+
+    .MoreText {
+        font-size: 0.9em;
+        color: #999;
+    }
+
+    .UnassignedTable {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 10px;
+    }
+
+    .UnassignedTable thead {
+        background-color: #f0f0f0;
+    }
+
+    .UnassignedTable th,
+    .UnassignedTable td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+    }
+
+    .UnassignedTable tr:hover {
+        background-color: #f9f9f9;
+    }
+
+    .UnassignedTable tr.P1Critical {
+        border-left: 3px solid #d32f2f;
+        background-color: #ffebee;
+    }
+
+    .UnassignedTable tr.P2High {
+        border-left: 3px solid #f57c00;
+        background-color: #ffe8d6;
+    }
+
+    .UnassignedTable tr.P3Medium {
+        border-left: 3px solid #fbc02d;
+        background-color: #fffde7;
+    }
+
+    .UnassignedTable tr.P4Low {
+        border-left: 3px solid #1976d2;
+        background-color: #e3f2fd;
+    }
+
+    .TicketNumber {
+        font-weight: bold;
+    }
+
+    .TicketNumber a {
+        color: #0066cc;
+        text-decoration: none;
+    }
+
+    .TicketNumber a:hover {
+        text-decoration: underline;
+    }
+
+    .TicketTitle {
+        max-width: 200px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .Priority {
+        text-align: center;
+    }
+
+    .PriorityBadge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 3px;
+        font-size: 0.85em;
+        font-weight: bold;
+        color: white;
+    }
+
+    .PriorityBadge.P1-Critical {
+        background-color: #d32f2f;
+    }
+
+    .PriorityBadge.P2-High {
+        background-color: #f57c00;
+    }
+
+    .PriorityBadge.P3-Medium {
+        background-color: #fbc02d;
+        color: #333;
+    }
+
+    .PriorityBadge.P4-Low {
+        background-color: #1976d2;
+    }
+
+    .Age {
+        font-size: 0.9em;
+        color: #666;
+    }
+
+    .Source {
+        font-size: 0.9em;
+        color: #999;
+    }
+
+    .ViewAllLink {
+        text-align: center;
+        padding: 10px;
+    }
+
+    .NoUnassignedMessage {
+        text-align: center;
+        padding: 30px;
+        background-color: #e8f5e9;
+        border: 1px solid #4caf50;
+        border-radius: 4px;
+        color: #2e7d32;
+    }
+
+    .GreenCheck {
+        display: block;
+        font-size: 3em;
+        color: #4caf50;
+        margin: 10px 0;
+    }
+</style>

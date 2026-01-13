@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Application">
+    <Setting Name="Loader::Agent::CommonCSS###500-MSSTLite-Dashboard" Required="1" Valid="1">
+        <Description Translatable="1">List of CSS files to always be loaded for the agent dashboard.</Description>
+        <Navigation>Frontend::Base::Loader</Navigation>
+        <Value>
+            <Array>
+                <Item>Core.Agent.Dashboard.MSSTLite.css</Item>
+            </Array>
+        </Value>
+    </Setting>
+</otrs_config>
