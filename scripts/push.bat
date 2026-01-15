@@ -3,7 +3,7 @@ echo Pushing files from mirror to original...
 echo Source: %USERPROFILE%\PRJ\MSSTLITE-MIRROR\msst-lite-znuny-mirror
 echo Destination: %USERPROFILE%\PRJ\MSSTLITE\msst-lite-znuny
 echo.
-robocopy "%USERPROFILE%\PRJ\MSSTLITE-MIRROR\msst-lite-znuny-mirror" "%USERPROFILE%\PRJ\MSSTLITE\msst-lite-znuny" /MIR /XD .git scripts /XF .gitignore
+robocopy "%USERPROFILE%\PRJ\MSSTLITE-MIRROR\msst-lite-znuny-mirror" "%USERPROFILE%\PRJ\MSSTLITE\msst-lite-znuny" /MIR /XD .git scripts .claude /XF .gitignore CLAUDE.md
 echo.
 echo Done!
 pause
