@@ -95,6 +95,15 @@ pipelines:
                         ls -la packages/pkg/ || echo "No packages found"
                         echo ""
 
+                        ## Show SSH public key for setup
+                        echo "=== GoCD Agent SSH Public Key ==="
+                        echo "Add this key to /root/.ssh/authorized_keys on DEV and REF servers:"
+                        echo ""
+                        cat ~/.ssh/id_ed25519.pub 2>/dev/null || cat ~/.ssh/id_rsa.pub 2>/dev/null || echo "No SSH key found"
+                        echo ""
+                        echo "================================="
+                        echo ""
+
                         ## === SAFE TEST: Deploy OPM file to verify connectivity ===
                         DEV_HOST="${DEV_ZNUNY_HOST:-NOT_CONFIGURED}"
 
