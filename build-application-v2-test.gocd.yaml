@@ -46,9 +46,6 @@ pipelines:
                 - build:
                     source: "**/*.opm"
                     destination: "pkg"
-                - build:
-                    source: "test-deploy-info.txt"
-                    destination: "metadata"
               tasks:
                 - exec:
                     command: "bash"
@@ -61,16 +58,7 @@ pipelines:
                         echo "Branch: feature/CICD_TEST_RJ"
                         echo "Timestamp: $(date -Iseconds)"
                         echo "Agent: $(hostname)"
-
-                        ## Create test file for deployment verification
-                        cat > test-deploy-info.txt << EOF
-                        Pipeline: ${GO_PIPELINE_NAME}
-                        Build: ${GO_PIPELINE_COUNTER}
-                        Branch: feature/CICD_TEST_RJ
-                        Built: $(date -Iseconds)
-                        Agent: $(hostname)
-                        EOF
-
+                        echo ""
                         echo "Checking for required build tools..."
                         perl -v
 
@@ -96,11 +84,6 @@ pipelines:
                     job: build-and-package
                     source: pkg/
                     destination: packages/
-                - fetch:
-                    stage: build
-                    job: build-and-package
-                    source: metadata/
-                    destination: metadata/
                 - exec:
                     command: "/bin/bash"
                     arguments:
@@ -111,11 +94,8 @@ pipelines:
                         echo "Build artifacts:"
                         ls -la packages/pkg/ || echo "No packages found"
                         echo ""
-                        echo "Metadata:"
-                        cat metadata/test-deploy-info.txt
-                        echo ""
 
-                        ## === SAFE TEST: Deploy temp file only ===
+                        ## === SAFE TEST: Deploy OPM file to verify connectivity ===
                         DEV_HOST="${DEV_ZNUNY_HOST:-NOT_CONFIGURED}"
 
                         if [ "$DEV_HOST" = "NOT_CONFIGURED" ]; then
@@ -127,16 +107,24 @@ pipelines:
                           exit 0
                         fi
 
-                        echo "Deploying test file to: $DEV_HOST"
+                        echo "Deploying OPM package to: $DEV_HOST"
 
-                        ## Deploy test file to verify SSH connectivity
-                        scp -P 2222 metadata/test-deploy-info.txt root@${DEV_HOST}:/tmp/gocd-deploy-test.txt
+                        ## Find the MSSTLite OPM file
+                        OPM_FILE=$(ls packages/pkg/MSSTLite-*.opm 2>/dev/null | head -1)
+                        if [ -z "$OPM_FILE" ]; then
+                          echo "ERROR: No MSSTLite OPM file found"
+                          exit 1
+                        fi
+                        echo "Found: $OPM_FILE"
+
+                        ## Deploy OPM file to verify SSH connectivity
+                        scp -P 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$OPM_FILE" root@${DEV_HOST}:/tmp/
 
                         ## Verify file was deployed
-                        ssh -p 2222 root@${DEV_HOST} << 'REMOTE'
+                        ssh -p 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${DEV_HOST} << 'REMOTE'
                           echo "=== Verification on DEV Server ==="
-                          echo "File deployed successfully:"
-                          cat /tmp/gocd-deploy-test.txt
+                          echo "OPM file deployed successfully:"
+                          ls -la /tmp/MSSTLite-*.opm
                           echo ""
                           echo "Deployment test PASSED"
                         REMOTE
@@ -156,11 +144,6 @@ pipelines:
                     job: build-and-package
                     source: pkg/
                     destination: packages/
-                - fetch:
-                    stage: build
-                    job: build-and-package
-                    source: metadata/
-                    destination: metadata/
                 - exec:
                     command: "/bin/bash"
                     arguments:
@@ -171,11 +154,8 @@ pipelines:
                         echo "Build artifacts:"
                         ls -la packages/pkg/ || echo "No packages found"
                         echo ""
-                        echo "Metadata:"
-                        cat metadata/test-deploy-info.txt
-                        echo ""
 
-                        ## === SAFE TEST: Deploy temp file only ===
+                        ## === SAFE TEST: Deploy OPM file to verify connectivity ===
                         REF_HOST="${REF_ZNUNY_HOST:-NOT_CONFIGURED}"
 
                         if [ "$REF_HOST" = "NOT_CONFIGURED" ]; then
@@ -187,16 +167,24 @@ pipelines:
                           exit 0
                         fi
 
-                        echo "Deploying test file to: $REF_HOST"
+                        echo "Deploying OPM package to: $REF_HOST"
 
-                        ## Deploy test file to verify SSH connectivity
-                        scp -P 2222 metadata/test-deploy-info.txt root@${REF_HOST}:/tmp/gocd-deploy-test.txt
+                        ## Find the MSSTLite OPM file
+                        OPM_FILE=$(ls packages/pkg/MSSTLite-*.opm 2>/dev/null | head -1)
+                        if [ -z "$OPM_FILE" ]; then
+                          echo "ERROR: No MSSTLite OPM file found"
+                          exit 1
+                        fi
+                        echo "Found: $OPM_FILE"
+
+                        ## Deploy OPM file to verify SSH connectivity
+                        scp -P 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$OPM_FILE" root@${REF_HOST}:/tmp/
 
                         ## Verify file was deployed
-                        ssh -p 2222 root@${REF_HOST} << 'REMOTE'
+                        ssh -p 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${REF_HOST} << 'REMOTE'
                           echo "=== Verification on REF Server ==="
-                          echo "File deployed successfully:"
-                          cat /tmp/gocd-deploy-test.txt
+                          echo "OPM file deployed successfully:"
+                          ls -la /tmp/MSSTLite-*.opm
                           echo ""
                           echo "Deployment test PASSED"
                         REMOTE
