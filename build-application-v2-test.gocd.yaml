@@ -130,10 +130,10 @@ pipelines:
                         echo "Deploying test file to: $DEV_HOST"
 
                         ## Deploy test file to verify SSH connectivity
-                        scp metadata/test-deploy-info.txt root@${DEV_HOST}:/tmp/gocd-deploy-test.txt
+                        scp -P 2222 metadata/test-deploy-info.txt root@${DEV_HOST}:/tmp/gocd-deploy-test.txt
 
                         ## Verify file was deployed
-                        ssh root@${DEV_HOST} << 'REMOTE'
+                        ssh -p 2222 root@${DEV_HOST} << 'REMOTE'
                           echo "=== Verification on DEV Server ==="
                           echo "File deployed successfully:"
                           cat /tmp/gocd-deploy-test.txt
@@ -190,10 +190,10 @@ pipelines:
                         echo "Deploying test file to: $REF_HOST"
 
                         ## Deploy test file to verify SSH connectivity
-                        scp metadata/test-deploy-info.txt root@${REF_HOST}:/tmp/gocd-deploy-test.txt
+                        scp -P 2222 metadata/test-deploy-info.txt root@${REF_HOST}:/tmp/gocd-deploy-test.txt
 
                         ## Verify file was deployed
-                        ssh root@${REF_HOST} << 'REMOTE'
+                        ssh -p 2222 root@${REF_HOST} << 'REMOTE'
                           echo "=== Verification on REF Server ==="
                           echo "File deployed successfully:"
                           cat /tmp/gocd-deploy-test.txt
