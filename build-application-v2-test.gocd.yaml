@@ -29,7 +29,7 @@ pipelines:
         git: ssh://git@bitbucket.mot-solutions.com:7999/msstlite/msst-lite-znuny.git
         branch: feature/CICD_TEST_RJ
         destination: znuny-build
-        auto_update: false
+        auto_update: true
 
     stages:
       #──────────────────────────────────────────────────────────────
@@ -62,7 +62,7 @@ pipelines:
                         echo "Timestamp: $(date -Iseconds)"
                         echo "Agent: $(hostname)"
 
-                        # Create test file for deployment verification
+                        ## Create test file for deployment verification
                         cat > test-deploy-info.txt << EOF
                         Pipeline: ${GO_PIPELINE_NAME}
                         Build: ${GO_PIPELINE_COUNTER}
@@ -115,7 +115,7 @@ pipelines:
                         cat metadata/test-deploy-info.txt
                         echo ""
 
-                        # === SAFE TEST: Deploy temp file only ===
+                        ## === SAFE TEST: Deploy temp file only ===
                         DEV_HOST="${DEV_ZNUNY_HOST:-NOT_CONFIGURED}"
 
                         if [ "$DEV_HOST" = "NOT_CONFIGURED" ]; then
@@ -129,10 +129,10 @@ pipelines:
 
                         echo "Deploying test file to: $DEV_HOST"
 
-                        # Deploy test file to verify SSH connectivity
+                        ## Deploy test file to verify SSH connectivity
                         scp metadata/test-deploy-info.txt root@${DEV_HOST}:/tmp/gocd-deploy-test.txt
 
-                        # Verify file was deployed
+                        ## Verify file was deployed
                         ssh root@${DEV_HOST} << 'REMOTE'
                           echo "=== Verification on DEV Server ==="
                           echo "File deployed successfully:"
@@ -175,7 +175,7 @@ pipelines:
                         cat metadata/test-deploy-info.txt
                         echo ""
 
-                        # === SAFE TEST: Deploy temp file only ===
+                        ## === SAFE TEST: Deploy temp file only ===
                         REF_HOST="${REF_ZNUNY_HOST:-NOT_CONFIGURED}"
 
                         if [ "$REF_HOST" = "NOT_CONFIGURED" ]; then
@@ -189,10 +189,10 @@ pipelines:
 
                         echo "Deploying test file to: $REF_HOST"
 
-                        # Deploy test file to verify SSH connectivity
+                        ## Deploy test file to verify SSH connectivity
                         scp metadata/test-deploy-info.txt root@${REF_HOST}:/tmp/gocd-deploy-test.txt
 
-                        # Verify file was deployed
+                        ## Verify file was deployed
                         ssh root@${REF_HOST} << 'REMOTE'
                           echo "=== Verification on REF Server ==="
                           echo "File deployed successfully:"
