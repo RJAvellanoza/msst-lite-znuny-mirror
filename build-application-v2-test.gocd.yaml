@@ -1,0 +1,202 @@
+# GoCD Pipeline for testing CI/CD v2 deployment automation
+#
+# This pipeline tests the deployment workflow before applying to production.
+# Branch: feature/CICD_TEST_RJ
+# Group: cicd-v2-test (separate from production pipelines)
+#
+# SECURITY NOTE:
+# Environment variables (DEV_ZNUNY_HOST, REF_ZNUNY_HOST) must be configured
+# as SECURE VARIABLES in GoCD UI, not in this file.
+# Path: Admin → Environments → cicd-v2-test-env → Environment Variables (Secure)
+
+format_version: 10
+
+# Environment definition (variables configured in GoCD UI for security)
+environments:
+  cicd-v2-test-env:
+    pipelines:
+      - znuny-cicd-test-rj
+    agents:
+      - 0b27be5b-bae0-4e63-ba34-ea80929a1cba
+
+pipelines:
+  znuny-cicd-test-rj:
+    group: cicd-v2-test
+    label_template: "test-${COUNT}"
+
+    materials:
+      znuny-source:
+        git: ssh://git@bitbucket.mot-solutions.com:7999/msstlite/msst-lite-znuny.git
+        branch: feature/CICD_TEST_RJ
+        destination: znuny-build
+        auto_update: false
+
+    stages:
+      #──────────────────────────────────────────────────────────────
+      # Stage 1: BUILD - Generate OPM package
+      #──────────────────────────────────────────────────────────────
+      - build:
+          clean_workspace: true
+          approval:
+            type: manual
+          jobs:
+            build-and-package:
+              timeout: 0
+              artifacts:
+                - build:
+                    source: "**/*.opm"
+                    destination: "pkg"
+                - build:
+                    source: "test-deploy-info.txt"
+                    destination: "metadata"
+              tasks:
+                - exec:
+                    command: "bash"
+                    arguments:
+                      - "-c"
+                      - |
+                        echo "=== Build Info ==="
+                        echo "Pipeline: ${GO_PIPELINE_NAME}"
+                        echo "Build: ${GO_PIPELINE_COUNTER}"
+                        echo "Branch: feature/CICD_TEST_RJ"
+                        echo "Timestamp: $(date -Iseconds)"
+                        echo "Agent: $(hostname)"
+
+                        # Create test file for deployment verification
+                        cat > test-deploy-info.txt << EOF
+                        Pipeline: ${GO_PIPELINE_NAME}
+                        Build: ${GO_PIPELINE_COUNTER}
+                        Branch: feature/CICD_TEST_RJ
+                        Built: $(date -Iseconds)
+                        Agent: $(hostname)
+                        EOF
+
+                        echo "Checking for required build tools..."
+                        perl -v
+
+                - exec:
+                    command: "/bin/sh"
+                    arguments:
+                      - "-c"
+                      - |
+                        ./znuny-build/gocd-build-application.sh /tmp/znuny-test-build-dir znuny-build
+
+      #──────────────────────────────────────────────────────────────
+      # Stage 2: DEPLOY-DEV - Deploy to Development server
+      #──────────────────────────────────────────────────────────────
+      - deploy-dev:
+          approval:
+            type: manual
+            allow_only_on_success: true
+          jobs:
+            deploy:
+              tasks:
+                - fetch:
+                    stage: build
+                    job: build-and-package
+                    source: pkg/
+                    destination: packages/
+                - fetch:
+                    stage: build
+                    job: build-and-package
+                    source: metadata/
+                    destination: metadata/
+                - exec:
+                    command: "/bin/bash"
+                    arguments:
+                      - "-c"
+                      - |
+                        echo "=== Deploy to DEV Server ==="
+                        echo ""
+                        echo "Build artifacts:"
+                        ls -la packages/pkg/ || echo "No packages found"
+                        echo ""
+                        echo "Metadata:"
+                        cat metadata/test-deploy-info.txt
+                        echo ""
+
+                        # === SAFE TEST: Deploy temp file only ===
+                        DEV_HOST="${DEV_ZNUNY_HOST:-NOT_CONFIGURED}"
+
+                        if [ "$DEV_HOST" = "NOT_CONFIGURED" ]; then
+                          echo "WARNING: DEV_ZNUNY_HOST not configured"
+                          echo "Skipping actual deployment"
+                          echo ""
+                          echo "To enable deployment, set environment variable:"
+                          echo "  DEV_ZNUNY_HOST=<ip-or-hostname>"
+                          exit 0
+                        fi
+
+                        echo "Deploying test file to: $DEV_HOST"
+
+                        # Deploy test file to verify SSH connectivity
+                        scp metadata/test-deploy-info.txt root@${DEV_HOST}:/tmp/gocd-deploy-test.txt
+
+                        # Verify file was deployed
+                        ssh root@${DEV_HOST} << 'REMOTE'
+                          echo "=== Verification on DEV Server ==="
+                          echo "File deployed successfully:"
+                          cat /tmp/gocd-deploy-test.txt
+                          echo ""
+                          echo "Deployment test PASSED"
+                        REMOTE
+
+      #──────────────────────────────────────────────────────────────
+      # Stage 3: DEPLOY-REF - Deploy to Reference server
+      #──────────────────────────────────────────────────────────────
+      - deploy-ref:
+          approval:
+            type: manual
+            allow_only_on_success: true
+          jobs:
+            deploy:
+              tasks:
+                - fetch:
+                    stage: build
+                    job: build-and-package
+                    source: pkg/
+                    destination: packages/
+                - fetch:
+                    stage: build
+                    job: build-and-package
+                    source: metadata/
+                    destination: metadata/
+                - exec:
+                    command: "/bin/bash"
+                    arguments:
+                      - "-c"
+                      - |
+                        echo "=== Deploy to REF Server ==="
+                        echo ""
+                        echo "Build artifacts:"
+                        ls -la packages/pkg/ || echo "No packages found"
+                        echo ""
+                        echo "Metadata:"
+                        cat metadata/test-deploy-info.txt
+                        echo ""
+
+                        # === SAFE TEST: Deploy temp file only ===
+                        REF_HOST="${REF_ZNUNY_HOST:-NOT_CONFIGURED}"
+
+                        if [ "$REF_HOST" = "NOT_CONFIGURED" ]; then
+                          echo "WARNING: REF_ZNUNY_HOST not configured"
+                          echo "Skipping actual deployment"
+                          echo ""
+                          echo "To enable deployment, set environment variable:"
+                          echo "  REF_ZNUNY_HOST=<ip-or-hostname>"
+                          exit 0
+                        fi
+
+                        echo "Deploying test file to: $REF_HOST"
+
+                        # Deploy test file to verify SSH connectivity
+                        scp metadata/test-deploy-info.txt root@${REF_HOST}:/tmp/gocd-deploy-test.txt
+
+                        # Verify file was deployed
+                        ssh root@${REF_HOST} << 'REMOTE'
+                          echo "=== Verification on REF Server ==="
+                          echo "File deployed successfully:"
+                          cat /tmp/gocd-deploy-test.txt
+                          echo ""
+                          echo "Deployment test PASSED"
+                        REMOTE
