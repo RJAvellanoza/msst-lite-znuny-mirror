@@ -1,96 +1,27 @@
-Invalid Merged Configuration21 Jan, 2026 at 11:40:28 Local Time
-Number of errors: 4+
-1. The material of type Git (ssh://git@bitbucket.mot-solutions.com:7999/msstlite/msst-lite-znuny.git) is used elsewhere with a different value for autoUpdate (poll for changes). All copies of this material must have the same autoUpdate setting or configuration repository must be removed.
-Config Repository: znuny-cicd-test-rj (auto update enabled).
-Pipelines:
- znuny-cicd-test-rj (auto update disabled)
-2. Error when processing params for 'echo "=== Build Info ==="
-echo "Pipeline: ${GO_PIPELINE_NAME}"
-echo "Build: ${GO_PIPELINE_COUNTER}"
-echo "Branch: feature/CICD_TEST_RJ"
-echo "Timestamp: $(date -Iseconds)"
-echo "Agent: $(hostname)"
+[go] Job Started: 2026-01-21 18:22:38 UTC
+[go] Start to prepare znuny-cicd-test-rj/test-1/deploy-dev/1/deploy on znuny-dev-for-ct-template [/var/lib/go-agent]
+[go] Start to build znuny-cicd-test-rj/test-1/deploy-dev/1/deploy on znuny-dev-for-ct-template [/var/lib/go-agent]
+[go] Task: fetch artifact [pkg/] => [packages/] from [znuny-cicd-test-rj/build/build-and-package]took: 5.96s
+[go] Task: fetch artifact [metadata/] => [metadata/] from [znuny-cicd-test-rj/build/build-and-package]took: 5.11s
+[go] Task: /bin/bash -c "echo \"=== Deploy to DEV Server ===\"\necho \"\"\necho \"Build artifacts:\"\nls -la packages/pkg/ || echo \"No packages found\"\necho \"\"\necho \"Metadata:\"\ncat metadata/test-deploy-info.txt\necho \"\"\n\n# === SAFE TEST: Deploy temp file only ===\nDEV_HOST=\"${DEV_ZNUNY_HOST:-NOT_CONFIGURED}\"\n\nif [ \"$DEV_HOST\" = \"NOT_CONFIGURED\" ]; then\n  echo \"WARNING: DEV_ZNUNY_HOST not configured\"\n  echo \"Skipping actual deployment\"\n  echo \"\"\n  echo \"To enable deployment, set environment variable:\"\n  echo \"  DEV_ZNUNY_HOST=<ip-or-hostname>\"\n  exit 0\nfi\n\necho \"Deploying test file to: $DEV_HOST\"\n\n# Deploy test file to verify SSH connectivity\nscp -P 2222 metadata/test-deploy-info.txt root@${DEV_HOST}:/tmp/gocd-deploy-test.txt\n\n# Verify file was deployed\nssh -p 2222 root@${DEV_HOST} << 'REMOTE'\n  echo \"=== Verification on DEV Server ===\"\n  echo \"File deployed successfully:\"\n  cat /tmp/gocd-deploy-test.txt\n  echo \"\"\n  echo \"Deployment test PASSED\"\nREMOTE\n"took: 0.360sexited: 255
+=== Deploy to DEV Server ===
 
-# Create test file for deployment verification
-cat > test-deploy-info.txt << EOF
-Pipeline: ${GO_PIPELINE_NAME}
-Build: ${GO_PIPELINE_COUNTER}
-Branch: feature/CICD_TEST_RJ
-Built: $(date -Iseconds)
-Agent: $(hostname)
-EOF
+Build artifacts:
+total 5028
+drwxr-xr-x 2 go go    4096 Jan 21 18:22 .
+drwxr-xr-x 3 go go    4096 Jan 21 18:22 ..
+-rw-r--r-- 1 go go 5131093 Jan 21 18:22 MSSTLite-2.0.390.opm
+-rw-r--r-- 1 go go    6639 Jan 21 18:22 Znuny-UserSetup-0.2.0.opm
 
-echo "Checking for required build tools..."
-perl -v
-' used in field 'argListString', # must be followed by a parameter pattern or escaped by another #
-3. Error when processing params for 'echo "=== Deploy to DEV Server ==="
-echo ""
-echo "Build artifacts:"
-ls -la packages/pkg/ || echo "No packages found"
-echo ""
-echo "Metadata:"
-cat metadata/test-deploy-info.txt
-echo ""
+Metadata:
+cat: metadata/test-deploy-info.txt: No such file or directory
 
-# === SAFE TEST: Deploy temp file only ===
-DEV_HOST="${DEV_ZNUNY_HOST:-NOT_CONFIGURED}"
-
-if [ "$DEV_HOST" = "NOT_CONFIGURED" ]; then
-  echo "WARNING: DEV_ZNUNY_HOST not configured"
-  echo "Skipping actual deployment"
-  echo ""
-  echo "To enable deployment, set environment variable:"
-  echo "  DEV_ZNUNY_HOST=<ip-or-hostname>"
-  exit 0
-fi
-
-echo "Deploying test file to: $DEV_HOST"
-
-# Deploy test file to verify SSH connectivity
-scp metadata/test-deploy-info.txt root@${DEV_HOST}:/tmp/gocd-deploy-test.txt
-
-# Verify file was deployed
-ssh root@${DEV_HOST} << 'REMOTE'
-  echo "=== Verification on DEV Server ==="
-  echo "File deployed successfully:"
-  cat /tmp/gocd-deploy-test.txt
-  echo ""
-  echo "Deployment test PASSED"
-REMOTE
-' used in field 'argListString', # must be followed by a parameter pattern or escaped by another #
-4. Error when processing params for 'echo "=== Deploy to REF Server ==="
-echo ""
-echo "Build artifacts:"
-ls -la packages/pkg/ || echo "No packages found"
-echo ""
-echo "Metadata:"
-cat metadata/test-deploy-info.txt
-echo ""
-
-# === SAFE TEST: Deploy temp file only ===
-REF_HOST="${REF_ZNUNY_HOST:-NOT_CONFIGURED}"
-
-if [ "$REF_HOST" = "NOT_CONFIGURED" ]; then
-  echo "WARNING: REF_ZNUNY_HOST not configured"
-  echo "Skipping actual deployment"
-  echo ""
-  echo "To enable deployment, set environment variable:"
-  echo "  REF_ZNUNY_HOST=<ip-or-hostname>"
-  exit 0
-fi
-
-echo "Deploying test file to: $REF_HOST"
-
-# Deploy test file to verify SSH connectivity
-scp metadata/test-deploy-info.txt root@${REF_HOST}:/tmp/gocd-deploy-test.txt
-
-# Verify file was deployed
-ssh root@${REF_HOST} << 'REMOTE'
-  echo "=== Verification on REF Server ==="
-  echo "File deployed successfully:"
-  cat /tmp/gocd-deploy-test.txt
-  echo ""
-  echo "Deployment test PASSED"
-REMOTE
-' used in field 'argListString', # must be followed by a parameter pattern or escaped by another #
-- For Config Repo: ssh://git@bitbucket.mot-solutions.com:7999/msstlite/msst-lite-znuny.git at revision 8c12553d6ea2bb89bec48acaddb6b941365504af
+Deploying test file to: ******
+Host key verification failed.
+scp: Connection closed
+Pseudo-terminal will not be allocated because stdin is not a terminal.
+Host key verification failed.
+[go] Task status: failed, took: 0.360s, exited: 255
+[go] Current job status: failed
+[go] Start to upload znuny-cicd-test-rj/test-1/deploy-dev/1/deploy on znuny-dev-for-ct-template [/var/lib/go-agent]
+[go] Job completed znuny-cicd-test-rj/test-1/deploy-dev/1/deploy on znuny-dev-for-ct-template [/var/lib/go-agent]
