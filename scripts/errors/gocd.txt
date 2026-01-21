@@ -1,27 +1,107 @@
-[go] Job Started: 2026-01-21 18:22:38 UTC
-[go] Start to prepare znuny-cicd-test-rj/test-1/deploy-dev/1/deploy on znuny-dev-for-ct-template [/var/lib/go-agent]
-[go] Start to build znuny-cicd-test-rj/test-1/deploy-dev/1/deploy on znuny-dev-for-ct-template [/var/lib/go-agent]
-[go] Task: fetch artifact [pkg/] => [packages/] from [znuny-cicd-test-rj/build/build-and-package]took: 5.96s
-[go] Task: fetch artifact [metadata/] => [metadata/] from [znuny-cicd-test-rj/build/build-and-package]took: 5.11s
-[go] Task: /bin/bash -c "echo \"=== Deploy to DEV Server ===\"\necho \"\"\necho \"Build artifacts:\"\nls -la packages/pkg/ || echo \"No packages found\"\necho \"\"\necho \"Metadata:\"\ncat metadata/test-deploy-info.txt\necho \"\"\n\n# === SAFE TEST: Deploy temp file only ===\nDEV_HOST=\"${DEV_ZNUNY_HOST:-NOT_CONFIGURED}\"\n\nif [ \"$DEV_HOST\" = \"NOT_CONFIGURED\" ]; then\n  echo \"WARNING: DEV_ZNUNY_HOST not configured\"\n  echo \"Skipping actual deployment\"\n  echo \"\"\n  echo \"To enable deployment, set environment variable:\"\n  echo \"  DEV_ZNUNY_HOST=<ip-or-hostname>\"\n  exit 0\nfi\n\necho \"Deploying test file to: $DEV_HOST\"\n\n# Deploy test file to verify SSH connectivity\nscp -P 2222 metadata/test-deploy-info.txt root@${DEV_HOST}:/tmp/gocd-deploy-test.txt\n\n# Verify file was deployed\nssh -p 2222 root@${DEV_HOST} << 'REMOTE'\n  echo \"=== Verification on DEV Server ===\"\n  echo \"File deployed successfully:\"\n  cat /tmp/gocd-deploy-test.txt\n  echo \"\"\n  echo \"Deployment test PASSED\"\nREMOTE\n"took: 0.360sexited: 255
-=== Deploy to DEV Server ===
-
-Build artifacts:
-total 5028
-drwxr-xr-x 2 go go    4096 Jan 21 18:22 .
-drwxr-xr-x 3 go go    4096 Jan 21 18:22 ..
--rw-r--r-- 1 go go 5131093 Jan 21 18:22 MSSTLite-2.0.390.opm
--rw-r--r-- 1 go go    6639 Jan 21 18:22 Znuny-UserSetup-0.2.0.opm
-
-Metadata:
-cat: metadata/test-deploy-info.txt: No such file or directory
-
-Deploying test file to: ******
-Host key verification failed.
-scp: Connection closed
-Pseudo-terminal will not be allocated because stdin is not a terminal.
-Host key verification failed.
-[go] Task status: failed, took: 0.360s, exited: 255
-[go] Current job status: failed
-[go] Start to upload znuny-cicd-test-rj/test-1/deploy-dev/1/deploy on znuny-dev-for-ct-template [/var/lib/go-agent]
-[go] Job completed znuny-cicd-test-rj/test-1/deploy-dev/1/deploy on znuny-dev-for-ct-template [/var/lib/go-agent]
+##|18:51:19.336 [go] Job Started: 2026-01-21 18:51:19 UTC
+##|18:51:19.336 
+pr|18:51:19.336 [go] Start to prepare znuny-cicd-test-rj/test-3/deploy-dev/1/deploy on znuny-dev-for-ct-template [/var/lib/go-agent]
+pr|18:51:19.351 [go] Keeping folder pipelines/znuny-cicd-test-rj/znuny-build
+pr|18:51:19.351 [go] Start to update materials.
+pr|18:51:19.351 
+pr|18:51:19.352 [go] Start updating znuny-build at revision c08f17ef06d1d447c8416ecaef9228270a98c638 from ssh://git@bitbucket.mot-solutions.com:7999/msstlite/msst-lite-znuny.git
+pr|18:51:19.357 [GIT] Fetching changes
+pr|18:51:24.030 [GIT] Performing git gc
+pr|18:51:24.032 [GIT] Reset working directory pipelines/znuny-cicd-test-rj/znuny-build
+pr|18:51:24.032 [GIT] Cleaning all unversioned files in working copy
+pr|18:51:24.059 [GIT] Cleaning submodule configurations in .git/config
+pr|18:51:24.062 [GIT] Updating working copy to revision c08f17ef06d1d447c8416ecaef9228270a98c638
+pr|18:51:24.067 HEAD is now at c08f17ef Refactor CI/CD pipeline to remove unnecessary metadata tasks and update deployment steps for OPM packages
+pr|18:51:24.067 [GIT] Removing modified files in submodules
+pr|18:51:24.089 [GIT] Cleaning all unversioned files in working copy
+pr|18:51:24.115 [go] Done.
+pr|18:51:24.115 
+pr|18:51:24.115 [go] setting environment variable 'GO_SERVER_URL' to value 'http://172.16.18.200:8153/go'
+pr|18:51:24.115 [go] setting environment variable 'GO_PIPELINE_GROUP_NAME' to value 'cicd-v2-test'
+pr|18:51:24.115 [go] setting environment variable 'GO_ENVIRONMENT_NAME' to value 'cicd-v2-test-env'
+pr|18:51:24.115 [go] setting environment variable 'DEV_ZNUNY_HOST' to value '********'
+pr|18:51:24.115 [go] setting environment variable 'REF_ZNUNY_HOST' to value '********'
+pr|18:51:24.115 [go] setting environment variable 'GO_TRIGGER_USER' to value 'robertjohn'
+pr|18:51:24.115 [go] setting environment variable 'GO_PIPELINE_NAME' to value 'znuny-cicd-test-rj'
+pr|18:51:24.115 [go] setting environment variable 'GO_PIPELINE_COUNTER' to value '3'
+pr|18:51:24.115 [go] setting environment variable 'GO_PIPELINE_LABEL' to value 'test-3'
+pr|18:51:24.115 [go] setting environment variable 'GO_STAGE_NAME' to value 'deploy-dev'
+pr|18:51:24.116 [go] setting environment variable 'GO_STAGE_COUNTER' to value '1'
+pr|18:51:24.116 [go] setting environment variable 'GO_JOB_NAME' to value 'deploy'
+pr|18:51:24.116 [go] setting environment variable 'GO_REVISION_ZNUNY_SOURCE' to value 'c08f17ef06d1d447c8416ecaef9228270a98c638'
+pr|18:51:24.116 [go] setting environment variable 'GO_TO_REVISION_ZNUNY_SOURCE' to value 'c08f17ef06d1d447c8416ecaef9228270a98c638'
+pr|18:51:24.116 [go] setting environment variable 'GO_FROM_REVISION_ZNUNY_SOURCE' to value 'c08f17ef06d1d447c8416ecaef9228270a98c638'
+pr|18:51:24.116 [go] setting environment variable 'GO_MATERIAL_URL_ZNUNY_SOURCE' to value 'ssh://bitbucket.mot-solutions.com:7999/msstlite/msst-lite-znuny.git'
+pr|18:51:24.116 [go] setting environment variable 'GO_MATERIAL_BRANCH_ZNUNY_SOURCE' to value 'feature/CICD_TEST_RJ'
+pr|18:51:24.116 [go] setting environment variable 'GO_MATERIAL_ZNUNY_SOURCE_HAS_CHANGED' to value 'true'
+pr|18:51:24.116 
+##|18:51:24.121 [go] Start to build znuny-cicd-test-rj/test-3/deploy-dev/1/deploy on znuny-dev-for-ct-template [/var/lib/go-agent]
+!!|18:51:24.129 [go] Task: fetch artifact [pkg/] => [packages/] from [znuny-cicd-test-rj/build/build-and-package]
+&1|18:51:24.129 [go] Fetching artifact [pkg/] from [znuny-cicd-test-rj/test-3/build/latest/build-and-package]
+&1|18:51:29.182 [go] Saved artifact to [pipelines/znuny-cicd-test-rj/packages] after verifying the integrity of its contents.
+?0|18:51:29.182 [go] Task status: passed (5053 ms)
+!!|18:51:29.182 [go] Task: /bin/bash -c "echo \"=== Deploy to DEV Server ===\"
+!!|18:51:29.182 echo \"\"
+!!|18:51:29.182 echo \"Build artifacts:\"
+!!|18:51:29.182 ls -la packages/pkg/ || echo \"No packages found\"
+!!|18:51:29.182 echo \"\"
+!!|18:51:29.182 
+!!|18:51:29.182 # === SAFE TEST: Deploy OPM file to verify connectivity ===
+!!|18:51:29.182 DEV_HOST=\"${DEV_ZNUNY_HOST:-NOT_CONFIGURED}\"
+!!|18:51:29.182 
+!!|18:51:29.182 if [ \"$DEV_HOST\" = \"NOT_CONFIGURED\" ]; then
+!!|18:51:29.182   echo \"WARNING: DEV_ZNUNY_HOST not configured\"
+!!|18:51:29.182   echo \"Skipping actual deployment\"
+!!|18:51:29.182   echo \"\"
+!!|18:51:29.182   echo \"To enable deployment, set environment variable:\"
+!!|18:51:29.182   echo \"  DEV_ZNUNY_HOST=<ip-or-hostname>\"
+!!|18:51:29.182   exit 0
+!!|18:51:29.182 fi
+!!|18:51:29.182 
+!!|18:51:29.182 echo \"Deploying OPM package to: $DEV_HOST\"
+!!|18:51:29.182 
+!!|18:51:29.182 # Find the MSSTLite OPM file
+!!|18:51:29.182 OPM_FILE=$(ls packages/pkg/MSSTLite-*.opm 2>/dev/null | head -1)
+!!|18:51:29.182 if [ -z \"$OPM_FILE\" ]; then
+!!|18:51:29.182   echo \"ERROR: No MSSTLite OPM file found\"
+!!|18:51:29.182   exit 1
+!!|18:51:29.182 fi
+!!|18:51:29.182 echo \"Found: $OPM_FILE\"
+!!|18:51:29.182 
+!!|18:51:29.182 # Deploy OPM file to verify SSH connectivity
+!!|18:51:29.182 scp -P 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \"$OPM_FILE\" root@${DEV_HOST}:/tmp/
+!!|18:51:29.182 
+!!|18:51:29.182 # Verify file was deployed
+!!|18:51:29.182 ssh -p 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${DEV_HOST} << 'REMOTE'
+!!|18:51:29.182   echo \"=== Verification on DEV Server ===\"
+!!|18:51:29.182   echo \"OPM file deployed successfully:\"
+!!|18:51:29.182   ls -la /tmp/MSSTLite-*.opm
+!!|18:51:29.182   echo \"\"
+!!|18:51:29.182   echo \"Deployment test PASSED\"
+!!|18:51:29.182 REMOTE
+!!|18:51:29.182 "
+&1|18:51:29.185 === Deploy to DEV Server ===
+&1|18:51:29.185 
+&1|18:51:29.185 Build artifacts:
+&1|18:51:29.187 total 5028
+&1|18:51:29.187 drwxr-xr-x 2 go go    4096 Jan 21 18:51 .
+&1|18:51:29.187 drwxr-xr-x 3 go go    4096 Jan 21 18:51 ..
+&1|18:51:29.187 -rw-r--r-- 1 go go 5131093 Jan 21 18:51 MSSTLite-2.0.390.opm
+&1|18:51:29.187 -rw-r--r-- 1 go go    6639 Jan 21 18:51 Znuny-UserSetup-0.2.0.opm
+&1|18:51:29.187 
+&1|18:51:29.187 Deploying OPM package to: ******
+&1|18:51:29.198 Found: packages/pkg/MSSTLite-2.0.390.opm
+&2|18:51:29.339 Warning: Permanently added '[******]:2222' (ED25519) to the list of known hosts.
+&2|18:51:29.437 Permission denied, please try again.
+&2|18:51:29.443 Permission denied, please try again.
+&2|18:51:29.450 root@******: Permission denied (publickey,password).
+&2|18:51:29.450 scp: Connection closed
+&2|18:51:29.455 Pseudo-terminal will not be allocated because stdin is not a terminal.
+&2|18:51:29.585 Warning: Permanently added '[******]:2222' (ED25519) to the list of known hosts.
+&2|18:51:29.682 Permission denied, please try again.
+&2|18:51:29.688 Permission denied, please try again.
+&2|18:51:29.694 root@******: Permission denied (publickey,password).
+?1|18:51:29.695 [go] Task status: failed (513 ms) (exit code: 255)
+j1|18:51:29.706 [go] Current job status: failed
+ar|18:51:29.715 [go] Start to upload znuny-cicd-test-rj/test-3/deploy-dev/1/deploy on znuny-dev-for-ct-template [/var/lib/go-agent]
+ex|18:51:29.716 [go] Job completed znuny-cicd-test-rj/test-3/deploy-dev/1/deploy on znuny-dev-for-ct-template [/var/lib/go-agent]
