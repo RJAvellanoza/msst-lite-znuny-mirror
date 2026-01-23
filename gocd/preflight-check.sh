@@ -19,10 +19,10 @@ CHECKS_WARNED=0
 echo -n "[Check 1/4] SSH private key exists... "
 if [ -f ~/.ssh/id_rsa ]; then
   echo "PASS"
-  ((CHECKS_PASSED++))
+  CHECKS_PASSED=$((CHECKS_PASSED + 1))
 elif [ -f ~/.ssh/id_ed25519 ]; then
   echo "PASS (ed25519)"
-  ((CHECKS_PASSED++))
+  CHECKS_PASSED=$((CHECKS_PASSED + 1))
 else
   echo "FAIL"
   echo ""
@@ -41,7 +41,7 @@ KEY_FILE=$(ls ~/.ssh/id_rsa 2>/dev/null || ls ~/.ssh/id_ed25519 2>/dev/null)
 KEY_PERMS=$(stat -c %a "$KEY_FILE" 2>/dev/null || stat -f %Lp "$KEY_FILE" 2>/dev/null)
 if [ "$KEY_PERMS" = "600" ]; then
   echo "PASS (600)"
-  ((CHECKS_PASSED++))
+  CHECKS_PASSED=$((CHECKS_PASSED + 1))
 else
   echo "FAIL"
   echo ""
@@ -56,10 +56,10 @@ fi
 echo -n "[Check 3/4] SSH config file... "
 if [ -f ~/.ssh/config ]; then
   echo "PASS"
-  ((CHECKS_PASSED++))
+  CHECKS_PASSED=$((CHECKS_PASSED + 1))
 else
   echo "WARN (optional)"
-  ((CHECKS_WARNED++))
+  CHECKS_WARNED=$((CHECKS_WARNED + 1))
 fi
 
 # Check 4: Environment variables configured
@@ -72,13 +72,13 @@ fi
 
 if [ "$ENV_OK" = "true" ]; then
   echo "PASS"
-  ((CHECKS_PASSED++))
+  CHECKS_PASSED=$((CHECKS_PASSED + 1))
   echo "           DEV_ZNUNY_HOST: configured"
   if [ -n "${REF_ZNUNY_HOST}" ]; then
     echo "           REF_ZNUNY_HOST: configured"
   else
     echo "           REF_ZNUNY_HOST: NOT configured (deploy-ref will skip)"
-    ((CHECKS_WARNED++))
+    CHECKS_WARNED=$((CHECKS_WARNED + 1))
   fi
 else
   echo "FAIL"
