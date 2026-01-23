@@ -1,0 +1,115 @@
+format_version: 10
+
+environments:
+  cicd-v2-test-env:
+    pipelines:
+      - znuny-cicd-test-rj
+    agents:
+      - 0b27be5b-bae0-4e63-ba34-ea80929a1cba
+
+pipelines:
+  znuny-cicd-test-rj:
+    group: cicd-v2-test
+    label_template: "test-${COUNT}"
+
+    materials:
+      znuny-source:
+        git: ssh://git@bitbucket.mot-solutions.com:7999/msstlite/msst-lite-znuny.git
+        branch: feature/CICD_TEST_RJ
+        destination: znuny-build
+        auto_update: true
+
+    stages:
+      - build:
+          clean_workspace: true
+          approval:
+            type: manual
+          jobs:
+            build-and-package:
+              timeout: 0
+              artifacts:
+                - build:
+                    source: "**/*.opm"
+                    destination: "pkg"
+              tasks:
+                - exec:
+                    command: "bash"
+                    arguments:
+                      - "-c"
+                      - |
+                        echo "=== Build Info ==="
+                        echo "Pipeline: ${GO_PIPELINE_NAME}"
+                        echo "Build: ${GO_PIPELINE_COUNTER}"
+                        echo "Branch: feature/CICD_TEST_RJ"
+                        echo "Timestamp: $(date -Iseconds)"
+                        echo "Agent: $(hostname)"
+                        echo ""
+                        echo "Checking for required build tools..."
+                        perl -v
+
+                - exec:
+                    command: "/bin/sh"
+                    arguments:
+                      - "-c"
+                      - |
+                        ./znuny-build/gocd-build-application.sh /tmp/znuny-test-build-dir znuny-build
+
+      - preflight:
+          approval:
+            type: manual
+            allow_only_on_success: true
+          jobs:
+            validate:
+              tasks:
+                - exec:
+                    command: "/bin/bash"
+                    arguments:
+                      - "./znuny-build/gocd/preflight-check.sh"
+
+      - deploy-dev:
+          approval:
+            type: manual
+            allow_only_on_success: true
+          jobs:
+            deploy:
+              tasks:
+                - fetch:
+                    stage: build
+                    job: build-and-package
+                    source: pkg/
+                    destination: packages/
+                - exec:
+                    command: "/bin/bash"
+                    arguments:
+                      - "-c"
+                      - |
+                        HOST="${DEV_ZNUNY_HOST:-NOT_CONFIGURED}"
+                        if [ "$HOST" = "NOT_CONFIGURED" ]; then
+                          echo "ERROR: DEV_ZNUNY_HOST not configured"
+                          exit 1
+                        fi
+                        ./znuny-build/gocd/deploy-opm.sh "$HOST" "DEV" "packages/pkg"
+
+      - deploy-ref:
+          approval:
+            type: manual
+            allow_only_on_success: true
+          jobs:
+            deploy:
+              tasks:
+                - fetch:
+                    stage: build
+                    job: build-and-package
+                    source: pkg/
+                    destination: packages/
+                - exec:
+                    command: "/bin/bash"
+                    arguments:
+                      - "-c"
+                      - |
+                        HOST="${REF_ZNUNY_HOST:-NOT_CONFIGURED}"
+                        if [ "$HOST" = "NOT_CONFIGURED" ]; then
+                          echo "WARNING: REF_ZNUNY_HOST not configured, skipping"
+                          exit 0
+                        fi
+                        ./znuny-build/gocd/deploy-opm.sh "$HOST" "REF" "packages/pkg"
