@@ -13,13 +13,13 @@ This directory contains the GoCD pipeline definition and deployment scripts for 
 ## Pipeline Structure
 
 ```
-build → preflight → deploy-dev → deploy-ref
+git push → build (auto) → preflight (auto) → deploy-dev (manual) → deploy-ref (manual)
 ```
 
-| Stage | Type | Description |
-|-------|------|-------------|
-| `build` | Manual | Builds OPM package using `gocd-build-application.sh` |
-| `preflight` | Manual | Validates SSH keys, permissions, environment variables |
+| Stage | Trigger | Description |
+|-------|---------|-------------|
+| `build` | Auto (on git push) | Builds OPM package using `gocd-build-application.sh` |
+| `preflight` | Auto (on build success) | Validates SSH keys, permissions, environment variables |
 | `deploy-dev` | Manual | Deploys OPM to DEV server |
 | `deploy-ref` | Manual | Deploys OPM to REF server |
 
