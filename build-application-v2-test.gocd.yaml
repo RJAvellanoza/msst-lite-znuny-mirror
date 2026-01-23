@@ -35,9 +35,7 @@ pipelines:
         auto_update: true
 
     stages:
-      #──────────────────────────────────────────────────────────────
       # Stage 1: BUILD - Generate OPM package
-      #──────────────────────────────────────────────────────────────
       - build:
           clean_workspace: true
           approval:
@@ -72,9 +70,7 @@ pipelines:
                       - |
                         ./znuny-build/gocd-build-application.sh /tmp/znuny-test-build-dir znuny-build
 
-      #──────────────────────────────────────────────────────────────
       # Stage 2: PREFLIGHT - Validate deployment prerequisites
-      #──────────────────────────────────────────────────────────────
       - preflight:
           approval:
             type: manual
@@ -100,9 +96,7 @@ pipelines:
                         CHECKS_PASSED=0
                         CHECKS_WARNED=0
 
-                        #────────────────────────────────────────────
                         # Check 1: SSH private key exists
-                        #────────────────────────────────────────────
                         echo -n "[Check 1/4] SSH private key exists... "
                         if [ -f ~/.ssh/id_rsa ]; then
                           echo "PASS"
@@ -122,9 +116,7 @@ pipelines:
                           exit 1
                         fi
 
-                        #────────────────────────────────────────────
                         # Check 2: SSH key permissions
-                        #────────────────────────────────────────────
                         echo -n "[Check 2/4] SSH key permissions... "
                         KEY_FILE=$(ls ~/.ssh/id_rsa 2>/dev/null || ls ~/.ssh/id_ed25519 2>/dev/null)
                         KEY_PERMS=$(stat -c %a "$KEY_FILE" 2>/dev/null || stat -f %Lp "$KEY_FILE" 2>/dev/null)
@@ -141,9 +133,7 @@ pipelines:
                           exit 1
                         fi
 
-                        #────────────────────────────────────────────
                         # Check 3: SSH config exists (optional)
-                        #────────────────────────────────────────────
                         echo -n "[Check 3/4] SSH config file... "
                         if [ -f ~/.ssh/config ]; then
                           echo "PASS"
@@ -153,9 +143,7 @@ pipelines:
                           ((CHECKS_WARNED++))
                         fi
 
-                        #────────────────────────────────────────────
                         # Check 4: Environment variables configured
-                        #────────────────────────────────────────────
                         echo -n "[Check 4/4] Environment variables... "
                         ENV_OK=true
 
@@ -187,9 +175,7 @@ pipelines:
                           exit 1
                         fi
 
-                        #────────────────────────────────────────────
                         # Summary
-                        #────────────────────────────────────────────
                         echo ""
                         echo "========================================"
                         echo "       PRE-FLIGHT SUMMARY"
@@ -200,9 +186,7 @@ pipelines:
                         echo "All critical checks passed - ready for deployment"
                         echo "========================================"
 
-      #──────────────────────────────────────────────────────────────
       # Stage 3: DEPLOY-DEV - Deploy to Development server
-      #──────────────────────────────────────────────────────────────
       - deploy-dev:
           approval:
             type: manual
@@ -227,9 +211,7 @@ pipelines:
                         echo "========================================"
                         echo ""
 
-                        #────────────────────────────────────────────
                         # Function: Check target host readiness
-                        #────────────────────────────────────────────
                         check_target_host() {
                           local HOST=$1
                           local HOST_NAME=$2
@@ -319,10 +301,7 @@ pipelines:
                           return 0
                         }
 
-                        #────────────────────────────────────────────
                         # Main deployment logic
-                        #────────────────────────────────────────────
-
                         DEV_HOST="${DEV_ZNUNY_HOST:-NOT_CONFIGURED}"
 
                         if [ "$DEV_HOST" = "NOT_CONFIGURED" ]; then
@@ -375,9 +354,7 @@ pipelines:
                         echo "       DEV DEPLOYMENT SUCCESSFUL"
                         echo "========================================"
 
-      #──────────────────────────────────────────────────────────────
       # Stage 4: DEPLOY-REF - Deploy to Reference server
-      #──────────────────────────────────────────────────────────────
       - deploy-ref:
           approval:
             type: manual
@@ -402,9 +379,7 @@ pipelines:
                         echo "========================================"
                         echo ""
 
-                        #────────────────────────────────────────────
                         # Function: Check target host readiness
-                        #────────────────────────────────────────────
                         check_target_host() {
                           local HOST=$1
                           local HOST_NAME=$2
@@ -494,10 +469,7 @@ pipelines:
                           return 0
                         }
 
-                        #────────────────────────────────────────────
                         # Main deployment logic
-                        #────────────────────────────────────────────
-
                         REF_HOST="${REF_ZNUNY_HOST:-NOT_CONFIGURED}"
 
                         if [ "$REF_HOST" = "NOT_CONFIGURED" ]; then
