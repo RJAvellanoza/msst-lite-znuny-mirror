@@ -159,7 +159,8 @@ echo ""
 echo "=== Building Packages ==="
 
 # Build MSSTLite (primary package)
-yes | ./build-package.sh --no-install --skip-version-increment
+# Note: Using "echo y" instead of "yes" to avoid SIGPIPE (exit 141) when script closes stdin
+echo "y" | ./build-package.sh --no-install --skip-version-increment
 
 # Build znuny-users-groups (secondary package) - only if exists
 SECONDARY_SOPM="$APP_BUILD_DIR/$APP_CHECKOUT_DEST/package-definitions/znuny-users-groups.sopm"
