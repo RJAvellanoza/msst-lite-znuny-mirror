@@ -154,19 +154,20 @@ echo "--- Installing OPM Package ---"
 echo ""
 
 # Check if package is already installed and install/reinstall accordingly
+# NOTE: otrs.Console.pl refuses to run as root, must use 'su' to switch to znuny user
 ssh -p 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${HOST} "
   cd /opt/otrs
 
   # Check if MSSTLite is already installed
   echo 'Checking existing installation...'
-  if bin/otrs.Console.pl Admin::Package::List | grep -q 'MSSTLite'; then
+  if su -c 'bin/otrs.Console.pl Admin::Package::List' -s /bin/bash znuny | grep -q 'MSSTLite'; then
     echo 'MSSTLite is already installed - using Reinstall'
     echo ''
-    bin/otrs.Console.pl Admin::Package::Reinstall /tmp/${OPM_FILENAME}
+    su -c 'bin/otrs.Console.pl Admin::Package::Reinstall /tmp/${OPM_FILENAME}' -s /bin/bash znuny
   else
     echo 'MSSTLite not found - using Install'
     echo ''
-    bin/otrs.Console.pl Admin::Package::Install /tmp/${OPM_FILENAME}
+    su -c 'bin/otrs.Console.pl Admin::Package::Install /tmp/${OPM_FILENAME}' -s /bin/bash znuny
   fi
 
   INSTALL_STATUS=\$?
@@ -181,17 +182,17 @@ ssh -p 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${H
   echo ''
 
   echo 'Rebuilding configuration...'
-  bin/otrs.Console.pl Maint::Config::Rebuild
+  su -c 'bin/otrs.Console.pl Maint::Config::Rebuild' -s /bin/bash znuny
 
   echo ''
   echo 'Clearing cache...'
-  bin/otrs.Console.pl Maint::Cache::Delete
+  su -c 'bin/otrs.Console.pl Maint::Cache::Delete' -s /bin/bash znuny
 
   echo ''
   echo '--- Verifying Installation ---'
   echo ''
   echo 'Installed packages:'
-  bin/otrs.Console.pl Admin::Package::List | grep -E '(MSSTLite|Name|-----)'
+  su -c 'bin/otrs.Console.pl Admin::Package::List' -s /bin/bash znuny | grep -E '(MSSTLite|Name|-----)'
 "
 
 echo ""
