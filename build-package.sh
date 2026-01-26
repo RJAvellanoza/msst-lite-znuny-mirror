@@ -1,8 +1,8 @@
 #!/bin/bash
 # Build Package Script for MSSTLite
-# Version: 2.3 (2026-01-26)
+# Version: 2.4 (2026-01-26)
 #
-# This is the NEW build script that:
+# This script:
 # 1. Copies files from Custom/ to proper Kernel/ structure
 # 2. Builds the package using Znuny's Dev::Package::Build
 # 3. Automatically installs the package (unless --no-install is specified)
@@ -10,8 +10,17 @@
 # Usage: ./build-package.sh [--no-install] [--skip-version-increment]
 #
 # Flags:
-#   --no-install            Build only, don't install
+#   --no-install              Build only, don't install
 #   --skip-version-increment  Don't increment version after build (used by CI)
+#
+# Environment Modes:
+#   Local (default):  Requires root. Builds, fixes permissions, and installs.
+#   CI (--no-install): No root required. Builds package only, skips privileged
+#                      operations (otrs.SetPermissions.pl, su znuny).
+#
+# IMPORTANT: When running in CI/CD pipelines (e.g., GoCD), always use --no-install
+#            as the pipeline agent typically runs as a non-privileged user and
+#            cannot execute su or root-level commands.
 #
 # See docs/VERSIONING.md for versioning documentation
 
@@ -384,40 +393,44 @@ find $ZNUNY_HOME/Kernel -type l -delete 2>/dev/null || true
 if [ -f "MSSTLite-${VERSION}.opm" ]; then
     echo ""
     echo "✓ Package built successfully: MSSTLite-${VERSION}.opm"
-    
-    # Fix permissions after build
-    echo "Fixing Znuny permissions..."
-    $ZNUNY_HOME/bin/otrs.SetPermissions.pl --otrs-user=$ZNUNY_USER --web-group=www-data
-    echo "✓ Permissions fixed"
-    
+
     # Clean up temporary build directories
     echo "Cleaning up temporary files..."
     rm -rf Kernel/ var/ bin/
     echo "✓ Cleanup complete"
-    
-    # Auto-install the package if not disabled
-    if [ "$AUTO_INSTALL" = true ]; then
-        echo ""
-        
-        # Check if package is already installed
-        PACKAGE_STATUS=$(su znuny -c "cd $ZNUNY_HOME/bin && ./otrs.Console.pl Admin::Package::List" | grep -c "MSSTLite" || true)
-        
-        if [ "$PACKAGE_STATUS" -gt 0 ]; then
-            echo "Uninstalling existing package..."
-            # Uninstall by package name (stored in database, not as file)
-            su znuny -c "cd $ZNUNY_HOME/bin && ./otrs.Console.pl Admin::Package::Uninstall MSSTLite"
 
-            if [ $? -eq 0 ]; then
-                echo "✓ Existing package uninstalled successfully"
-            else
-                echo "⚠ Warning: Failed to uninstall existing package, continuing anyway..."
-            fi
-            echo ""
-        fi
-        
+    # ===========================================================================
+    # LOCAL INSTALL MODE (default)
+    # Requires: root privileges, su access to znuny user
+    # ===========================================================================
+    if [ "$AUTO_INSTALL" = true ]; then
+
+        # Fix file ownership and permissions for Znuny web server
+        # - Sets correct owner (znuny/otrs user)
+        # - Sets correct group (www-data for Apache)
+        # Requires: root privileges
+        echo "Fixing Znuny permissions..."
+        $ZNUNY_HOME/bin/otrs.SetPermissions.pl --otrs-user=$ZNUNY_USER --web-group=www-data
+        echo "✓ Permissions fixed"
+
+        echo ""
+
+        # Remove existing MSSTLite package from Znuny
+        # - Uses Admin::Package::Uninstall console command
+        # - Errors ignored (|| true) because package may not be installed
+        # - stderr suppressed (2>/dev/null) for cleaner output
+        # Requires: su access to znuny user
+        echo "Removing existing package (if any)..."
+        su $ZNUNY_USER -c "cd $ZNUNY_HOME/bin && ./otrs.Console.pl Admin::Package::Uninstall MSSTLite" 2>/dev/null || true
+        echo ""
+
+        # Install the newly built OPM package
+        # - Uses Admin::Package::Install (fresh install after uninstall)
+        # - Reads package from current working directory
+        # Requires: su access to znuny user
         echo "Installing package..."
-        su znuny -c "cd $ZNUNY_HOME/bin && ./otrs.Console.pl Admin::Package::Install $PWD/MSSTLite-${VERSION}.opm"
-        
+        su $ZNUNY_USER -c "cd $ZNUNY_HOME/bin && ./otrs.Console.pl Admin::Package::Install $PWD/MSSTLite-${VERSION}.opm"
+
         if [ $? -eq 0 ]; then
             echo ""
             echo "✓ Package installed successfully!"
@@ -425,24 +438,31 @@ if [ -f "MSSTLite-${VERSION}.opm" ]; then
             echo ""
             echo "✗ Package installation failed!"
             echo "You can manually install with:"
-            echo "su znuny -c \"cd $ZNUNY_HOME/bin && ./otrs.Console.pl $INSTALL_CMD $PWD/MSSTLite-${VERSION}.opm\""
+            echo "su $ZNUNY_USER -c \"cd $ZNUNY_HOME/bin && ./otrs.Console.pl Admin::Package::Install $PWD/MSSTLite-${VERSION}.opm\""
             exit 1
         fi
+
+    # ===========================================================================
+    # CI/BUILD-ONLY MODE (--no-install flag)
+    # No root or su required - just builds the .opm file
+    # ===========================================================================
     else
         echo ""
         echo "Package built but not installed (--no-install flag was used)"
-        
-        # Check if package is already installed for manual install instructions
-        PACKAGE_STATUS=$(su znuny -c "cd $ZNUNY_HOME/bin && ./otrs.Console.pl Admin::Package::List" | grep -c "MSSTLite" || true)
-        
-        if [ "$PACKAGE_STATUS" -gt 0 ]; then
-            INSTALL_CMD="Admin::Package::Upgrade"
-        else
-            INSTALL_CMD="Admin::Package::Install"
+
+        # Determine correct install command for manual installation hint
+        # - Admin::Package::Install  = package not currently installed
+        # - Admin::Package::Upgrade  = package already installed
+        # Note: This check may fail in CI (no su access), defaults to Install
+        INSTALL_CMD="Admin::Package::Install"
+        if PACKAGE_STATUS=$(su $ZNUNY_USER -c "cd $ZNUNY_HOME/bin && ./otrs.Console.pl Admin::Package::List" 2>/dev/null | grep -c "MSSTLite"); then
+            if [ "$PACKAGE_STATUS" -gt 0 ]; then
+                INSTALL_CMD="Admin::Package::Upgrade"
+            fi
         fi
-        
+
         echo "To install manually, run:"
-        echo "su znuny -c \"cd $ZNUNY_HOME/bin && ./otrs.Console.pl $INSTALL_CMD $PWD/MSSTLite-${VERSION}.opm\""
+        echo "su $ZNUNY_USER -c \"cd $ZNUNY_HOME/bin && ./otrs.Console.pl $INSTALL_CMD $PWD/MSSTLite-${VERSION}.opm\""
     fi
 else
     echo ""
