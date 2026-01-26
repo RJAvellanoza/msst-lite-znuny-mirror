@@ -146,7 +146,58 @@ ssh -p 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${H
   md5sum /tmp/MSSTLite-*.opm
 "
 
+# Get the OPM filename for installation
+OPM_FILENAME=$(basename "$OPM_FILE")
+
+echo ""
+echo "--- Installing OPM Package ---"
+echo ""
+
+# Check if package is already installed and install/reinstall accordingly
+ssh -p 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${HOST} "
+  cd /opt/otrs
+
+  # Check if MSSTLite is already installed
+  echo 'Checking existing installation...'
+  if bin/otrs.Console.pl Admin::Package::List | grep -q 'MSSTLite'; then
+    echo 'MSSTLite is already installed - using Reinstall'
+    echo ''
+    bin/otrs.Console.pl Admin::Package::Reinstall /tmp/${OPM_FILENAME}
+  else
+    echo 'MSSTLite not found - using Install'
+    echo ''
+    bin/otrs.Console.pl Admin::Package::Install /tmp/${OPM_FILENAME}
+  fi
+
+  INSTALL_STATUS=\$?
+  if [ \$INSTALL_STATUS -ne 0 ]; then
+    echo ''
+    echo 'ERROR: Package installation failed!'
+    exit \$INSTALL_STATUS
+  fi
+
+  echo ''
+  echo '--- Post-Installation Steps ---'
+  echo ''
+
+  echo 'Rebuilding configuration...'
+  bin/otrs.Console.pl Maint::Config::Rebuild
+
+  echo ''
+  echo 'Clearing cache...'
+  bin/otrs.Console.pl Maint::Cache::Delete
+
+  echo ''
+  echo '--- Verifying Installation ---'
+  echo ''
+  echo 'Installed packages:'
+  bin/otrs.Console.pl Admin::Package::List | grep -E '(MSSTLite|Name|-----)'
+"
+
 echo ""
 echo "========================================"
 echo "       $HOST_NAME DEPLOYMENT SUCCESSFUL"
 echo "========================================"
+echo ""
+echo "Package installed and configuration rebuilt."
+echo "No Apache restart performed - changes active for new requests."

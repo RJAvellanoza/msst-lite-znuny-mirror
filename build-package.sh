@@ -1,20 +1,36 @@
 #!/bin/bash
 # Build Package Script for MSSTLite
-# Version: 2.1 (2025-07-11)
-# 
+# Version: 2.3 (2026-01-26)
+#
 # This is the NEW build script that:
 # 1. Copies files from Custom/ to proper Kernel/ structure
 # 2. Builds the package using Znuny's Dev::Package::Build
 # 3. Automatically installs the package (unless --no-install is specified)
 #
-# Usage: ./build-package.sh [--no-install]
+# Usage: ./build-package.sh [--no-install] [--skip-version-increment]
+#
+# Flags:
+#   --no-install            Build only, don't install
+#   --skip-version-increment  Don't increment version after build (used by CI)
+#
+# See docs/VERSIONING.md for versioning documentation
 
-# Check for --no-install flag
+# Check for flags
 AUTO_INSTALL=true
-if [ "$1" = "--no-install" ]; then
-    AUTO_INSTALL=false
-    echo "Auto-install disabled"
-fi
+SKIP_VERSION_INCREMENT=false
+
+for arg in "$@"; do
+    case $arg in
+        --no-install)
+            AUTO_INSTALL=false
+            echo "Auto-install disabled"
+            ;;
+        --skip-version-increment)
+            SKIP_VERSION_INCREMENT=true
+            echo "Version increment disabled (CI mode)"
+            ;;
+    esac
+done
 
 echo "Preparing files for package build..."
 
@@ -322,24 +338,27 @@ if [ ${#VERSION_PARTS[@]} -eq 3 ]; then
     MAJOR="${VERSION_PARTS[0]}"
     MINOR="${VERSION_PARTS[1]}"
     BUILD="${VERSION_PARTS[2]}"
-
-    # Increment build number
-    BUILD=$((BUILD + 1))
-
-    # Construct new version
-    NEW_VERSION="${MAJOR}.${MINOR}.${BUILD}"
 else
     echo "ERROR: Unexpected version format: $CURRENT_VERSION"
     echo "Expected format: MAJOR.MINOR.BUILD (e.g., 1.0.9)"
     exit 1
 fi
 
-# Update version in SOPM file
-echo "Updating version from $CURRENT_VERSION to $NEW_VERSION..."
-sed -i "s|<Version>$CURRENT_VERSION</Version>|<Version>$NEW_VERSION</Version>|" MSSTLite.sopm
+# Version handling depends on CI mode
+if [ "$SKIP_VERSION_INCREMENT" = "false" ]; then
+    # Local build mode - always increment version
+    BUILD=$((BUILD + 1))
+    NEW_VERSION="${MAJOR}.${MINOR}.${BUILD}"
 
-# Use the new version for the build
-VERSION=$NEW_VERSION
+    echo "Updating version from $CURRENT_VERSION to $NEW_VERSION..."
+    sed -i "s|<Version>$CURRENT_VERSION</Version>|<Version>$NEW_VERSION</Version>|" MSSTLite.sopm
+
+    VERSION=$NEW_VERSION
+else
+    # CI mode: Version was already injected by gocd-build-application.sh
+    echo "Using version: $CURRENT_VERSION (CI mode - version was injected)"
+    VERSION=$CURRENT_VERSION
+fi
 
 echo ""
 echo "Building MSSTLite version $VERSION..."

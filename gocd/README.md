@@ -9,6 +9,7 @@ This directory contains the GoCD pipeline definition and deployment scripts for 
 | `build-application-v2-test.gocd.yaml` | Pipeline definition (YAML as Code) |
 | `preflight-check.sh` | Pre-deployment validation script |
 | `deploy-opm.sh` | OPM deployment script with target host checks |
+| `README.md` | This documentation |
 
 ## Pipeline Structure
 
@@ -22,6 +23,28 @@ git push → build (auto) → preflight (auto) → deploy-dev (manual) → deplo
 | `preflight` | Auto (on build success) | Validates SSH keys, permissions, environment variables |
 | `deploy-dev` | Manual | Deploys OPM to DEV server |
 | `deploy-ref` | Manual | Deploys OPM to REF server |
+
+## Versioning
+
+The pipeline automatically handles version numbers based on the SOPM file:
+
+| SOPM Version | Pipeline Counter | Built Package | Type |
+|--------------|------------------|---------------|------|
+| `3.2.0` | 45 | MSSTLite-3.2.0.opm | Release |
+| `3.2.1` | 46 | MSSTLite-3.2.46.opm | Dev build |
+
+**Rules:**
+- **PATCH = 0** → Builds exact version (for releases)
+- **PATCH > 0** → Replaces PATCH with pipeline counter (for dev builds)
+
+**Full documentation:** See [docs/VERSIONING.md](../docs/VERSIONING.md)
+
+### Quick Reference
+
+| I want to... | Set SOPM version to |
+|--------------|---------------------|
+| Release 3.2.0 | `<Version>3.2.0</Version>` |
+| Resume dev builds | `<Version>3.2.1</Version>` |
 
 ## Prerequisites
 
@@ -183,6 +206,6 @@ Znuny Container (e.g., 172.16.18.22:22)
 
 ## Related Documentation
 
+- [Versioning Guide](../docs/VERSIONING.md) - Complete versioning documentation with flow diagrams
 - [SSH Setup Guide](../CICD/ssh-setup-guide.md)
 - [Pipeline Architecture](../CICD/gocd-pipeline-architecture.md)
-- [Session Checkpoint](../../checkpoint/2026-01-23.md)

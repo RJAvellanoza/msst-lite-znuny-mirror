@@ -52,7 +52,7 @@ pipelines:
                     arguments:
                       - "-c"
                       - |
-                        ./znuny-build/gocd-build-application.sh /tmp/znuny-test-build-dir znuny-build
+                        ./znuny-build/gocd-build-application.sh /tmp/znuny-build-dir znuny-build
 
       - preflight:
           approval:
