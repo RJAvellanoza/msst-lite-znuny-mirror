@@ -154,20 +154,31 @@ echo "--- Installing OPM Package ---"
 echo ""
 
 # Check if package is already installed and install/reinstall accordingly
-# NOTE: otrs.Console.pl refuses to run as root, must use 'su' to switch to znuny user
+# NOTE: otrs.Console.pl refuses to run as root, must use 'su' to switch to otrs/znuny user
 ssh -p 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${HOST} "
   cd /opt/otrs
 
+  # Detect the correct user (otrs or znuny)
+  if id -u otrs >/dev/null 2>&1; then
+    OTRS_USER=otrs
+  elif id -u znuny >/dev/null 2>&1; then
+    OTRS_USER=znuny
+  else
+    echo 'ERROR: Neither otrs nor znuny user found!'
+    exit 1
+  fi
+  echo \"Using user: \$OTRS_USER\"
+
   # Check if MSSTLite is already installed
   echo 'Checking existing installation...'
-  if su -c 'bin/otrs.Console.pl Admin::Package::List' -s /bin/bash znuny | grep -q 'MSSTLite'; then
+  if su -c 'bin/otrs.Console.pl Admin::Package::List' -s /bin/bash \$OTRS_USER | grep -q 'MSSTLite'; then
     echo 'MSSTLite is already installed - using Reinstall'
     echo ''
-    su -c 'bin/otrs.Console.pl Admin::Package::Reinstall /tmp/${OPM_FILENAME}' -s /bin/bash znuny
+    su -c 'bin/otrs.Console.pl Admin::Package::Reinstall /tmp/${OPM_FILENAME}' -s /bin/bash \$OTRS_USER
   else
     echo 'MSSTLite not found - using Install'
     echo ''
-    su -c 'bin/otrs.Console.pl Admin::Package::Install /tmp/${OPM_FILENAME}' -s /bin/bash znuny
+    su -c 'bin/otrs.Console.pl Admin::Package::Install /tmp/${OPM_FILENAME}' -s /bin/bash \$OTRS_USER
   fi
 
   INSTALL_STATUS=\$?
@@ -182,17 +193,17 @@ ssh -p 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${H
   echo ''
 
   echo 'Rebuilding configuration...'
-  su -c 'bin/otrs.Console.pl Maint::Config::Rebuild' -s /bin/bash znuny
+  su -c 'bin/otrs.Console.pl Maint::Config::Rebuild' -s /bin/bash \$OTRS_USER
 
   echo ''
   echo 'Clearing cache...'
-  su -c 'bin/otrs.Console.pl Maint::Cache::Delete' -s /bin/bash znuny
+  su -c 'bin/otrs.Console.pl Maint::Cache::Delete' -s /bin/bash \$OTRS_USER
 
   echo ''
   echo '--- Verifying Installation ---'
   echo ''
   echo 'Installed packages:'
-  su -c 'bin/otrs.Console.pl Admin::Package::List' -s /bin/bash znuny | grep -E '(MSSTLite|Name|-----)'
+  su -c 'bin/otrs.Console.pl Admin::Package::List' -s /bin/bash \$OTRS_USER | grep -E '(MSSTLite|Name|-----)'
 "
 
 echo ""
