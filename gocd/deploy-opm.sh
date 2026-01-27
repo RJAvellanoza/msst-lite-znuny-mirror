@@ -392,11 +392,28 @@ ssh $SSH_OPTS_CONTAINER $PROXY_JUMP root@"${CONTAINER_IP}" "
     echo \"Currently installed: MSSTLite \$INSTALLED_VERSION\"
     echo ''
     echo 'Uninstalling existing package...'
-    # Do NOT suppress stderr - we need to see any errors
-    if ! su -c 'bin/otrs.Console.pl Admin::Package::Uninstall MSSTLite' -s /bin/bash \$OTRS_USER; then
+
+    # Try normal uninstall first
+    if su -c 'bin/otrs.Console.pl Admin::Package::Uninstall MSSTLite' -s /bin/bash \$OTRS_USER 2>&1; then
+      echo 'Uninstall successful'
+    else
       echo ''
-      echo 'WARNING: Uninstall returned non-zero, trying with --force...'
-      su -c 'bin/otrs.Console.pl Admin::Package::Uninstall MSSTLite --force' -s /bin/bash \$OTRS_USER || true
+      echo 'WARNING: Normal uninstall failed (package file missing from repository)'
+      echo 'Removing package entry directly from database...'
+
+      # Get database credentials from Kernel/Config.pm
+      DB_NAME=\$(grep -oP \"DatabaseName\\s*=>\\s*'\\K[^']+\" Kernel/Config.pm || echo 'otrs')
+      DB_USER=\$(grep -oP \"DatabaseUser\\s*=>\\s*'\\K[^']+\" Kernel/Config.pm || echo 'otrs')
+      DB_PASS=\$(grep -oP \"DatabasePw\\s*=>\\s*'\\K[^']+\" Kernel/Config.pm || echo '')
+
+      # Remove from package_repository table
+      PGPASSWORD=\"\$DB_PASS\" psql -U \"\$DB_USER\" -d \"\$DB_NAME\" -c \"DELETE FROM package_repository WHERE name = 'MSSTLite';\" 2>/dev/null
+
+      if [ \$? -eq 0 ]; then
+        echo 'Package entry removed from database'
+      else
+        echo 'WARNING: Could not remove from database, continuing anyway...'
+      fi
     fi
     echo ''
   else

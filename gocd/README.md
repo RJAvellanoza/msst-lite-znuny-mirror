@@ -339,6 +339,36 @@ Deploys OPM package to a target Znuny server with pre-deployment snapshots.
 
 **Note:** Uses `Uninstall + Install` instead of `Reinstall` because `Reinstall` only refreshes files without updating the version in the database.
 
+### Snapshot Limitation: Database on Separate Container
+
+**Important:** Container snapshots do NOT include the PostgreSQL database if it runs on a separate container.
+
+```
+┌─────────────────────────────┐     ┌─────────────────────────────┐
+│   Znuny Container (104)     │     │   PostgreSQL Container      │
+├─────────────────────────────┤     ├─────────────────────────────┤
+│ /opt/otrs/var/packages/     │     │ package_repository table    │
+│   ✅ Affected by snapshot   │     │   ❌ NOT affected           │
+└─────────────────────────────┘     └─────────────────────────────┘
+```
+
+After a container rollback, a mismatch can occur:
+- **Filesystem:** Reverted (package files gone/restored)
+- **Database:** Unchanged (still thinks package is installed)
+
+**How the script handles this:**
+
+1. Try normal uninstall via `Admin::Package::Uninstall`
+2. If uninstall fails with "File not found in local repository":
+   - Extract DB credentials from `Kernel/Config.pm`
+   - Delete package entry directly: `DELETE FROM package_repository WHERE name = 'MSSTLite'`
+3. Proceed with fresh install
+
+**Why this is safe for MSSTLite:**
+- `CodeUninstall` is empty (intentionally does nothing)
+- `CodeInstall` is idempotent (checks before creating entities)
+- No custom tables are created (uses existing Znuny tables)
+
 ## Network Architecture
 
 ```
@@ -508,6 +538,46 @@ ssh root@<PROXMOX_HOST> "pct start <CONTAINER_ID>"
 
 # Or set ZNUNY_CONTAINER_IP manually in GoCD environment variables
 ```
+
+### Package Already Installed After Rollback
+
+**Symptoms:**
+```
+Error: File 'MSSTLite' not found in local repository or invalid package version.
+...
+Error: Package is already installed.
+```
+
+**Root Cause:**
+
+After rolling back the Znuny container snapshot, the database (on a separate PostgreSQL container) still thinks the package is installed, but the package files are gone from the filesystem.
+
+| Component | After Rollback |
+|-----------|----------------|
+| `/opt/otrs/var/packages/MSSTLite-*.opm` | Missing (rolled back) |
+| `package_repository` table | Still has MSSTLite entry |
+
+**Resolution:**
+
+The deploy script handles this automatically by:
+1. Detecting the uninstall failure
+2. Removing the package entry directly from the database
+3. Proceeding with fresh install
+
+If you need to fix this manually:
+
+```bash
+# Connect to PostgreSQL container and run:
+psql -U otrs -d otrs -c "DELETE FROM package_repository WHERE name = 'MSSTLite';"
+```
+
+**Prevention:**
+
+This is expected behavior when:
+- PostgreSQL runs on a separate container
+- Only the Znuny container is snapshot/rolled back
+
+For true rollback capability, you would need to snapshot both containers or use `pg_dump` before deployment.
 
 ## Related Documentation
 
