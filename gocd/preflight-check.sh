@@ -109,7 +109,7 @@ echo -n "[Check 5/8] Version format... "
 
 # Find SOPM file (look in common locations)
 SOPM_FILE=""
-for path in "MSSTLite.sopm" "../MSSTLite.sopm" "../../MSSTLite.sopm" "$GO_WORKING_DIR/MSSTLite.sopm"; do
+for path in "MSSTLite.sopm" "znuny-build/MSSTLite.sopm" "../MSSTLite.sopm" "../../MSSTLite.sopm" "$GO_WORKING_DIR/MSSTLite.sopm"; do
   if [ -f "$path" ]; then
     SOPM_FILE="$path"
     break

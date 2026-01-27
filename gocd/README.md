@@ -37,10 +37,12 @@ The pipeline automatically creates Proxmox container snapshots before deploying 
 
 ### Snapshot Naming
 
+Dots are replaced with dashes (Proxmox doesn't allow dots in snapshot names):
+
 | Deploying Package | Snapshot Name |
 |-------------------|---------------|
-| MSSTLite-2.1.14.opm | `pre-MSSTLite-2.1.14` |
-| MSSTLite-3.0.0.opm | `pre-MSSTLite-3.0.0` |
+| MSSTLite-2.1.14.opm | `pre-MSSTLite-2-1-14` |
+| MSSTLite-3.0.0.opm | `pre-MSSTLite-3-0-0` |
 
 ### Rollback Procedure
 
@@ -56,7 +58,7 @@ ssh root@<PROXMOX_HOST> 'pct stop <CONTAINER_ID> && pct rollback <CONTAINER_ID> 
 
 Example for DEV:
 ```bash
-ssh root@10.228.33.221 'pct rollback 104 pre-MSSTLite-2.1.14'
+ssh root@10.228.33.221 'pct rollback 104 pre-MSSTLite-2-1-14'
 ```
 
 ## Versioning

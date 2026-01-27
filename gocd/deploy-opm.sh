@@ -47,7 +47,9 @@ create_pre_deploy_snapshot() {
   local HOST="$1"
   local CONTAINER_ID="$2"
   local VERSION="$3"
-  local SNAPSHOT_NAME="pre-MSSTLite-${VERSION}"
+  # Replace dots with dashes - Proxmox doesn't allow dots in snapshot names
+  local VERSION_SAFE="${VERSION//./-}"
+  local SNAPSHOT_NAME="pre-MSSTLite-${VERSION_SAFE}"
 
   echo ""
   echo "--- Creating Pre-Deployment Snapshot ---"
@@ -226,6 +228,8 @@ echo "Size:  $(du -h "$OPM_FILE" | cut -f1)"
 
 # Extract version for snapshot naming
 VERSION=$(extract_version_from_opm "$OPM_FILE")
+# Replace dots with dashes for Proxmox snapshot name (dots not allowed)
+VERSION_SAFE="${VERSION//./-}"
 echo "Version: $VERSION"
 echo ""
 
@@ -336,11 +340,11 @@ if [ $DEPLOY_STATUS -ne 0 ]; then
     echo ""
     echo "To rollback to pre-deployment state, run:"
     echo ""
-    echo "  ssh root@$HOST 'pct rollback $CONTAINER_ID pre-MSSTLite-$VERSION'"
+    echo "  ssh root@$HOST 'pct rollback $CONTAINER_ID pre-MSSTLite-$VERSION_SAFE'"
     echo ""
     echo "Or with optional container stop (recommended for clean state):"
     echo ""
-    echo "  ssh root@$HOST 'pct stop $CONTAINER_ID && pct rollback $CONTAINER_ID pre-MSSTLite-$VERSION && pct start $CONTAINER_ID'"
+    echo "  ssh root@$HOST 'pct stop $CONTAINER_ID && pct rollback $CONTAINER_ID pre-MSSTLite-$VERSION_SAFE && pct start $CONTAINER_ID'"
     echo ""
   fi
   exit $DEPLOY_STATUS
@@ -357,8 +361,8 @@ echo "No Apache restart performed - changes active for new requests."
 if [ -n "$CONTAINER_ID" ]; then
   echo ""
   echo "--- Rollback Information ---"
-  echo "Snapshot: pre-MSSTLite-$VERSION"
+  echo "Snapshot: pre-MSSTLite-$VERSION_SAFE"
   echo ""
   echo "If issues occur, rollback with:"
-  echo "  ssh root@$HOST 'pct rollback $CONTAINER_ID pre-MSSTLite-$VERSION'"
+  echo "  ssh root@$HOST 'pct rollback $CONTAINER_ID pre-MSSTLite-$VERSION_SAFE'"
 fi
