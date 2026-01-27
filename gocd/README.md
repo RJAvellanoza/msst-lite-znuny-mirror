@@ -165,6 +165,22 @@ which pct
 pct listsnapshot <CONTAINER_ID>
 ```
 
+**Required permissions:**
+
+| Path | Numeric | Symbolic | Why |
+|------|---------|----------|-----|
+| `/root/.ssh/` | `700` | `drwx------` | Only owner can access directory |
+| `/root/.ssh/authorized_keys` | `600` | `-rw-------` | SSH refuses if group/others have access |
+
+**Verify with:**
+
+```bash
+ls -la /root/.ssh/
+# Expected:
+# drwx------  2 root root 4096 Jan 27 10:00 .
+# -rw-------  1 root root  742 Jan 27 10:00 authorized_keys
+```
+
 ### 4. SSH Setup for Container (Port 2222)
 
 The GoCD agent needs SSH access to the container to deploy OPM packages.
@@ -188,6 +204,36 @@ systemctl restart sshd
 
 # Exit container
 exit
+```
+
+**Required permissions (inside container):**
+
+| Path | Numeric | Symbolic | Why |
+|------|---------|----------|-----|
+| `/root/.ssh/` | `700` | `drwx------` | Only owner can access directory |
+| `/root/.ssh/authorized_keys` | `600` | `-rw-------` | SSH refuses if group/others have access |
+
+**Verify with:**
+
+```bash
+ls -la /root/.ssh/
+# Expected:
+# drwx------  2 root root 4096 Jan 27 10:00 .
+# -rw-------  1 root root  742 Jan 27 10:00 authorized_keys
+```
+
+**Permission breakdown:**
+
+```
+drwx------  (700 for directories)
+│││└┴┴┴┴┴┴── others/group: no permissions (------)
+│└┴──────── owner: read, write, execute (rwx)
+└─────────── d = directory
+
+-rw-------  (600 for files)
+│││└┴┴┴┴┴┴── others/group: no permissions (------)
+│└┴──────── owner: read, write (rw-)
+└─────────── - = regular file
 ```
 
 ### 5. Test SSH Connections
@@ -264,22 +310,28 @@ Deploys OPM package to a target Znuny server with pre-deployment snapshots.
 | `OPM_SOURCE_DIR` | Yes | Directory containing the OPM file |
 | `CONTAINER_ID` | No | Proxmox container ID for snapshots |
 
+**Environment Variables:**
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `ZNUNY_CONTAINER_IP` | No | Container IP (auto-detected if not set) |
+
 **Target host checks:**
 
 | Check | Description |
 |-------|-------------|
-| Port 2222 reachable | TCP connectivity test (5s timeout) |
-| SSH public key auth | BatchMode SSH connection test |
-| /tmp writable | Touch test file |
+| Proxmox host reachable | Port 22 connectivity test |
+| SSH to Proxmox host | BatchMode SSH connection test |
+| ProxyJump to container | SSH via Proxmox to container |
+| /tmp writable | Touch test file in container |
 | Disk space | Minimum 500MB available |
-| Cleanup | Removes old MSSTLite-*.opm files |
 
 **Deployment flow:**
 
 | Step | Description |
 |------|-------------|
 | 1. Pre-deploy snapshot | Creates `pre-MSSTLite-X.Y.Z` snapshot (if CONTAINER_ID provided) |
-| 2. Copy OPM | SCP package to container's /tmp |
+| 2. Copy OPM | SCP via ProxyJump to container's /tmp |
 | 3. User detection | Auto-detects `otrs` or `znuny` user |
 | 4. Uninstall | Removes existing MSSTLite package (if any) |
 | 5. Install | Fresh install of new OPM package |
@@ -295,9 +347,30 @@ GoCD Agent (10.228.33.225, Container 201)
     +-- SSH port 22 --> Proxmox Host --> pct snapshot <CONTAINER_ID>
     |                   (for snapshots)
     |
-    +-- SSH port 2222 --> Proxmox Host --> iptables DNAT --> Container:22
-                          (for deployment)
+    +-- SSH ProxyJump --> Proxmox Host (port 22) --> Container (port 22)
+                          (for deployment - more secure than port forwarding)
 ```
+
+### Connection Method: SSH ProxyJump
+
+The pipeline uses SSH ProxyJump for secure container access:
+
+```
+GoCD Agent ---> Proxmox Host (port 22) ---> Container (port 22)
+```
+
+**Why ProxyJump instead of port forwarding:**
+
+| Aspect | Port Forwarding (2222) | ProxyJump |
+|--------|------------------------|-----------|
+| Exposed ports | Port 2222 open to network | No additional ports |
+| Authentication layers | 1 (container only) | 2 (Proxmox + container) |
+| Security | Single barrier | Defense in depth |
+
+**Requirements:**
+- GoCD agent's public key must be in **both**:
+  1. Proxmox host's `/root/.ssh/authorized_keys`
+  2. Container's `/root/.ssh/authorized_keys`
 
 ## Troubleshooting
 
@@ -312,29 +385,68 @@ GoCD Agent (10.228.33.225, Container 201)
 
 **Resolution:**
 ```bash
-# Verify key is on Proxmox host (not in container)
+# Verify key is on Proxmox host
 ssh root@<PROXMOX_HOST> "cat /root/.ssh/authorized_keys"
 
 # Check sshd_config on Proxmox host
 ssh root@<PROXMOX_HOST> "grep PubkeyAuthentication /etc/ssh/sshd_config"
 ```
 
-### SSH to Container Failed (Port 2222)
+### ProxyJump to Container Failed
 
-**Symptoms:** Deploy stage fails at "SSH public key auth" check
+**Symptoms:** Preflight fails at "ProxyJump to container" check
 
 **Common causes:**
-1. Public key added to Proxmox host instead of container
+1. Public key not in container's `/root/.ssh/authorized_keys`
 2. `PubkeyAuthentication` not enabled in container's sshd_config
-3. Wrong permissions on `.ssh/` or `authorized_keys`
+3. Wrong permissions on `.ssh/` (`700`/`drwx------`) or `authorized_keys` (`600`/`-rw-------`)
+4. Container's sshd not running
 
 **Resolution:**
 ```bash
 # Verify key is inside the container
 ssh root@<PROXMOX_HOST> "pct exec <CONTAINER_ID> -- cat /root/.ssh/authorized_keys"
 
+# Check permissions inside container
+ssh root@<PROXMOX_HOST> "pct exec <CONTAINER_ID> -- ls -la /root/.ssh/"
+
 # Check sshd_config inside container
 ssh root@<PROXMOX_HOST> "pct exec <CONTAINER_ID> -- grep PubkeyAuthentication /etc/ssh/sshd_config"
+
+# Restart sshd in container if needed
+ssh root@<PROXMOX_HOST> "pct exec <CONTAINER_ID> -- systemctl restart sshd"
+```
+
+### known_hosts Conflict (REMOTE HOST IDENTIFICATION HAS CHANGED)
+
+**Symptoms:**
+```
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Host key for 172.16.18.22 has changed...
+```
+
+**Cause:** DEV and REF containers have the same IP (172.16.18.22) but different host keys.
+
+**Resolution:**
+```bash
+# Remove conflicting entry
+ssh-keygen -f "$HOME/.ssh/known_hosts" -R "172.16.18.22"
+```
+
+**Note:** Deploy scripts use `-o UserKnownHostsFile=/dev/null` to prevent this issue.
+
+### No Route to Host (Direct Container Access)
+
+**Symptoms:** `ssh: connect to host 172.16.18.22 port 22: No route to host`
+
+**Cause:** Container IP is not routable from GoCD agent.
+
+**Resolution:** Use ProxyJump (already configured in scripts):
+```bash
+# Correct
+ssh -o ProxyJump=root@<PROXMOX_HOST> root@172.16.18.22 "hostname"
 ```
 
 ### Snapshot Creation Failed
@@ -358,21 +470,6 @@ ssh root@<PROXMOX_HOST> "pct status <CONTAINER_ID>"
 ssh root@<PROXMOX_HOST> "pct snapshot <CONTAINER_ID> test-snapshot"
 ```
 
-### Port 2222 Not Reachable
-
-**Symptoms:** Deploy stage fails at "Port 2222 reachable" check
-
-**Common causes:**
-1. Proxmox host is down
-2. Port forwarding not configured
-3. Firewall blocking the port
-
-**Resolution:**
-```bash
-# Check port forwarding on Proxmox host
-ssh root@<PROXMOX_HOST> "iptables -t nat -L PREROUTING -n | grep 2222"
-```
-
 ### Environment Variable Not Configured
 
 **Symptoms:** Preflight stage fails at "Environment variables" check
@@ -391,6 +488,25 @@ ssh root@<PROXMOX_HOST> "iptables -t nat -L PREROUTING -n | grep 2222"
 ssh root@<PROXMOX_HOST> "pct list"
 
 # Verify ZNUNY_CONTAINER_ID matches an existing container
+```
+
+### Container IP Auto-Detection Failed
+
+**Symptoms:** Deploy fails with "Could not determine container IP address"
+
+**Common causes:**
+1. Container is not running
+2. Network not configured in container
+
+**Resolution:**
+```bash
+# Check container status
+ssh root@<PROXMOX_HOST> "pct status <CONTAINER_ID>"
+
+# Start container if stopped
+ssh root@<PROXMOX_HOST> "pct start <CONTAINER_ID>"
+
+# Or set ZNUNY_CONTAINER_IP manually in GoCD environment variables
 ```
 
 ## Related Documentation

@@ -9,27 +9,84 @@
 #   OPM_SOURCE_DIR - Directory containing the OPM file
 #   CONTAINER_ID   - (Optional) Proxmox container ID for snapshots
 #
+# Environment Variables:
+#   ZNUNY_CONTAINER_IP - (Optional) Container IP address. If not set, will be
+#                        queried from the Proxmox host using pct exec.
+#
 # Example: deploy-opm.sh 10.228.33.221 DEV packages/pkg 104
+#
+# Connection Method:
+#   Uses SSH ProxyJump through the Proxmox host to reach the container.
+#   This is more secure than port forwarding as it requires authentication
+#   to both the Proxmox host and the container.
+#
+#   GoCD Agent ---> Proxmox Host (port 22) ---> Container (port 22)
 #
 # If CONTAINER_ID is provided, a pre-deployment snapshot is created before
 # installing the package. The snapshot is named "pre-MSSTLite-X.Y.Z" where
 # X.Y.Z is the version from the OPM filename.
 
-set -e
+set -euo pipefail
 
-HOST=$1
-HOST_NAME=$2
-OPM_SOURCE_DIR=$3
+HOST="${1:-}"
+HOST_NAME="${2:-}"
+OPM_SOURCE_DIR="${3:-}"
 CONTAINER_ID="${4:-}"
 
-# SSH options for consistency
-SSH_OPTS="-o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+# Container IP can be set via environment variable or will be auto-detected
+CONTAINER_IP="${ZNUNY_CONTAINER_IP:-}"
 
+# SSH options for Proxmox host connections (snapshots)
+SSH_OPTS_HOST="-o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+
+# SSH options for container connections (via ProxyJump)
+SSH_OPTS_CONTAINER="-o BatchMode=yes -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+
+# Validate required arguments
 if [ -z "$HOST" ] || [ -z "$HOST_NAME" ] || [ -z "$OPM_SOURCE_DIR" ]; then
   echo "Usage: $0 <HOST_IP> <HOST_NAME> <OPM_SOURCE_DIR> [CONTAINER_ID]"
+  echo ""
+  echo "Arguments:"
+  echo "  HOST_IP        - IP address of the Proxmox host"
+  echo "  HOST_NAME      - Environment name (DEV, REF, PROD)"
+  echo "  OPM_SOURCE_DIR - Directory containing the OPM file"
+  echo "  CONTAINER_ID   - (Optional) Proxmox container ID for snapshots"
+  echo ""
+  echo "Environment Variables:"
+  echo "  ZNUNY_CONTAINER_IP - (Optional) Container IP. Auto-detected if not set."
+  echo ""
   echo "Example: $0 10.228.33.221 DEV packages/pkg 104"
   exit 1
 fi
+
+# ==============================================================================
+# CONTAINER IP DETECTION
+# ==============================================================================
+
+get_container_ip() {
+  local HOST="$1"
+  local CONTAINER_ID="$2"
+
+  echo "Querying container IP from Proxmox host..."
+  local IP
+  IP=$(ssh -p 22 $SSH_OPTS_HOST root@"$HOST" "pct exec $CONTAINER_ID -- hostname -I | awk '{print \$1}'" 2>/dev/null)
+
+  if [ -z "$IP" ]; then
+    echo "ERROR: Could not determine container IP address"
+    echo ""
+    echo "Possible causes:"
+    echo "  - Container is not running"
+    echo "  - Container ID is incorrect"
+    echo "  - Network not configured in container"
+    echo ""
+    echo "Resolution:"
+    echo "  1. Check container status: ssh root@$HOST 'pct status $CONTAINER_ID'"
+    echo "  2. Set ZNUNY_CONTAINER_IP environment variable manually"
+    return 1
+  fi
+
+  echo "$IP"
+}
 
 # ==============================================================================
 # SNAPSHOT FUNCTIONS
@@ -62,14 +119,14 @@ create_pre_deploy_snapshot() {
   # Check if old pre-deploy snapshot exists and delete it
   echo "Checking for existing pre-deploy snapshots..."
   local EXISTING_SNAPSHOTS
-  EXISTING_SNAPSHOTS=$(ssh -p 22 $SSH_OPTS root@"$HOST" "pct listsnapshot $CONTAINER_ID 2>/dev/null | grep 'pre-MSSTLite-' | awk '{print \$1}'" || true)
+  EXISTING_SNAPSHOTS=$(ssh -p 22 $SSH_OPTS_HOST root@"$HOST" "pct listsnapshot $CONTAINER_ID 2>/dev/null | grep 'pre-MSSTLite-' | awk '{print \$1}'" || true)
 
   if [ -n "$EXISTING_SNAPSHOTS" ]; then
     echo "Found existing pre-deploy snapshots:"
     echo "$EXISTING_SNAPSHOTS"
     for OLD_SNAP in $EXISTING_SNAPSHOTS; do
       echo "Deleting old snapshot: $OLD_SNAP"
-      if ssh -p 22 $SSH_OPTS root@"$HOST" "pct delsnapshot $CONTAINER_ID $OLD_SNAP" 2>/dev/null; then
+      if ssh -p 22 $SSH_OPTS_HOST root@"$HOST" "pct delsnapshot $CONTAINER_ID $OLD_SNAP" 2>/dev/null; then
         echo "  Deleted: $OLD_SNAP"
       else
         echo "  Warning: Failed to delete $OLD_SNAP (may not exist)"
@@ -82,7 +139,7 @@ create_pre_deploy_snapshot() {
   # Create new snapshot
   echo ""
   echo "Creating snapshot: $SNAPSHOT_NAME"
-  if ssh -p 22 $SSH_OPTS root@"$HOST" "pct snapshot $CONTAINER_ID $SNAPSHOT_NAME --description 'Pre-deployment snapshot for MSSTLite $VERSION'"; then
+  if ssh -p 22 $SSH_OPTS_HOST root@"$HOST" "pct snapshot $CONTAINER_ID $SNAPSHOT_NAME --description 'Pre-deployment snapshot for MSSTLite $VERSION'"; then
     echo "Snapshot created successfully"
   else
     echo ""
@@ -101,7 +158,7 @@ create_pre_deploy_snapshot() {
 
   # Verify snapshot was created
   echo "Verifying snapshot..."
-  if ssh -p 22 $SSH_OPTS root@"$HOST" "pct listsnapshot $CONTAINER_ID | grep -q '$SNAPSHOT_NAME'"; then
+  if ssh -p 22 $SSH_OPTS_HOST root@"$HOST" "pct listsnapshot $CONTAINER_ID | grep -q '$SNAPSHOT_NAME'"; then
     echo "Snapshot verified: $SNAPSHOT_NAME"
     echo ""
     return 0
@@ -119,71 +176,103 @@ echo "========================================"
 echo "       DEPLOY TO $HOST_NAME SERVER"
 echo "========================================"
 echo ""
+echo "Connection Method: SSH ProxyJump (secure)"
+echo ""
+
+# Determine container IP
+if [ -z "$CONTAINER_IP" ]; then
+  if [ -z "$CONTAINER_ID" ]; then
+    echo "ERROR: Either ZNUNY_CONTAINER_IP or CONTAINER_ID must be provided"
+    echo "       Container IP is needed for ProxyJump connection"
+    exit 1
+  fi
+  CONTAINER_IP=$(get_container_ip "$HOST" "$CONTAINER_ID")
+fi
+
+echo "Proxmox Host: $HOST"
+echo "Container IP: $CONTAINER_IP"
+if [ -n "$CONTAINER_ID" ]; then
+  echo "Container ID: $CONTAINER_ID"
+fi
+echo ""
+
+# Build ProxyJump SSH command components
+PROXY_JUMP="-o ProxyJump=root@${HOST}"
 
 check_target_host() {
   local HOST=$1
   local HOST_NAME=$2
+  local CONTAINER_IP=$3
 
   echo "--- Target Host Checks: $HOST_NAME ---"
   echo ""
 
-  # Check 1: Port reachable
-  echo -n "[Check 1/5] Port 2222 reachable... "
-  if timeout 5 bash -c "echo >/dev/tcp/$HOST/2222" 2>/dev/null; then
+  # Check 1: Proxmox host reachable
+  echo -n "[Check 1/5] Proxmox host reachable (port 22)... "
+  if timeout 5 bash -c "echo >/dev/tcp/$HOST/22" 2>/dev/null; then
     echo "PASS"
   else
     echo "FAIL"
     echo ""
-    echo "ERROR: Cannot reach $HOST:2222"
+    echo "ERROR: Cannot reach Proxmox host $HOST:22"
     echo ""
     echo "Possible causes:"
     echo "  - Host is down or unreachable"
-    echo "  - Firewall blocking port 2222"
-    echo "  - Port forwarding not configured on Proxmox"
+    echo "  - Firewall blocking port 22"
     echo ""
     echo "Resolution:"
     echo "  1. Check host is running: ping $HOST"
-    echo "  2. Check port forwarding: ssh root@\$HOST 'iptables -t nat -L PREROUTING -n | grep 2222'"
     return 1
   fi
 
-  # Check 2: SSH authentication
-  echo -n "[Check 2/5] SSH public key auth... "
-  if ssh -p 2222 -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no root@$HOST "exit" 2>/dev/null; then
+  # Check 2: SSH to Proxmox host
+  echo -n "[Check 2/5] SSH to Proxmox host... "
+  if ssh -p 22 $SSH_OPTS_HOST root@"$HOST" "exit" 2>/dev/null; then
     echo "PASS"
   else
     echo "FAIL"
     echo ""
-    echo "ERROR: SSH public key authentication failed to $HOST"
-    echo ""
-    echo "Possible causes:"
-    echo "  - Public key not in /root/.ssh/authorized_keys on target"
-    echo "  - Key added to Proxmox host instead of container"
-    echo "  - PubkeyAuthentication not enabled in sshd_config"
+    echo "ERROR: SSH authentication failed to Proxmox host $HOST"
     echo ""
     echo "Resolution:"
-    echo "  1. Add this key to /root/.ssh/authorized_keys INSIDE the container:"
-    cat ~/.ssh/id_rsa.pub 2>/dev/null || cat ~/.ssh/id_ed25519.pub 2>/dev/null
-    echo ""
-    echo "  2. Ensure PubkeyAuthentication yes in /etc/ssh/sshd_config"
-    echo "  3. Restart sshd: systemctl restart sshd"
+    echo "  1. Add public key to /root/.ssh/authorized_keys on Proxmox host"
     return 1
   fi
 
-  # Check 3: /tmp writable
-  echo -n "[Check 3/5] /tmp writable... "
-  if ssh -p 2222 -o StrictHostKeyChecking=no root@$HOST "touch /tmp/.gocd_deploy_test && rm /tmp/.gocd_deploy_test" 2>/dev/null; then
+  # Check 3: ProxyJump to container
+  echo -n "[Check 3/5] ProxyJump to container ($CONTAINER_IP)... "
+  if ssh $SSH_OPTS_CONTAINER $PROXY_JUMP root@"$CONTAINER_IP" "exit" 2>/dev/null; then
     echo "PASS"
   else
     echo "FAIL"
     echo ""
-    echo "ERROR: Cannot write to /tmp on $HOST"
+    echo "ERROR: ProxyJump SSH to container failed"
+    echo ""
+    echo "Possible causes:"
+    echo "  - Public key not in /root/.ssh/authorized_keys inside container"
+    echo "  - Container is not running"
+    echo "  - Container IP is incorrect"
+    echo ""
+    echo "Resolution:"
+    echo "  1. Add public key to container: ssh root@$HOST 'pct exec $CONTAINER_ID -- mkdir -p /root/.ssh'"
+    echo "  2. Verify container is running: ssh root@$HOST 'pct status $CONTAINER_ID'"
     return 1
   fi
 
-  # Check 4: Disk space (500MB minimum)
-  echo -n "[Check 4/5] Disk space (min 500MB)... "
-  AVAIL_KB=$(ssh -p 2222 -o StrictHostKeyChecking=no root@$HOST "df /tmp | tail -1 | awk '{print \$4}'" 2>/dev/null)
+  # Check 4: /tmp writable in container
+  echo -n "[Check 4/5] /tmp writable in container... "
+  if ssh $SSH_OPTS_CONTAINER $PROXY_JUMP root@"$CONTAINER_IP" "touch /tmp/.gocd_deploy_test && rm /tmp/.gocd_deploy_test" 2>/dev/null; then
+    echo "PASS"
+  else
+    echo "FAIL"
+    echo ""
+    echo "ERROR: Cannot write to /tmp in container"
+    return 1
+  fi
+
+  # Check 5: Disk space (500MB minimum)
+  echo -n "[Check 5/5] Disk space (min 500MB)... "
+  AVAIL_KB=$(ssh $SSH_OPTS_CONTAINER $PROXY_JUMP root@"$CONTAINER_IP" "df /tmp | tail -1 | awk '{print \$4}'" 2>/dev/null)
   AVAIL_MB=$((AVAIL_KB / 1024))
   if [ "$AVAIL_MB" -ge 500 ]; then
     echo "PASS (${AVAIL_MB}MB available)"
@@ -193,14 +282,14 @@ check_target_host() {
     echo "ERROR: Only ${AVAIL_MB}MB available on /tmp, need 500MB"
     echo ""
     echo "Resolution:"
-    echo "  1. Clean up /tmp: ssh -p 2222 root@\$HOST 'rm -rf /tmp/*'"
+    echo "  1. Clean up /tmp in container"
     echo "  2. Or expand disk"
     return 1
   fi
 
-  # Check 5: Cleanup old OPM files
-  echo -n "[Check 5/5] Cleanup old deployments... "
-  ssh -p 2222 -o StrictHostKeyChecking=no root@$HOST "rm -f /tmp/MSSTLite-*.opm" 2>/dev/null
+  # Cleanup old OPM files
+  echo -n "Cleanup old deployments... "
+  ssh $SSH_OPTS_CONTAINER $PROXY_JUMP root@"$CONTAINER_IP" "rm -f /tmp/MSSTLite-*.opm" 2>/dev/null || true
   echo "DONE"
 
   echo ""
@@ -210,7 +299,7 @@ check_target_host() {
 }
 
 # Run target host checks
-check_target_host "$HOST" "$HOST_NAME"
+check_target_host "$HOST" "$HOST_NAME" "$CONTAINER_IP"
 
 # Find the OPM file
 echo "--- Locating OPM Package ---"
@@ -247,7 +336,7 @@ if [ -n "$CONTAINER_ID" ]; then
 else
   echo "--- Skipping Snapshot ---"
   echo "Container ID not provided. Proceeding without snapshot."
-  echo "To enable snapshots, set the CONTAINER_ID environment variable"
+  echo "To enable snapshots, set the ZNUNY_CONTAINER_ID environment variable"
   echo "or pass it as the 4th argument."
   echo ""
 fi
@@ -255,13 +344,13 @@ fi
 # Deploy the OPM file
 echo "--- Deploying OPM Package ---"
 echo ""
-echo "Copying $OPM_FILE to $HOST:/tmp/"
-scp -P 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$OPM_FILE" root@${HOST}:/tmp/
+echo "Copying $OPM_FILE to container:/tmp/ (via ProxyJump)"
+scp $SSH_OPTS_CONTAINER $PROXY_JUMP "$OPM_FILE" root@"${CONTAINER_IP}":/tmp/
 
 # Verify deployment
 echo ""
 echo "--- Verification ---"
-ssh -p 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${HOST} "
+ssh $SSH_OPTS_CONTAINER $PROXY_JUMP root@"${CONTAINER_IP}" "
   echo ''
   echo 'OPM file on $HOST_NAME server:'
   ls -la /tmp/MSSTLite-*.opm
@@ -279,7 +368,7 @@ echo ""
 
 # Install package using Uninstall + Install approach (consistent with build-package.sh)
 # NOTE: otrs.Console.pl refuses to run as root, must use 'su' to switch to otrs/znuny user
-ssh -p 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${HOST} "
+ssh $SSH_OPTS_CONTAINER $PROXY_JUMP root@"${CONTAINER_IP}" "
   cd /opt/otrs
 
   # Detect the correct user (otrs or znuny)
