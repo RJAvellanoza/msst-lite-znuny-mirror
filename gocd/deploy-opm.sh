@@ -1,20 +1,117 @@
 #!/bin/bash
-# Deploy OPM package to target Znuny server
-# Usage: deploy-opm.sh <HOST_IP> <HOST_NAME> <OPM_SOURCE_DIR>
+# Deploy OPM package to target Znuny server with pre-deployment snapshots
 #
-# Example: deploy-opm.sh 10.228.33.221 DEV packages/pkg
+# Usage: deploy-opm.sh <HOST_IP> <HOST_NAME> <OPM_SOURCE_DIR> [CONTAINER_ID]
+#
+# Arguments:
+#   HOST_IP        - IP address of the Proxmox host
+#   HOST_NAME      - Environment name (DEV, REF, PROD)
+#   OPM_SOURCE_DIR - Directory containing the OPM file
+#   CONTAINER_ID   - (Optional) Proxmox container ID for snapshots
+#
+# Example: deploy-opm.sh 10.228.33.221 DEV packages/pkg 104
+#
+# If CONTAINER_ID is provided, a pre-deployment snapshot is created before
+# installing the package. The snapshot is named "pre-MSSTLite-X.Y.Z" where
+# X.Y.Z is the version from the OPM filename.
 
 set -e
 
 HOST=$1
 HOST_NAME=$2
 OPM_SOURCE_DIR=$3
+CONTAINER_ID="${4:-}"
+
+# SSH options for consistency
+SSH_OPTS="-o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 
 if [ -z "$HOST" ] || [ -z "$HOST_NAME" ] || [ -z "$OPM_SOURCE_DIR" ]; then
-  echo "Usage: $0 <HOST_IP> <HOST_NAME> <OPM_SOURCE_DIR>"
-  echo "Example: $0 10.228.33.221 DEV packages/pkg"
+  echo "Usage: $0 <HOST_IP> <HOST_NAME> <OPM_SOURCE_DIR> [CONTAINER_ID]"
+  echo "Example: $0 10.228.33.221 DEV packages/pkg 104"
   exit 1
 fi
+
+# ==============================================================================
+# SNAPSHOT FUNCTIONS
+# ==============================================================================
+
+# Extract version from OPM filename (MSSTLite-X.Y.Z.opm -> X.Y.Z)
+extract_version_from_opm() {
+  local OPM_FILE="$1"
+  basename "$OPM_FILE" | sed 's/MSSTLite-\([0-9]*\.[0-9]*\.[0-9]*\)\.opm/\1/'
+}
+
+# Create pre-deployment snapshot
+# Arguments: HOST, CONTAINER_ID, VERSION
+create_pre_deploy_snapshot() {
+  local HOST="$1"
+  local CONTAINER_ID="$2"
+  local VERSION="$3"
+  local SNAPSHOT_NAME="pre-MSSTLite-${VERSION}"
+
+  echo ""
+  echo "--- Creating Pre-Deployment Snapshot ---"
+  echo ""
+  echo "Proxmox Host: $HOST"
+  echo "Container ID: $CONTAINER_ID"
+  echo "Snapshot Name: $SNAPSHOT_NAME"
+  echo ""
+
+  # Check if old pre-deploy snapshot exists and delete it
+  echo "Checking for existing pre-deploy snapshots..."
+  local EXISTING_SNAPSHOTS
+  EXISTING_SNAPSHOTS=$(ssh -p 22 $SSH_OPTS root@"$HOST" "pct listsnapshot $CONTAINER_ID 2>/dev/null | grep 'pre-MSSTLite-' | awk '{print \$1}'" || true)
+
+  if [ -n "$EXISTING_SNAPSHOTS" ]; then
+    echo "Found existing pre-deploy snapshots:"
+    echo "$EXISTING_SNAPSHOTS"
+    for OLD_SNAP in $EXISTING_SNAPSHOTS; do
+      echo "Deleting old snapshot: $OLD_SNAP"
+      if ssh -p 22 $SSH_OPTS root@"$HOST" "pct delsnapshot $CONTAINER_ID $OLD_SNAP" 2>/dev/null; then
+        echo "  Deleted: $OLD_SNAP"
+      else
+        echo "  Warning: Failed to delete $OLD_SNAP (may not exist)"
+      fi
+    done
+  else
+    echo "No existing pre-deploy snapshots found"
+  fi
+
+  # Create new snapshot
+  echo ""
+  echo "Creating snapshot: $SNAPSHOT_NAME"
+  if ssh -p 22 $SSH_OPTS root@"$HOST" "pct snapshot $CONTAINER_ID $SNAPSHOT_NAME --description 'Pre-deployment snapshot for MSSTLite $VERSION'"; then
+    echo "Snapshot created successfully"
+  else
+    echo ""
+    echo "ERROR: Failed to create snapshot"
+    echo ""
+    echo "Possible causes:"
+    echo "  - Insufficient storage space"
+    echo "  - Container is in an invalid state"
+    echo "  - Permission denied"
+    echo ""
+    echo "Resolution:"
+    echo "  1. Check Proxmox storage: ssh root@$HOST 'pvesm status'"
+    echo "  2. Check container status: ssh root@$HOST 'pct status $CONTAINER_ID'"
+    return 1
+  fi
+
+  # Verify snapshot was created
+  echo "Verifying snapshot..."
+  if ssh -p 22 $SSH_OPTS root@"$HOST" "pct listsnapshot $CONTAINER_ID | grep -q '$SNAPSHOT_NAME'"; then
+    echo "Snapshot verified: $SNAPSHOT_NAME"
+    echo ""
+    return 0
+  else
+    echo "ERROR: Snapshot verification failed"
+    return 1
+  fi
+}
+
+# ==============================================================================
+# MAIN SCRIPT
+# ==============================================================================
 
 echo "========================================"
 echo "       DEPLOY TO $HOST_NAME SERVER"
@@ -126,7 +223,30 @@ if [ -z "$OPM_FILE" ]; then
 fi
 echo "Found: $OPM_FILE"
 echo "Size:  $(du -h "$OPM_FILE" | cut -f1)"
+
+# Extract version for snapshot naming
+VERSION=$(extract_version_from_opm "$OPM_FILE")
+echo "Version: $VERSION"
 echo ""
+
+# Create pre-deployment snapshot (if container ID provided)
+if [ -n "$CONTAINER_ID" ]; then
+  if ! create_pre_deploy_snapshot "$HOST" "$CONTAINER_ID" "$VERSION"; then
+    echo ""
+    echo "========================================"
+    echo "       SNAPSHOT CREATION FAILED"
+    echo "========================================"
+    echo ""
+    echo "Deployment aborted. No changes were made to the container."
+    exit 1
+  fi
+else
+  echo "--- Skipping Snapshot ---"
+  echo "Container ID not provided. Proceeding without snapshot."
+  echo "To enable snapshots, set the CONTAINER_ID environment variable"
+  echo "or pass it as the 4th argument."
+  echo ""
+fi
 
 # Deploy the OPM file
 echo "--- Deploying OPM Package ---"
@@ -153,7 +273,7 @@ echo ""
 echo "--- Installing OPM Package ---"
 echo ""
 
-# Check if package is already installed and install/reinstall accordingly
+# Install package using Uninstall + Install approach (consistent with build-package.sh)
 # NOTE: otrs.Console.pl refuses to run as root, must use 'su' to switch to otrs/znuny user
 ssh -p 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${HOST} "
   cd /opt/otrs
@@ -169,17 +289,14 @@ ssh -p 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${H
   fi
   echo \"Using user: \$OTRS_USER\"
 
-  # Check if MSSTLite is already installed
-  echo 'Checking existing installation...'
-  if su -c 'bin/otrs.Console.pl Admin::Package::List' -s /bin/bash \$OTRS_USER | grep -q 'MSSTLite'; then
-    echo 'MSSTLite is already installed - using Reinstall'
-    echo ''
-    su -c 'bin/otrs.Console.pl Admin::Package::Reinstall /tmp/${OPM_FILENAME}' -s /bin/bash \$OTRS_USER
-  else
-    echo 'MSSTLite not found - using Install'
-    echo ''
-    su -c 'bin/otrs.Console.pl Admin::Package::Install /tmp/${OPM_FILENAME}' -s /bin/bash \$OTRS_USER
-  fi
+  # Always uninstall first (ignore errors if not installed)
+  echo 'Removing existing package (if any)...'
+  su -c 'bin/otrs.Console.pl Admin::Package::Uninstall MSSTLite' -s /bin/bash \$OTRS_USER 2>/dev/null || true
+  echo ''
+
+  # Always install fresh
+  echo 'Installing package...'
+  su -c 'bin/otrs.Console.pl Admin::Package::Install /tmp/${OPM_FILENAME}' -s /bin/bash \$OTRS_USER
 
   INSTALL_STATUS=\$?
   if [ \$INSTALL_STATUS -ne 0 ]; then
@@ -206,6 +323,29 @@ ssh -p 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${H
   su -c 'bin/otrs.Console.pl Admin::Package::List' -s /bin/bash \$OTRS_USER | grep -E '(MSSTLite|Name|-----)'
 "
 
+DEPLOY_STATUS=$?
+
+if [ $DEPLOY_STATUS -ne 0 ]; then
+  echo ""
+  echo "========================================"
+  echo "       $HOST_NAME DEPLOYMENT FAILED"
+  echo "========================================"
+  echo ""
+  if [ -n "$CONTAINER_ID" ]; then
+    echo "A snapshot was created before installation."
+    echo ""
+    echo "To rollback to pre-deployment state, run:"
+    echo ""
+    echo "  ssh root@$HOST 'pct rollback $CONTAINER_ID pre-MSSTLite-$VERSION'"
+    echo ""
+    echo "Or with optional container stop (recommended for clean state):"
+    echo ""
+    echo "  ssh root@$HOST 'pct stop $CONTAINER_ID && pct rollback $CONTAINER_ID pre-MSSTLite-$VERSION && pct start $CONTAINER_ID'"
+    echo ""
+  fi
+  exit $DEPLOY_STATUS
+fi
+
 echo ""
 echo "========================================"
 echo "       $HOST_NAME DEPLOYMENT SUCCESSFUL"
@@ -213,3 +353,12 @@ echo "========================================"
 echo ""
 echo "Package installed and configuration rebuilt."
 echo "No Apache restart performed - changes active for new requests."
+
+if [ -n "$CONTAINER_ID" ]; then
+  echo ""
+  echo "--- Rollback Information ---"
+  echo "Snapshot: pre-MSSTLite-$VERSION"
+  echo ""
+  echo "If issues occur, rollback with:"
+  echo "  ssh root@$HOST 'pct rollback $CONTAINER_ID pre-MSSTLite-$VERSION'"
+fi

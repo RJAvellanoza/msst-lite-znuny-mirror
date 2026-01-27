@@ -84,11 +84,15 @@ pipelines:
                       - "-c"
                       - |
                         HOST="${DEV_ZNUNY_HOST:-NOT_CONFIGURED}"
+                        CONTAINER_ID="${ZNUNY_CONTAINER_ID:-}"
                         if [ "$HOST" = "NOT_CONFIGURED" ]; then
                           echo "ERROR: DEV_ZNUNY_HOST not configured"
                           exit 1
                         fi
-                        ./znuny-build/gocd/deploy-opm.sh "$HOST" "DEV" "packages/pkg"
+                        if [ -z "$CONTAINER_ID" ]; then
+                          echo "WARNING: ZNUNY_CONTAINER_ID not configured - snapshots disabled"
+                        fi
+                        ./znuny-build/gocd/deploy-opm.sh "$HOST" "DEV" "packages/pkg" "$CONTAINER_ID"
 
       - deploy-ref:
           approval:
@@ -108,8 +112,12 @@ pipelines:
                       - "-c"
                       - |
                         HOST="${REF_ZNUNY_HOST:-NOT_CONFIGURED}"
+                        CONTAINER_ID="${ZNUNY_CONTAINER_ID:-}"
                         if [ "$HOST" = "NOT_CONFIGURED" ]; then
                           echo "WARNING: REF_ZNUNY_HOST not configured, skipping"
                           exit 0
                         fi
-                        ./znuny-build/gocd/deploy-opm.sh "$HOST" "REF" "packages/pkg"
+                        if [ -z "$CONTAINER_ID" ]; then
+                          echo "WARNING: ZNUNY_CONTAINER_ID not configured - snapshots disabled"
+                        fi
+                        ./znuny-build/gocd/deploy-opm.sh "$HOST" "REF" "packages/pkg" "$CONTAINER_ID"
