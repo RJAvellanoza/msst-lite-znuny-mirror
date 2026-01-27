@@ -28,14 +28,25 @@
 format_version: 10
 
 environments:
-  build-env:
+  # Test environment for znuny-cicd-pipeline testing
+  cicd-v2-test-env:
     pipelines:
       - znuny-cicd-pipeline
-      - znuny-build-pipeline
-      - znuny-rel1.1-pipeline
-      - znuny-rel2.0-pipeline
     agents:
       - 0b27be5b-bae0-4e63-ba34-ea80929a1cba
+
+# =============================================================================
+# NOTE: The following environment is commented out for testing.
+# Uncomment after merging to master and remove cicd-test-env above.
+# =============================================================================
+#  build-env:
+#    pipelines:
+#      - znuny-cicd-pipeline
+#      - znuny-build-pipeline
+#      - znuny-rel1.1-pipeline
+#      - znuny-rel2.0-pipeline
+#    agents:
+#      - 0b27be5b-bae0-4e63-ba34-ea80929a1cba
 
 # Defines the pipeline group.
 pipelines:
@@ -166,146 +177,151 @@ pipelines:
                         fi
                         ./znuny-build/gocd/deploy-opm.sh "$HOST" "REF" "packages/pkg" "$CONTAINER_ID"
 
-  # =============================================================================
-  # MASTER BRANCH - DISABLED (replaced by znuny-cicd-pipeline)
-  # Pause this pipeline in GoCD UI after znuny-cicd-pipeline is verified working
-  # Kept for rollback purposes - can be re-enabled if needed
-  # To disable: GoCD UI → Pipeline → Settings (gear icon) → Pause pipeline
-  # =============================================================================
-  znuny-build-pipeline:
-    group: ZNUNY
-    label_template: "${COUNT}"
+# =============================================================================
+# COMMENTED OUT FOR TESTING - These pipelines exist in master branch config
+# Uncomment after merging to master
+# =============================================================================
 
-    # Defines the materials (source code repositories) for this pipeline.
-    materials:
-      znuny-source:
-        # Git repository for LSMP
-        git: ssh://git@bitbucket.mot-solutions.com:7999/msstlite/msst-lite-znuny.git
-        branch: master
-        destination: znuny-build
-        shallow_clone: true
-
-    # Defines the stages of the pipeline.
-    stages:
-      - build:
-          # This stage builds the Znuny application.
-          clean_workspace: true
-          jobs:
-            build-and-package:
-              # This job compiles the code and packages the application.
-              timeout: 0
-              artifacts:
-                - build:
-                    source: "**/*.opm"
-                    destination: "pkg"
-              tasks:
-                # Task 1: Check for required build tools
-                - exec:
-                    command: "bash"
-                    arguments:
-                      - "-c"
-                      - |
-                        echo "Checking for required build tools..."
-                        perl -v
-
-                # Task 2: Build Znuny packages
-                - exec:
-                    command: "/bin/sh"
-                    arguments:
-                      - "-c"
-                      - |
-                        ./znuny-build/gocd-build-application.sh /tmp/znuny-build-dir znuny-build
-
-  # =============================================================================
-  # R1.1 BRANCH - Build Only
-  # =============================================================================
-  znuny-rel1.1-pipeline:
-    group: ZNUNY
-    label_template: "znuny-rel1.1-${COUNT}"
-
-    # Defines the materials (source code repositories) for this pipeline.
-    materials:
-      znuny-source:
-        # Git repository for LSMP
-        git: ssh://git@bitbucket.mot-solutions.com:7999/msstlite/msst-lite-znuny.git
-        branch: R1.1
-        destination: znuny-1.1-build
-        shallow_clone: true
-
-    # Defines the stages of the pipeline.
-    stages:
-      - build:
-          # This stage builds the Znuny application.
-          clean_workspace: true
-          jobs:
-            build-and-package:
-              # This job compiles the code and packages the application.
-              timeout: 0
-              artifacts:
-                - build:
-                    source: "**/*.opm"
-                    destination: "pkg"
-              tasks:
-                # Task 1: Check for required build tools
-                - exec:
-                    command: "bash"
-                    arguments:
-                      - "-c"
-                      - |
-                        echo "Checking for required build tools..."
-                        perl -v
-
-                # Task 2: Build Znuny packages
-                - exec:
-                    command: "/bin/sh"
-                    arguments:
-                      - "-c"
-                      - |
-                        ./znuny-1.1-build/gocd-build-application.sh /tmp/znuny-1.1-build-dir znuny-1.1-build
-
-  # =============================================================================
-  # R2.0 BRANCH - Build Only
-  # =============================================================================
-  znuny-rel2.0-pipeline:
-    group: ZNUNY
-    label_template: "znuny-rel2.0-${COUNT}"
-
-    # Defines the materials (source code repositories) for this pipeline.
-    materials:
-      znuny-source:
-        # Git repository for LSMP
-        git: ssh://git@bitbucket.mot-solutions.com:7999/msstlite/msst-lite-znuny.git
-        branch: R2.0
-        destination: znuny-2.0-build
-        shallow_clone: true
-
-    # Defines the stages of the pipeline.
-    stages:
-      - build:
-          # This stage builds the Znuny application.
-          clean_workspace: true
-          jobs:
-            build-and-package:
-              # This job compiles the code and packages the application.
-              timeout: 0
-              artifacts:
-                - build:
-                    source: "**/*.opm"
-                    destination: "pkg"
-              tasks:
-                # Task 1: Check for required build tools
-                - exec:
-                    command: "bash"
-                    arguments:
-                      - "-c"
-                      - |
-                        echo "Checking for required build tools..."
-                        perl -v
-
-                # Task 2: Build Znuny packages
-                - exec:
-                    command: "/bin/sh"
-                    arguments:
-                      - "-c"
-                      - |
-                        ./znuny-2.0-build/gocd-build-application.sh /tmp/znuny-2.0-build-dir znuny-2.0-build
+#  # =============================================================================
+#  # MASTER BRANCH - DISABLED (replaced by znuny-cicd-pipeline)
+#  # Pause this pipeline in GoCD UI after znuny-cicd-pipeline is verified working
+#  # Kept for rollback purposes - can be re-enabled if needed
+#  # To disable: GoCD UI → Pipeline → Settings (gear icon) → Pause pipeline
+#  # =============================================================================
+#  znuny-build-pipeline:
+#    group: ZNUNY
+#    label_template: "${COUNT}"
+#
+#    # Defines the materials (source code repositories) for this pipeline.
+#    materials:
+#      znuny-source:
+#        # Git repository for LSMP
+#        git: ssh://git@bitbucket.mot-solutions.com:7999/msstlite/msst-lite-znuny.git
+#        branch: master
+#        destination: znuny-build
+#        shallow_clone: true
+#
+#    # Defines the stages of the pipeline.
+#    stages:
+#      - build:
+#          # This stage builds the Znuny application.
+#          clean_workspace: true
+#          jobs:
+#            build-and-package:
+#              # This job compiles the code and packages the application.
+#              timeout: 0
+#              artifacts:
+#                - build:
+#                    source: "**/*.opm"
+#                    destination: "pkg"
+#              tasks:
+#                # Task 1: Check for required build tools
+#                - exec:
+#                    command: "bash"
+#                    arguments:
+#                      - "-c"
+#                      - |
+#                        echo "Checking for required build tools..."
+#                        perl -v
+#
+#                # Task 2: Build Znuny packages
+#                - exec:
+#                    command: "/bin/sh"
+#                    arguments:
+#                      - "-c"
+#                      - |
+#                        ./znuny-build/gocd-build-application.sh /tmp/znuny-build-dir znuny-build
+#
+#  # =============================================================================
+#  # R1.1 BRANCH - Build Only
+#  # =============================================================================
+#  znuny-rel1.1-pipeline:
+#    group: ZNUNY
+#    label_template: "znuny-rel1.1-${COUNT}"
+#
+#    # Defines the materials (source code repositories) for this pipeline.
+#    materials:
+#      znuny-source:
+#        # Git repository for LSMP
+#        git: ssh://git@bitbucket.mot-solutions.com:7999/msstlite/msst-lite-znuny.git
+#        branch: R1.1
+#        destination: znuny-1.1-build
+#        shallow_clone: true
+#
+#    # Defines the stages of the pipeline.
+#    stages:
+#      - build:
+#          # This stage builds the Znuny application.
+#          clean_workspace: true
+#          jobs:
+#            build-and-package:
+#              # This job compiles the code and packages the application.
+#              timeout: 0
+#              artifacts:
+#                - build:
+#                    source: "**/*.opm"
+#                    destination: "pkg"
+#              tasks:
+#                # Task 1: Check for required build tools
+#                - exec:
+#                    command: "bash"
+#                    arguments:
+#                      - "-c"
+#                      - |
+#                        echo "Checking for required build tools..."
+#                        perl -v
+#
+#                # Task 2: Build Znuny packages
+#                - exec:
+#                    command: "/bin/sh"
+#                    arguments:
+#                      - "-c"
+#                      - |
+#                        ./znuny-1.1-build/gocd-build-application.sh /tmp/znuny-1.1-build-dir znuny-1.1-build
+#
+#  # =============================================================================
+#  # R2.0 BRANCH - Build Only
+#  # =============================================================================
+#  znuny-rel2.0-pipeline:
+#    group: ZNUNY
+#    label_template: "znuny-rel2.0-${COUNT}"
+#
+#    # Defines the materials (source code repositories) for this pipeline.
+#    materials:
+#      znuny-source:
+#        # Git repository for LSMP
+#        git: ssh://git@bitbucket.mot-solutions.com:7999/msstlite/msst-lite-znuny.git
+#        branch: R2.0
+#        destination: znuny-2.0-build
+#        shallow_clone: true
+#
+#    # Defines the stages of the pipeline.
+#    stages:
+#      - build:
+#          # This stage builds the Znuny application.
+#          clean_workspace: true
+#          jobs:
+#            build-and-package:
+#              # This job compiles the code and packages the application.
+#              timeout: 0
+#              artifacts:
+#                - build:
+#                    source: "**/*.opm"
+#                    destination: "pkg"
+#              tasks:
+#                # Task 1: Check for required build tools
+#                - exec:
+#                    command: "bash"
+#                    arguments:
+#                      - "-c"
+#                      - |
+#                        echo "Checking for required build tools..."
+#                        perl -v
+#
+#                # Task 2: Build Znuny packages
+#                - exec:
+#                    command: "/bin/sh"
+#                    arguments:
+#                      - "-c"
+#                      - |
+#                        ./znuny-2.0-build/gocd-build-application.sh /tmp/znuny-2.0-build-dir znuny-2.0-build
