@@ -402,10 +402,11 @@ ssh $SSH_OPTS_CONTAINER $PROXY_JUMP root@"${CONTAINER_IP}" "
       echo 'Removing package entry directly from database...'
 
       # Get database credentials from Kernel/Config.pm
-      DB_HOST=\$(grep -oP \"DatabaseHost\\s*=>\\s*'\\K[^']+\" Kernel/Config.pm || echo 'localhost')
-      DB_NAME=\$(grep -oP \"DatabaseName\\s*=>\\s*'\\K[^']+\" Kernel/Config.pm || echo 'otrs')
-      DB_USER=\$(grep -oP \"DatabaseUser\\s*=>\\s*'\\K[^']+\" Kernel/Config.pm || echo 'otrs')
-      DB_PASS=\$(grep -oP \"DatabasePw\\s*=>\\s*'\\K[^']+\" Kernel/Config.pm || echo '')
+      # Znuny uses format: \$Self->{DatabaseHost} = 'value';
+      DB_HOST=\$(grep -oP \"\\{DatabaseHost\\}\\s*=\\s*['\\\"]\\K[^'\\\"]+\" Kernel/Config.pm || echo 'localhost')
+      DB_NAME=\$(grep -oP \"\\{Database\\}\\s*=\\s*['\\\"]\\K[^'\\\"]+\" Kernel/Config.pm || echo 'otrs')
+      DB_USER=\$(grep -oP \"\\{DatabaseUser\\}\\s*=\\s*['\\\"]\\K[^'\\\"]+\" Kernel/Config.pm || echo 'otrs')
+      DB_PASS=\$(grep -oP \"\\{DatabasePw\\}\\s*=\\s*['\\\"]\\K[^'\\\"]+\" Kernel/Config.pm || echo '')
 
       echo \"Database: \$DB_NAME@\$DB_HOST (user: \$DB_USER)\"
 
