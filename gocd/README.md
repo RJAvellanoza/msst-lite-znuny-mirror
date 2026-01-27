@@ -208,7 +208,7 @@ ssh -p 2222 -o StrictHostKeyChecking=no root@<PROXMOX_HOST> "hostname"
 
 Validates deployment prerequisites before any deployment stage runs.
 
-**Checks performed:**
+**General Checks (1-5):**
 
 | Check | Required | Description |
 |-------|----------|-------------|
@@ -217,9 +217,29 @@ Validates deployment prerequisites before any deployment stage runs.
 | 3. SSH config exists | No | Warning only if missing |
 | 4. Environment variables | Yes | `DEV_ZNUNY_HOST` must be set |
 | 5. Version format | Yes | Must be X.Y.Z format |
-| 6. SSH to Proxmox host | Yes | Port 22 connectivity for snapshots |
-| 7. pct command available | Yes | Proxmox container tool exists |
-| 8. Container ID valid | Yes | Container exists on Proxmox host |
+
+**Environment Checks (per environment):**
+
+| Check | Required | Description |
+|-------|----------|-------------|
+| 1. SSH to Proxmox host | Yes | Port 22 connectivity for snapshots |
+| 2. pct command available | Yes | Proxmox container tool exists |
+| 3. Container ID valid | Yes | Container exists on Proxmox host |
+
+**Deployment Readiness:**
+
+The preflight summary shows deployment status for each environment:
+
+| Status | Meaning |
+|--------|---------|
+| `READY` | All checks passed, deployment will succeed |
+| `NOT READY` | One or more checks failed |
+| `SKIPPED` | Environment not configured (e.g., REF_ZNUNY_HOST not set) |
+
+**Important:**
+- DEV checks are **required** - pipeline fails if DEV is not ready
+- REF checks are **optional** - pipeline continues even if REF fails
+- Manual deploy stages will only succeed for READY environments
 
 ### deploy-opm.sh
 
