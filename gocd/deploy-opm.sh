@@ -67,24 +67,26 @@ get_container_ip() {
   local HOST="$1"
   local CONTAINER_ID="$2"
 
-  echo "Querying container IP from Proxmox host..."
+  # Status messages go to stderr so they don't pollute the return value
+  echo "Querying container IP from Proxmox host..." >&2
   local IP
   IP=$(ssh -p 22 $SSH_OPTS_HOST root@"$HOST" "pct exec $CONTAINER_ID -- hostname -I | awk '{print \$1}'" 2>/dev/null)
 
   if [ -z "$IP" ]; then
-    echo "ERROR: Could not determine container IP address"
-    echo ""
-    echo "Possible causes:"
-    echo "  - Container is not running"
-    echo "  - Container ID is incorrect"
-    echo "  - Network not configured in container"
-    echo ""
-    echo "Resolution:"
-    echo "  1. Check container status: ssh root@$HOST 'pct status $CONTAINER_ID'"
-    echo "  2. Set ZNUNY_CONTAINER_IP environment variable manually"
+    echo "ERROR: Could not determine container IP address" >&2
+    echo "" >&2
+    echo "Possible causes:" >&2
+    echo "  - Container is not running" >&2
+    echo "  - Container ID is incorrect" >&2
+    echo "  - Network not configured in container" >&2
+    echo "" >&2
+    echo "Resolution:" >&2
+    echo "  1. Check container status: ssh root@$HOST 'pct status $CONTAINER_ID'" >&2
+    echo "  2. Set ZNUNY_CONTAINER_IP environment variable manually" >&2
     return 1
   fi
 
+  # Only the IP goes to stdout (captured by caller)
   echo "$IP"
 }
 
