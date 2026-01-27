@@ -368,7 +368,7 @@ echo ""
 echo "--- Installing OPM Package ---"
 echo ""
 
-# Install package using Uninstall + Install approach (consistent with build-package.sh)
+# Install package using Uninstall + Install approach (ensures version updates in DB)
 # NOTE: otrs.Console.pl refuses to run as root, must use 'su' to switch to otrs/znuny user
 ssh $SSH_OPTS_CONTAINER $PROXY_JUMP root@"${CONTAINER_IP}" "
   cd /opt/otrs
@@ -384,12 +384,27 @@ ssh $SSH_OPTS_CONTAINER $PROXY_JUMP root@"${CONTAINER_IP}" "
   fi
   echo \"Using user: \$OTRS_USER\"
 
-  # Always uninstall first (ignore errors if not installed)
-  echo 'Removing existing package (if any)...'
-  su -c 'bin/otrs.Console.pl Admin::Package::Uninstall MSSTLite' -s /bin/bash \$OTRS_USER 2>/dev/null || true
-  echo ''
+  # Check if package is already installed
+  echo 'Checking current package status...'
+  INSTALLED_VERSION=\$(su -c 'bin/otrs.Console.pl Admin::Package::List' -s /bin/bash \$OTRS_USER 2>/dev/null | grep 'MSSTLite' | awk '{print \$2}' || true)
 
-  # Always install fresh
+  if [ -n \"\$INSTALLED_VERSION\" ]; then
+    echo \"Currently installed: MSSTLite \$INSTALLED_VERSION\"
+    echo ''
+    echo 'Uninstalling existing package...'
+    # Do NOT suppress stderr - we need to see any errors
+    if ! su -c 'bin/otrs.Console.pl Admin::Package::Uninstall MSSTLite' -s /bin/bash \$OTRS_USER; then
+      echo ''
+      echo 'WARNING: Uninstall returned non-zero, trying with --force...'
+      su -c 'bin/otrs.Console.pl Admin::Package::Uninstall MSSTLite --force' -s /bin/bash \$OTRS_USER || true
+    fi
+    echo ''
+  else
+    echo 'No existing MSSTLite package found'
+    echo ''
+  fi
+
+  # Install the package
   echo 'Installing package...'
   su -c 'bin/otrs.Console.pl Admin::Package::Install /tmp/${OPM_FILENAME}' -s /bin/bash \$OTRS_USER
 
