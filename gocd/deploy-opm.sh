@@ -402,14 +402,15 @@ ssh $SSH_OPTS_CONTAINER $PROXY_JUMP root@"${CONTAINER_IP}" "
       echo 'Removing package entry directly from database...'
 
       # Get database credentials from Kernel/Config.pm
+      DB_HOST=\$(grep -oP \"DatabaseHost\\s*=>\\s*'\\K[^']+\" Kernel/Config.pm || echo 'localhost')
       DB_NAME=\$(grep -oP \"DatabaseName\\s*=>\\s*'\\K[^']+\" Kernel/Config.pm || echo 'otrs')
       DB_USER=\$(grep -oP \"DatabaseUser\\s*=>\\s*'\\K[^']+\" Kernel/Config.pm || echo 'otrs')
       DB_PASS=\$(grep -oP \"DatabasePw\\s*=>\\s*'\\K[^']+\" Kernel/Config.pm || echo '')
 
-      # Remove from package_repository table
-      PGPASSWORD=\"\$DB_PASS\" psql -U \"\$DB_USER\" -d \"\$DB_NAME\" -c \"DELETE FROM package_repository WHERE name = 'MSSTLite';\" 2>/dev/null
+      echo \"Database: \$DB_NAME@\$DB_HOST (user: \$DB_USER)\"
 
-      if [ \$? -eq 0 ]; then
+      # Remove from package_repository table (connect to external DB host)
+      if PGPASSWORD=\"\$DB_PASS\" psql -h \"\$DB_HOST\" -U \"\$DB_USER\" -d \"\$DB_NAME\" -c \"DELETE FROM package_repository WHERE name = 'MSSTLite';\" 2>&1; then
         echo 'Package entry removed from database'
       else
         echo 'WARNING: Could not remove from database, continuing anyway...'
