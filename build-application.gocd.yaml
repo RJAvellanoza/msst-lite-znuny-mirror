@@ -1,15 +1,16 @@
-# GoCD Pipeline for building Znuny 6.15 LTS with additional packages
+# GoCD Pipeline for building Znuny 6.5 LTS with additional packages
 #
-# This pipeline defines the process for fetching the Znuny source code,
-# integrating custom packages, and building the application.
+# TEST PIPELINES - Remove "-test" suffix after verification
 #
-# Pipelines:
-#   - znuny-cicd-pipeline: Full CI/CD for master branch (build + deploy)
-#   - znuny-build-pipeline: DISABLED - replaced by znuny-cicd-pipeline
-#   - znuny-rel1.1-pipeline: Build-only for R1.1 branch
-#   - znuny-rel2.0-pipeline: Build-only for R2.0 branch
+# Pipeline Architecture:
+#   - znuny-develop-pipeline-test: develop-test branch → DEV server (auto-deploy)
+#   - znuny-master-pipeline-test:  master-test branch → REF server (auto-deploy)
 #
-# Environment Variables Required (configure in GoCD UI: Admin → Environments → build-env):
+# Legacy Pipelines (ZNUNY-LEGACY group):
+#   - znuny-cicd-pipeline-test: Old unified pipeline (paused, kept for rollback)
+#   - znuny-build-pipeline, znuny-rel1.1-pipeline, znuny-rel2.0-pipeline: Deprecated
+#
+# Environment Variables Required (configure in GoCD UI: Admin → Environments → cicd-v2-test-env):
 #   DEV_ZNUNY_HOST     - Proxmox host IP for DEV environment (e.g., 10.228.33.221)
 #   REF_ZNUNY_HOST     - Proxmox host IP for REF environment (e.g., 10.228.33.223)
 #   ZNUNY_CONTAINER_ID - LXC container ID running Znuny (e.g., 104)
@@ -24,65 +25,223 @@
 #   - gocd/deploy-opm.sh      - Deploys OPM packages to Znuny (creates snapshot first)
 #   - gocd/preflight-check.sh - Validates SSH connectivity before deployment
 
-# Defines the format version of this file.
 format_version: 10
 
 environments:
-  # Test environment for znuny-cicd-pipeline testing
+  # Test environment for develop-test/master-test pipelines
   cicd-v2-test-env:
     pipelines:
-      - znuny-cicd-pipeline
+      - znuny-develop-pipeline-test
+      - znuny-master-pipeline-test
     agents:
       - 0b27be5b-bae0-4e63-ba34-ea80929a1cba
 
-# =============================================================================
-# NOTE: The following environment is commented out for testing.
-# Uncomment after merging to master and remove cicd-test-env above.
-# =============================================================================
-#  build-env:
-#    pipelines:
-#      - znuny-cicd-pipeline
-#      - znuny-build-pipeline
-#      - znuny-rel1.1-pipeline
-#      - znuny-rel2.0-pipeline
-#    agents:
-#      - 0b27be5b-bae0-4e63-ba34-ea80929a1cba
-
-# Defines the pipeline group.
 pipelines:
   # =============================================================================
-  # MASTER BRANCH - Full CI/CD Pipeline
+  # DEVELOP-TEST BRANCH → DEV SERVER
+  # Triggers: Automatically on push/merge to develop-test
+  # Deploys: Automatically after preflight passes
   # =============================================================================
-  znuny-cicd-pipeline:
+  znuny-develop-pipeline-test:
     group: ZNUNY
-    label_template: "${COUNT}"
+    label_template: "DEV-${COUNT}"
 
-    # Defines the materials (source code repositories) for this pipeline.
     materials:
       znuny-source:
-        # Git repository for LSMP
         git: ssh://git@bitbucket.mot-solutions.com:7999/msstlite/msst-lite-znuny.git
-        branch: feature/CICD_TEST_RJ
+        branch: develop-test
         destination: znuny-build
         auto_update: true
 
-    # Defines the stages of the pipeline.
     stages:
       - build:
-          # This stage builds the Znuny application.
           clean_workspace: true
           approval:
             type: success
           jobs:
             build-and-package:
-              # This job compiles the code and packages the application.
               timeout: 0
               artifacts:
                 - build:
                     source: "**/*.opm"
                     destination: "pkg"
               tasks:
-                # Task 1: Check for required build tools
+                - exec:
+                    command: "bash"
+                    arguments:
+                      - "-c"
+                      - |
+                        echo "=== Build Info ==="
+                        echo "Pipeline: ${GO_PIPELINE_NAME}"
+                        echo "Build: ${GO_PIPELINE_COUNTER}"
+                        echo "Branch: develop-test"
+                        echo "Timestamp: $(date -Iseconds)"
+                        echo "Agent: $(hostname)"
+                        echo ""
+                        echo "Checking for required build tools..."
+                        perl -v
+
+                - exec:
+                    command: "/bin/sh"
+                    arguments:
+                      - "-c"
+                      - |
+                        ./znuny-build/gocd-build-application.sh /tmp/znuny-build-dir znuny-build
+
+      - preflight:
+          approval:
+            type: success
+            allow_only_on_success: true
+          jobs:
+            validate:
+              tasks:
+                - exec:
+                    command: "/bin/bash"
+                    arguments:
+                      - "./znuny-build/gocd/preflight-check.sh"
+
+      - deploy-dev:
+          approval:
+            type: success
+            allow_only_on_success: true
+          jobs:
+            deploy:
+              tasks:
+                - fetch:
+                    stage: build
+                    job: build-and-package
+                    source: pkg/
+                    destination: packages/
+                - exec:
+                    command: "/bin/bash"
+                    arguments:
+                      - "-c"
+                      - |
+                        HOST="${DEV_ZNUNY_HOST:-NOT_CONFIGURED}"
+                        CONTAINER_ID="${ZNUNY_CONTAINER_ID:-104}"
+                        if [ "$HOST" = "NOT_CONFIGURED" ]; then
+                          echo "ERROR: DEV_ZNUNY_HOST not configured"
+                          exit 1
+                        fi
+                        ./znuny-build/gocd/deploy-opm.sh "$HOST" "DEV" "packages/pkg" "$CONTAINER_ID"
+
+  # =============================================================================
+  # MASTER-TEST BRANCH → REF SERVER
+  # Triggers: Automatically on push/merge to master-test
+  # Deploys: Automatically after preflight passes
+  # =============================================================================
+  znuny-master-pipeline-test:
+    group: ZNUNY
+    label_template: "REF-${COUNT}"
+
+    materials:
+      znuny-source:
+        git: ssh://git@bitbucket.mot-solutions.com:7999/msstlite/msst-lite-znuny.git
+        branch: master-test
+        destination: znuny-build
+        auto_update: true
+
+    stages:
+      - build:
+          clean_workspace: true
+          approval:
+            type: success
+          jobs:
+            build-and-package:
+              timeout: 0
+              artifacts:
+                - build:
+                    source: "**/*.opm"
+                    destination: "pkg"
+              tasks:
+                - exec:
+                    command: "bash"
+                    arguments:
+                      - "-c"
+                      - |
+                        echo "=== Build Info ==="
+                        echo "Pipeline: ${GO_PIPELINE_NAME}"
+                        echo "Build: ${GO_PIPELINE_COUNTER}"
+                        echo "Branch: master-test"
+                        echo "Timestamp: $(date -Iseconds)"
+                        echo "Agent: $(hostname)"
+                        echo ""
+                        echo "Checking for required build tools..."
+                        perl -v
+
+                - exec:
+                    command: "/bin/sh"
+                    arguments:
+                      - "-c"
+                      - |
+                        ./znuny-build/gocd-build-application.sh /tmp/znuny-build-dir znuny-build
+
+      - preflight:
+          approval:
+            type: success
+            allow_only_on_success: true
+          jobs:
+            validate:
+              tasks:
+                - exec:
+                    command: "/bin/bash"
+                    arguments:
+                      - "./znuny-build/gocd/preflight-check.sh"
+
+      - deploy-ref:
+          approval:
+            type: success
+            allow_only_on_success: true
+          jobs:
+            deploy:
+              tasks:
+                - fetch:
+                    stage: build
+                    job: build-and-package
+                    source: pkg/
+                    destination: packages/
+                - exec:
+                    command: "/bin/bash"
+                    arguments:
+                      - "-c"
+                      - |
+                        HOST="${REF_ZNUNY_HOST:-NOT_CONFIGURED}"
+                        CONTAINER_ID="${ZNUNY_CONTAINER_ID:-104}"
+                        if [ "$HOST" = "NOT_CONFIGURED" ]; then
+                          echo "ERROR: REF_ZNUNY_HOST not configured"
+                          exit 1
+                        fi
+                        ./znuny-build/gocd/deploy-opm.sh "$HOST" "REF" "packages/pkg" "$CONTAINER_ID"
+
+  # =============================================================================
+  # LEGACY PIPELINES
+  # These are kept for rollback/reference purposes.
+  # Pause these in GoCD UI after new pipelines are verified working.
+  # =============================================================================
+  znuny-cicd-pipeline-test:
+    group: ZNUNY-LEGACY
+    label_template: "LEGACY-${COUNT}"
+
+    materials:
+      znuny-source:
+        git: ssh://git@bitbucket.mot-solutions.com:7999/msstlite/msst-lite-znuny.git
+        branch: feature/CICD_TEST_RJ
+        destination: znuny-build
+        auto_update: false    # Disabled - use new pipelines instead
+
+    stages:
+      - build:
+          clean_workspace: true
+          approval:
+            type: success
+          jobs:
+            build-and-package:
+              timeout: 0
+              artifacts:
+                - build:
+                    source: "**/*.opm"
+                    destination: "pkg"
+              tasks:
                 - exec:
                     command: "bash"
                     arguments:
@@ -98,7 +257,6 @@ pipelines:
                         echo "Checking for required build tools..."
                         perl -v
 
-                # Task 2: Build Znuny packages
                 - exec:
                     command: "/bin/sh"
                     arguments:
@@ -107,7 +265,6 @@ pipelines:
                         ./znuny-build/gocd-build-application.sh /tmp/znuny-build-dir znuny-build
 
       - preflight:
-          # This stage validates SSH connectivity before deployment.
           approval:
             type: success
             allow_only_on_success: true
@@ -119,7 +276,6 @@ pipelines:
                     arguments:
                       - "./znuny-build/gocd/preflight-check.sh"
 
-      # Deploy to DEV: Creates snapshot → Copies OPM → Installs via znuny.Console.pl
       - deploy-dev:
           approval:
             type: manual
@@ -148,7 +304,6 @@ pipelines:
                         fi
                         ./znuny-build/gocd/deploy-opm.sh "$HOST" "DEV" "packages/pkg" "$CONTAINER_ID"
 
-      # Deploy to REF: Creates snapshot → Copies OPM → Installs via znuny.Console.pl
       - deploy-ref:
           approval:
             type: manual
@@ -178,44 +333,31 @@ pipelines:
                         ./znuny-build/gocd/deploy-opm.sh "$HOST" "REF" "packages/pkg" "$CONTAINER_ID"
 
 # =============================================================================
-# COMMENTED OUT FOR TESTING - These pipelines exist in master branch config
-# Uncomment after merging to master
+# DEPRECATED LEGACY PIPELINES
+# These pipelines are commented out and kept for historical reference only.
+# They were replaced by the develop/master pipeline structure above.
 # =============================================================================
 
-#  # =============================================================================
-#  # MASTER BRANCH - DISABLED (replaced by znuny-cicd-pipeline)
-#  # Pause this pipeline in GoCD UI after znuny-cicd-pipeline is verified working
-#  # Kept for rollback purposes - can be re-enabled if needed
-#  # To disable: GoCD UI → Pipeline → Settings (gear icon) → Pause pipeline
-#  # =============================================================================
 #  znuny-build-pipeline:
-#    group: ZNUNY
-#    label_template: "${COUNT}"
-#
-#    # Defines the materials (source code repositories) for this pipeline.
+#    group: ZNUNY-LEGACY
+#    label_template: "LEGACY-BUILD-${COUNT}"
 #    materials:
 #      znuny-source:
-#        # Git repository for LSMP
 #        git: ssh://git@bitbucket.mot-solutions.com:7999/msstlite/msst-lite-znuny.git
 #        branch: master
 #        destination: znuny-build
 #        shallow_clone: true
-#
-#    # Defines the stages of the pipeline.
 #    stages:
 #      - build:
-#          # This stage builds the Znuny application.
 #          clean_workspace: true
 #          jobs:
 #            build-and-package:
-#              # This job compiles the code and packages the application.
 #              timeout: 0
 #              artifacts:
 #                - build:
 #                    source: "**/*.opm"
 #                    destination: "pkg"
 #              tasks:
-#                # Task 1: Check for required build tools
 #                - exec:
 #                    command: "bash"
 #                    arguments:
@@ -223,46 +365,33 @@ pipelines:
 #                      - |
 #                        echo "Checking for required build tools..."
 #                        perl -v
-#
-#                # Task 2: Build Znuny packages
 #                - exec:
 #                    command: "/bin/sh"
 #                    arguments:
 #                      - "-c"
 #                      - |
 #                        ./znuny-build/gocd-build-application.sh /tmp/znuny-build-dir znuny-build
-#
-#  # =============================================================================
-#  # R1.1 BRANCH - Build Only
-#  # =============================================================================
+
 #  znuny-rel1.1-pipeline:
-#    group: ZNUNY
-#    label_template: "znuny-rel1.1-${COUNT}"
-#
-#    # Defines the materials (source code repositories) for this pipeline.
+#    group: ZNUNY-LEGACY
+#    label_template: "LEGACY-R1.1-${COUNT}"
 #    materials:
 #      znuny-source:
-#        # Git repository for LSMP
 #        git: ssh://git@bitbucket.mot-solutions.com:7999/msstlite/msst-lite-znuny.git
 #        branch: R1.1
 #        destination: znuny-1.1-build
 #        shallow_clone: true
-#
-#    # Defines the stages of the pipeline.
 #    stages:
 #      - build:
-#          # This stage builds the Znuny application.
 #          clean_workspace: true
 #          jobs:
 #            build-and-package:
-#              # This job compiles the code and packages the application.
 #              timeout: 0
 #              artifacts:
 #                - build:
 #                    source: "**/*.opm"
 #                    destination: "pkg"
 #              tasks:
-#                # Task 1: Check for required build tools
 #                - exec:
 #                    command: "bash"
 #                    arguments:
@@ -270,46 +399,33 @@ pipelines:
 #                      - |
 #                        echo "Checking for required build tools..."
 #                        perl -v
-#
-#                # Task 2: Build Znuny packages
 #                - exec:
 #                    command: "/bin/sh"
 #                    arguments:
 #                      - "-c"
 #                      - |
 #                        ./znuny-1.1-build/gocd-build-application.sh /tmp/znuny-1.1-build-dir znuny-1.1-build
-#
-#  # =============================================================================
-#  # R2.0 BRANCH - Build Only
-#  # =============================================================================
+
 #  znuny-rel2.0-pipeline:
-#    group: ZNUNY
-#    label_template: "znuny-rel2.0-${COUNT}"
-#
-#    # Defines the materials (source code repositories) for this pipeline.
+#    group: ZNUNY-LEGACY
+#    label_template: "LEGACY-R2.0-${COUNT}"
 #    materials:
 #      znuny-source:
-#        # Git repository for LSMP
 #        git: ssh://git@bitbucket.mot-solutions.com:7999/msstlite/msst-lite-znuny.git
 #        branch: R2.0
 #        destination: znuny-2.0-build
 #        shallow_clone: true
-#
-#    # Defines the stages of the pipeline.
 #    stages:
 #      - build:
-#          # This stage builds the Znuny application.
 #          clean_workspace: true
 #          jobs:
 #            build-and-package:
-#              # This job compiles the code and packages the application.
 #              timeout: 0
 #              artifacts:
 #                - build:
 #                    source: "**/*.opm"
 #                    destination: "pkg"
 #              tasks:
-#                # Task 1: Check for required build tools
 #                - exec:
 #                    command: "bash"
 #                    arguments:
@@ -317,8 +433,6 @@ pipelines:
 #                      - |
 #                        echo "Checking for required build tools..."
 #                        perl -v
-#
-#                # Task 2: Build Znuny packages
 #                - exec:
 #                    command: "/bin/sh"
 #                    arguments:
