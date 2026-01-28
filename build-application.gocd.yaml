@@ -227,7 +227,7 @@ pipelines:
         git: ssh://git@bitbucket.mot-solutions.com:7999/msstlite/msst-lite-znuny.git
         branch: feature/CICD_TEST_RJ
         destination: znuny-build
-        auto_update: false    # Disabled - use new pipelines instead
+        auto_update: true    # Disable or pause after new pipelines are verified
 
     stages:
       - build:
