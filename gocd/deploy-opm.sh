@@ -121,7 +121,9 @@ create_pre_deploy_snapshot() {
   # Check if old pre-deploy snapshot exists and delete it
   echo "Checking for existing pre-deploy snapshots..."
   local EXISTING_SNAPSHOTS
-  EXISTING_SNAPSHOTS=$(ssh -p 22 $SSH_OPTS_HOST root@"$HOST" "pct listsnapshot $CONTAINER_ID 2>/dev/null | grep 'pre-MSSTLite-' | awk '{print \$1}'" || true)
+  # pct listsnapshot output format: "`-> snapshot_name  description"
+  # Field $1 is the tree char (`->), field $2 is the snapshot name
+  EXISTING_SNAPSHOTS=$(ssh -p 22 $SSH_OPTS_HOST root@"$HOST" "pct listsnapshot $CONTAINER_ID 2>/dev/null | grep 'pre-MSSTLite-' | awk '{print \$2}'" || true)
 
   if [ -n "$EXISTING_SNAPSHOTS" ]; then
     echo "Found existing pre-deploy snapshots:"
