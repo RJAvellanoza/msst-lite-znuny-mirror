@@ -62,7 +62,7 @@ echo Source: %MIRROR_DIR% [%MIRROR_BRANCH%]
 echo Destination: %ORIGINAL_DIR% [%ORIGINAL_BRANCH%]
 echo.
 
-robocopy "%MIRROR_DIR%" "%ORIGINAL_DIR%" /MIR /XD .git scripts /XF .gitignore
+robocopy "%MIRROR_DIR%" "%ORIGINAL_DIR%" /MIR /XD .git scripts .claude /XF .gitignore CLAUDE.md
 
 echo.
 echo ============================================
