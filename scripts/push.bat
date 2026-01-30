@@ -26,28 +26,33 @@ cd /d "%MIRROR_DIR%"
 for /f "tokens=*" %%i in ('git rev-parse --abbrev-ref HEAD') do set "BRANCH=%%i"
 echo Mirror branch: %BRANCH%
 
+:: Map main to master for original repo (BitBucket uses master)
+set "TARGET_BRANCH=%BRANCH%"
+if "%BRANCH%"=="main" set "TARGET_BRANCH=master"
+echo Target branch: %TARGET_BRANCH%
+
 :: Switch to original and match branch
 cd /d "%ORIGINAL_DIR%"
 for /f "tokens=*" %%i in ('git rev-parse --abbrev-ref HEAD') do set "ORIG_BRANCH=%%i"
 echo Original branch: %ORIG_BRANCH%
 
-if not "%BRANCH%"=="%ORIG_BRANCH%" (
+if not "%TARGET_BRANCH%"=="%ORIG_BRANCH%" (
     echo.
-    echo Switching original repo to branch: %BRANCH%
+    echo Switching original repo to branch: %TARGET_BRANCH%
 
     :: Check if branch exists locally
-    git show-ref --verify --quiet refs/heads/%BRANCH%
+    git show-ref --verify --quiet refs/heads/%TARGET_BRANCH%
     if !errorlevel! equ 0 (
-        git checkout %BRANCH%
+        git checkout %TARGET_BRANCH%
     ) else (
         :: Check if branch exists on remote
-        git fetch origin %BRANCH% 2>nul
+        git fetch origin %TARGET_BRANCH% 2>nul
         if !errorlevel! equ 0 (
-            git checkout -b %BRANCH% origin/%BRANCH%
+            git checkout -b %TARGET_BRANCH% origin/%TARGET_BRANCH%
         ) else (
             :: Create new branch
-            echo Creating new branch: %BRANCH%
-            git checkout -b %BRANCH%
+            echo Creating new branch: %TARGET_BRANCH%
+            git checkout -b %TARGET_BRANCH%
         )
     )
 )
