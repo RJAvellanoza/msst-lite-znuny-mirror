@@ -1,17 +1,24 @@
 @echo off
 setlocal EnableDelayedExpansion
 
+:: Enable ANSI colors
+for /F %%a in ('echo prompt $E ^| cmd') do set "ESC=%%a"
+set "GREEN=%ESC%[32m"
+set "CYAN=%ESC%[36m"
+set "YELLOW=%ESC%[33m"
+set "RESET=%ESC%[0m"
+
 set "MIRROR_DIR=%USERPROFILE%\PRJ\MSSTLITE-MIRROR\msst-lite-znuny-mirror"
 set "ORIGINAL_DIR=%USERPROFILE%\PRJ\MSSTLITE\msst-lite-znuny"
 
 :: Check directories exist
 if not exist "%MIRROR_DIR%" (
-    echo ERROR: Mirror directory not found: %MIRROR_DIR%
+    echo %ESC%[31mERROR: Mirror directory not found: %MIRROR_DIR%%RESET%
     pause
     exit /b 1
 )
 if not exist "%ORIGINAL_DIR%" (
-    echo ERROR: Original directory not found: %ORIGINAL_DIR%
+    echo %ESC%[31mERROR: Original directory not found: %ORIGINAL_DIR%%RESET%
     pause
     exit /b 1
 )
@@ -43,14 +50,14 @@ if not "%ORIGINAL_BRANCH%"=="%CURRENT_ORIG_BRANCH%" (
 )
 
 echo.
-echo ZNUNY PULL: [%ORIGINAL_BRANCH%] -^> [%MIRROR_BRANCH%]
+echo %GREEN%ZNUNY PULL:%RESET% %CYAN%[%ORIGINAL_BRANCH%]%RESET% %YELLOW%-^>%RESET% %CYAN%[%MIRROR_BRANCH%]%RESET%
 echo.
 
 robocopy "%ORIGINAL_DIR%" "%MIRROR_DIR%" /MIR /XD .git scripts .claude /XF .gitignore CLAUDE.md /NJH /NDL
 
 echo.
 cd /d "%MIRROR_DIR%"
-echo Git status:
+echo %GREEN%Git status:%RESET%
 git status --short
 echo.
 pause
