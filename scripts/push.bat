@@ -46,7 +46,7 @@ echo.
 echo ZNUNY PUSH: [%MIRROR_BRANCH%] -^> [%ORIGINAL_BRANCH%]
 echo.
 
-robocopy "%MIRROR_DIR%" "%ORIGINAL_DIR%" /MIR /XD .git scripts .claude /XF .gitignore CLAUDE.md /NJH /NJS /NDL /NFL
+robocopy "%MIRROR_DIR%" "%ORIGINAL_DIR%" /MIR /XD .git scripts .claude /XF .gitignore CLAUDE.md /NJH /NDL
 
 echo.
 echo Git status:

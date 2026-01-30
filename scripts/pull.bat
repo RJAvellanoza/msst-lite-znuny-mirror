@@ -46,7 +46,7 @@ echo.
 echo ZNUNY PULL: [%ORIGINAL_BRANCH%] -^> [%MIRROR_BRANCH%]
 echo.
 
-robocopy "%ORIGINAL_DIR%" "%MIRROR_DIR%" /MIR /XD .git scripts .claude /XF .gitignore CLAUDE.md /NJH /NJS /NDL /NFL
+robocopy "%ORIGINAL_DIR%" "%MIRROR_DIR%" /MIR /XD .git scripts .claude /XF .gitignore CLAUDE.md /NJH /NDL
 
 echo.
 cd /d "%MIRROR_DIR%"
