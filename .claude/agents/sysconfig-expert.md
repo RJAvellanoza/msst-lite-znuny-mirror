@@ -4,7 +4,7 @@ description: >
   SysConfig XML specialist for Znuny configuration management.
   Expert in XML schema, setting types, navigation paths, and
   default values. Use for configuration analysis and creation.
-model: haiku
+model: sonnet
 tools:
   - Read
   - Glob

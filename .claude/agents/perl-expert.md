@@ -5,7 +5,7 @@ description: >
   Expert in Kernel::System, Kernel::Modules, GenericInterface,
   and OTRS object management. Use for Perl code review, debugging,
   and new module development. Proactively use for any .pm file work.
-model: sonnet
+model: opus
 tools:
   - Read
   - Glob

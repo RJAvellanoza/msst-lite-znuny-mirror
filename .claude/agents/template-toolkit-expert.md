@@ -4,7 +4,7 @@ description: >
   Template Toolkit specialist for Znuny HTML templates.
   Expert in .tt file syntax, BLOCK definitions, INCLUDE directives,
   and Znuny layout patterns. Use for template debugging and creation.
-model: haiku
+model: sonnet
 tools:
   - Read
   - Glob
