@@ -53,7 +53,7 @@ echo.
 echo %GREEN%ZNUNY PULL:%RESET% %CYAN%[%ORIGINAL_BRANCH%]%RESET% %YELLOW%-^>%RESET% %CYAN%[%MIRROR_BRANCH%]%RESET%
 echo.
 
-robocopy "%ORIGINAL_DIR%" "%MIRROR_DIR%" /MIR /XD .git scripts .claude /XF .gitignore CLAUDE.md /NJH /NDL
+robocopy "%ORIGINAL_DIR%" "%MIRROR_DIR%" /MIR /XD "%ORIGINAL_DIR%\.git" "%MIRROR_DIR%\.git" "%MIRROR_DIR%\scripts" "%MIRROR_DIR%\.claude" /XF .gitignore CLAUDE.md /NJH /NDL
 
 echo.
 cd /d "%MIRROR_DIR%"
