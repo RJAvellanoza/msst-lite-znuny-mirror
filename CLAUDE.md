@@ -5,21 +5,7 @@
 This repository is part of the MSSTLITE project. See `../CLAUDE.md` for global project rules including:
 - Temporary file locations
 - Checkpoint conventions
-- **Plan mode workflow rules**
-
-## Plan Mode Rules
-
-**IMPORTANT**: When in plan mode, follow this workflow strictly:
-
-1. **Explore & Research**: Thoroughly investigate the codebase and gather all necessary context
-2. **Write Plan**: Document the complete plan in the designated plan file
-3. **Summarize**: Provide a clear summary of what the plan contains
-4. **Wait for Review**: Ask the user explicitly: "Would you like to review the full plan file before I request approval?"
-5. **User Review**: Allow the user time to read the plan file and request any changes
-6. **Request Approval**: Only call `ExitPlanMode` after the user explicitly says "proceed", "approved", "looks good", or similar confirmation
-7. **Implement**: Begin implementation only after ExitPlanMode approval is granted
-
-**DO NOT** call `ExitPlanMode` immediately after writing the plan. Always wait for explicit user confirmation first.
+- Plan mode workflow rules
 
 ## Repository Overview
 
