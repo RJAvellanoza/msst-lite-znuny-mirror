@@ -1,0 +1,82 @@
+format_version: 10
+environments:
+  znuny-dev:
+    pipelines:
+      - znuny-dev-deploy
+pipelines:
+  znuny-dev-deploy:
+    group: znuny-deploy
+    label_template: "DEV ##${COUNT}"
+    lock_behavior: unlockWhenFinished
+    display_order: -1
+    materials:
+      znuny:
+        git: ssh://git@bitbucket.mot-solutions.com:7999/msstlite/msst-lite-znuny.git
+        shallow_clone: false
+        auto_update: true
+        branch: develop-test
+        destination: znuny-source
+    stages:
+      - build:
+          fetch_materials: true
+          keep_artifacts: false
+          clean_workspace: true
+          approval:
+            type: success
+            allow_only_on_success: false
+          jobs:
+            build-package:
+              timeout: 0
+              artifacts:
+                - build:
+                    source: znuny-source/.build/MSSTLite-*.opm
+                    destination: package
+              tasks:
+                - exec:
+                    command: bash
+                    arguments:
+                      - znuny-source/gocd/pipeline.sh
+                      - build
+                    run_if: passed
+      - preflight:
+          fetch_materials: true
+          keep_artifacts: false
+          clean_workspace: false
+          approval:
+            type: success
+            allow_only_on_success: true
+          jobs:
+            validate-targets:
+              timeout: 0
+              tasks:
+                - exec:
+                    command: bash
+                    arguments:
+                      - znuny-source/gocd/pipeline.sh
+                      - preflight
+                      - dev
+                    run_if: passed
+      - deploy:
+          fetch_materials: true
+          keep_artifacts: false
+          clean_workspace: false
+          approval:
+            type: success
+            allow_only_on_success: true
+          jobs:
+            deploy-to-dev:
+              timeout: 0
+              tasks:
+                - fetch:
+                    pipeline: znuny-dev-deploy
+                    stage: build
+                    job: build-package
+                    source: package
+                    is_file: false
+                - exec:
+                    command: bash
+                    arguments:
+                      - znuny-source/gocd/pipeline.sh
+                      - deploy
+                      - dev
+                    run_if: passed

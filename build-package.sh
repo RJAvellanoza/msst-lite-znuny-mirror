@@ -1,20 +1,36 @@
 #!/bin/bash
+set -euo pipefail
 # Build Package Script for MSSTLite
-# Version: 2.1 (2025-07-11)
+# Version: 2.2 (2026-02-23)
 # 
 # This is the NEW build script that:
 # 1. Copies files from Custom/ to proper Kernel/ structure
 # 2. Builds the package using Znuny's Dev::Package::Build
 # 3. Automatically installs the package (unless --no-install is specified)
 #
-# Usage: ./build-package.sh [--no-install]
+# Usage: ./build-package.sh [--no-install] [--ci]
+#
+# Flags:
+#   --no-install  Skip auto-install after build (still prompts for unlisted files)
+#   --ci          CI/CD mode: skip interactive prompts AND skip auto-install.
+#                 Moves built OPM to .build/ directory for artifact collection.
 
-# Check for --no-install flag
+# Parse flags
 AUTO_INSTALL=true
-if [ "$1" = "--no-install" ]; then
-    AUTO_INSTALL=false
-    echo "Auto-install disabled"
-fi
+CI_MODE=false
+for arg in "$@"; do
+    case "$arg" in
+        --no-install)
+            AUTO_INSTALL=false
+            echo "Auto-install disabled"
+            ;;
+        --ci)
+            CI_MODE=true
+            AUTO_INSTALL=false
+            echo "CI/CD mode enabled (non-interactive, no auto-install)"
+            ;;
+    esac
+done
 
 echo "Preparing files for package build..."
 
@@ -194,7 +210,7 @@ while IFS= read -r line; do
             fi
         fi
     fi
-done < <(grep '<File' MSSTLite.sopm)
+done < <(grep '<File' MSSTLite.sopm || true)
 
 if [ ${#MISSING_FILES[@]} -gt 0 ]; then
     echo "✗ ERROR: The following files listed in SOPM are missing:"
@@ -221,7 +237,7 @@ while IFS= read -r line; do
         # Also add Custom/ version
         SOPM_FILES+=("Custom/$FILE_PATH")
     fi
-done < <(grep '<File' MSSTLite.sopm)
+done < <(grep '<File' MSSTLite.sopm || true)
 
 # Check all .pm, .tt, .xml, .yml files in Custom
 while IFS= read -r file; do
@@ -237,7 +253,7 @@ while IFS= read -r file; do
         fi
     done
     
-    if [ $found -eq 0 ]; then
+    if [ "$found" -eq 0 ]; then
         # Skip certain files that shouldn't be in package
         if [[ ! "$file" =~ (\.git|\.docs|test/|\.swp$|~$|\.bak$) ]]; then
             UNLISTED_FILES+=("$file")
@@ -256,7 +272,7 @@ while IFS= read -r file; do
         fi
     done
     
-    if [ $found -eq 0 ]; then
+    if [ "$found" -eq 0 ]; then
         UNLISTED_FILES+=("$file")
     fi
 done < <(find Custom/var -type f \( -name "*.yml" -o -name "*.pm" \) 2>/dev/null)
@@ -267,11 +283,15 @@ if [ ${#UNLISTED_FILES[@]} -gt 0 ]; then
         echo "  - $file"
     done
     echo ""
-    read -p "Continue with build anyway? (y/N) " -n 1 -r
-    echo ""
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        echo "Build aborted!"
-        exit 1
+    if [ "$CI_MODE" = true ]; then
+        echo "CI mode: continuing despite unlisted files"
+    else
+        read -p "Continue with build anyway? (y/N) " -n 1 -r || true
+        echo ""
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            echo "Build aborted!"
+            exit 1
+        fi
     fi
 else
     echo "✓ All Custom files are listed in SOPM"
@@ -296,50 +316,70 @@ ZNUNY_USER="otrs"
 if ! id "$ZNUNY_USER" &>/dev/null; then
     ZNUNY_USER="znuny"
     if ! id "$ZNUNY_USER" &>/dev/null; then
-        ZNUNY_USER=$(stat -c '%U' "$ZNUNY_PATH/bin/otrs.Console.pl" 2>/dev/null || echo "")
+        ZNUNY_USER=$(stat -c '%U' "$ZNUNY_HOME/bin/otrs.Console.pl" 2>/dev/null || echo "")
     fi
+fi
+
+if [ -z "$ZNUNY_USER" ]; then
+    echo "ERROR: Could not determine Znuny user (tried otrs, znuny, stat fallback)"
+    exit 1
 fi
 
 # Copy all files to Znuny installation directory
 echo ""
 echo "Copying files to Znuny installation..."
-su $ZNUNY_USER -c "cp -rp Kernel/* $ZNUNY_HOME/Kernel/"
+su "$ZNUNY_USER" -c "cp -rp Kernel/* ${ZNUNY_HOME}/Kernel/"
 if [ -d "var" ]; then
-    su $ZNUNY_USER -c "cp -rp var/* $ZNUNY_HOME/var/"
+    su "$ZNUNY_USER" -c "cp -rp var/* ${ZNUNY_HOME}/var/"
 fi
 if [ -d "scripts" ]; then
-    su $ZNUNY_USER -c "mkdir -p $ZNUNY_HOME/scripts && cp -rp scripts/* $ZNUNY_HOME/scripts/"
+    su "$ZNUNY_USER" -c "mkdir -p ${ZNUNY_HOME}/scripts && cp -rp scripts/* ${ZNUNY_HOME}/scripts/"
 fi
 
 # Get version from SOPM file
-CURRENT_VERSION=$(grep '<Version>' MSSTLite.sopm | sed 's/.*<Version>\(.*\)<\/Version>.*/\1/')
-
-# Parse version components - expecting format like 1.0.9 or 1.0.20
-IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
-
-# Handle 3-part version (1.0.9)
-if [ ${#VERSION_PARTS[@]} -eq 3 ]; then
-    MAJOR="${VERSION_PARTS[0]}"
-    MINOR="${VERSION_PARTS[1]}"
-    BUILD="${VERSION_PARTS[2]}"
-
-    # Increment build number
-    BUILD=$((BUILD + 1))
-
-    # Construct new version
-    NEW_VERSION="${MAJOR}.${MINOR}.${BUILD}"
-else
-    echo "ERROR: Unexpected version format: $CURRENT_VERSION"
-    echo "Expected format: MAJOR.MINOR.BUILD (e.g., 1.0.9)"
+CURRENT_VERSION=$(grep -m 1 '<Version>' MSSTLite.sopm | sed 's/.*<Version>\(.*\)<\/Version>.*/\1/') || {
+    echo "ERROR: Could not find <Version> tag in MSSTLite.sopm"
+    exit 1
+}
+if [ -z "$CURRENT_VERSION" ]; then
+    echo "ERROR: <Version> tag found but value is empty in MSSTLite.sopm"
     exit 1
 fi
 
-# Update version in SOPM file
-echo "Updating version from $CURRENT_VERSION to $NEW_VERSION..."
-sed -i "s|<Version>$CURRENT_VERSION</Version>|<Version>$NEW_VERSION</Version>|" MSSTLite.sopm
+if [ "$CI_MODE" = true ]; then
+    # CI mode: version was already stamped by pipeline.sh (MAJOR.MINOR.PIPELINE_COUNTER)
+    # Use it as-is — no auto-increment
+    VERSION=$CURRENT_VERSION
+    echo "CI mode: using pre-stamped version $VERSION"
+else
+    # Local mode: auto-increment the build number
+    # Parse version components - expecting format like 1.0.9 or 1.0.20
+    IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
 
-# Use the new version for the build
-VERSION=$NEW_VERSION
+    # Handle 3-part version (1.0.9)
+    if [ ${#VERSION_PARTS[@]} -eq 3 ]; then
+        MAJOR="${VERSION_PARTS[0]}"
+        MINOR="${VERSION_PARTS[1]}"
+        BUILD="${VERSION_PARTS[2]}"
+
+        # Increment build number
+        BUILD=$((BUILD + 1))
+
+        # Construct new version
+        NEW_VERSION="${MAJOR}.${MINOR}.${BUILD}"
+    else
+        echo "ERROR: Unexpected version format: $CURRENT_VERSION"
+        echo "Expected format: MAJOR.MINOR.BUILD (e.g., 1.0.9)"
+        exit 1
+    fi
+
+    # Update version in SOPM file
+    echo "Updating version from $CURRENT_VERSION to $NEW_VERSION..."
+    sed -i "s|<Version>$CURRENT_VERSION</Version>|<Version>$NEW_VERSION</Version>|" MSSTLite.sopm
+
+    # Use the new version for the build
+    VERSION=$NEW_VERSION
+fi
 
 echo ""
 echo "Building MSSTLite version $VERSION..."
@@ -348,19 +388,19 @@ echo "Building MSSTLite version $VERSION..."
 # Create temporary symlinks for files that need to be in Znuny's directory
 for file in Kernel/Config/Files/*.pm; do
     if [ -f "$file" ]; then
-        su $ZNUNY_USER -c "ln -sf $PWD/$file $ZNUNY_HOME/$file 2>/dev/null || true"
+        su "$ZNUNY_USER" -c "ln -sf ${PWD}/${file} ${ZNUNY_HOME}/${file} 2>/dev/null || true"
     fi
 done
 for file in Kernel/Config/Files/XML/*.xml; do
     if [ -f "$file" ]; then
-	su $ZNUNY_USER -c "ln -sf $PWD/$file $ZNUNY_HOME/$file 2>/dev/null || true"
+        su "$ZNUNY_USER" -c "ln -sf ${PWD}/${file} ${ZNUNY_HOME}/${file} 2>/dev/null || true"
     fi
 done
 
-su $ZNUNY_USER -c "$ZNUNY_HOME/bin/otrs.Console.pl Dev::Package::Build --module-directory $PWD $PWD/MSSTLite.sopm $PWD"
+su "$ZNUNY_USER" -c "${ZNUNY_HOME}/bin/otrs.Console.pl Dev::Package::Build --module-directory ${PWD} ${PWD}/MSSTLite.sopm ${PWD}"
 
 # Clean up symlinks
-find $ZNUNY_HOME/Kernel -type l -delete 2>/dev/null || true
+find "$ZNUNY_HOME/Kernel" -type l -delete 2>/dev/null || true
 
 if [ -f "MSSTLite-${VERSION}.opm" ]; then
     echo ""
@@ -368,7 +408,7 @@ if [ -f "MSSTLite-${VERSION}.opm" ]; then
     
     # Fix permissions after build
     echo "Fixing Znuny permissions..."
-    $ZNUNY_HOME/bin/otrs.SetPermissions.pl --otrs-user=$ZNUNY_USER --web-group=www-data
+    "${ZNUNY_HOME}/bin/otrs.SetPermissions.pl" --otrs-user="${ZNUNY_USER}" --web-group=www-data
     echo "✓ Permissions fixed"
     
     # Clean up temporary build directories
@@ -376,54 +416,57 @@ if [ -f "MSSTLite-${VERSION}.opm" ]; then
     rm -rf Kernel/ var/ bin/
     echo "✓ Cleanup complete"
     
+    # In CI mode, copy OPM to .build/ for artifact collection
+    if [ "$CI_MODE" = true ]; then
+        mkdir -p .build
+        cp "MSSTLite-${VERSION}.opm" .build/
+        echo "Artifact staged: .build/MSSTLite-${VERSION}.opm"
+    fi
+
     # Auto-install the package if not disabled
     if [ "$AUTO_INSTALL" = true ]; then
         echo ""
-        
+
         # Check if package is already installed
-        PACKAGE_STATUS=$(su znuny -c "cd $ZNUNY_HOME/bin && ./otrs.Console.pl Admin::Package::List" | grep -c "MSSTLite" || true)
-        
+        PACKAGE_STATUS=$(su "$ZNUNY_USER" -c "cd ${ZNUNY_HOME}/bin && ./otrs.Console.pl Admin::Package::List" | grep -c "MSSTLite" || true)
+
         if [ "$PACKAGE_STATUS" -gt 0 ]; then
             echo "Uninstalling existing package..."
             # Uninstall by package name (stored in database, not as file)
-            su znuny -c "cd $ZNUNY_HOME/bin && ./otrs.Console.pl Admin::Package::Uninstall MSSTLite"
-
-            if [ $? -eq 0 ]; then
+            if su "$ZNUNY_USER" -c "cd ${ZNUNY_HOME}/bin && ./otrs.Console.pl Admin::Package::Uninstall MSSTLite"; then
                 echo "✓ Existing package uninstalled successfully"
             else
                 echo "⚠ Warning: Failed to uninstall existing package, continuing anyway..."
             fi
             echo ""
         fi
-        
+
         echo "Installing package..."
-        su znuny -c "cd $ZNUNY_HOME/bin && ./otrs.Console.pl Admin::Package::Install $PWD/MSSTLite-${VERSION}.opm"
-        
-        if [ $? -eq 0 ]; then
+        if su "$ZNUNY_USER" -c "cd ${ZNUNY_HOME}/bin && ./otrs.Console.pl Admin::Package::Install ${PWD}/MSSTLite-${VERSION}.opm"; then
             echo ""
             echo "✓ Package installed successfully!"
         else
             echo ""
             echo "✗ Package installation failed!"
             echo "You can manually install with:"
-            echo "su znuny -c \"cd $ZNUNY_HOME/bin && ./otrs.Console.pl $INSTALL_CMD $PWD/MSSTLite-${VERSION}.opm\""
+            echo "su ${ZNUNY_USER} -c \"cd ${ZNUNY_HOME}/bin && ./otrs.Console.pl Admin::Package::Install ${PWD}/MSSTLite-${VERSION}.opm\""
             exit 1
         fi
     else
         echo ""
         echo "Package built but not installed (--no-install flag was used)"
-        
+
         # Check if package is already installed for manual install instructions
-        PACKAGE_STATUS=$(su znuny -c "cd $ZNUNY_HOME/bin && ./otrs.Console.pl Admin::Package::List" | grep -c "MSSTLite" || true)
-        
+        PACKAGE_STATUS=$(su "$ZNUNY_USER" -c "cd ${ZNUNY_HOME}/bin && ./otrs.Console.pl Admin::Package::List" | grep -c "MSSTLite" || true)
+
         if [ "$PACKAGE_STATUS" -gt 0 ]; then
             INSTALL_CMD="Admin::Package::Upgrade"
         else
             INSTALL_CMD="Admin::Package::Install"
         fi
-        
+
         echo "To install manually, run:"
-        echo "su znuny -c \"cd $ZNUNY_HOME/bin && ./otrs.Console.pl $INSTALL_CMD $PWD/MSSTLite-${VERSION}.opm\""
+        echo "su ${ZNUNY_USER} -c \"cd ${ZNUNY_HOME}/bin && ./otrs.Console.pl ${INSTALL_CMD} ${PWD}/MSSTLite-${VERSION}.opm\""
     fi
 else
     echo ""

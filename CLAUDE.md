@@ -35,6 +35,20 @@ Custom/
 ├── Kernel/Output/HTML/       # Templates, filters, widgets
 ├── Kernel/Config/Files/XML/  # SysConfig definitions
 └── Kernel/GenericInterface/  # REST/SOAP API handlers
+
+ansible/                       # Deployment automation
+├── ansible.cfg                # Ansible configuration
+├── inventory/dev.yaml         # DEV environment targets (CT 104)
+├── playbooks/
+│   ├── preflight.yaml         # Target reachability validation
+│   └── deploy-znuny.yaml     # Deployment orchestration with rollback
+└── roles/
+    ├── snapshot/              # Pre-deploy Proxmox snapshot
+    ├── znuny-deploy/          # OPM package installation
+    └── health-check/          # Post-deploy verification
+
+gocd/
+└── pipeline.sh                # GoCD entry point (build/preflight/deploy)
 ```
 
 ## Available Subagents
@@ -53,8 +67,11 @@ This repository has specialized subagents in `.claude/agents/`:
 # Syntax check Perl module
 perl -c Custom/Kernel/System/MyModule.pm
 
-# Build package
+# Build package (local, auto-increments version)
 ./build-package.sh
+
+# Build package (CI mode, no prompts, no install)
+./build-package.sh --ci
 
 # Development setup (creates symlinks)
 ./setup.sh
@@ -62,3 +79,20 @@ perl -c Custom/Kernel/System/MyModule.pm
 # Clear cache and rebuild config
 /opt/otrs/bin/otrs.Console.pl Maint::Config::Rebuild
 ```
+
+## CI/CD Pipeline
+
+GoCD pipeline (`znuny-dev-deploy`) with three stages:
+
+```
+build → preflight → deploy
+```
+
+- **Build**: `build-package.sh --ci` produces OPM artifact
+- **Preflight**: Ansible validates Proxmox host + container running
+- **Deploy**: Ansible pushes OPM → uninstall old → install new → rebuild config → health check
+- **Rollback**: Automatic Proxmox snapshot rollback on any failure
+
+Version in CI: `MAJOR.MINOR` from `MSSTLite.sopm` + GoCD pipeline counter as patch.
+
+See `ansible/README.md` for full deployment documentation.

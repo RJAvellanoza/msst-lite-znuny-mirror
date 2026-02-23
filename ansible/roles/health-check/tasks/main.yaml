@@ -1,0 +1,97 @@
+---
+# Post-deploy health check — verifies Znuny (apache2) is running,
+# the web interface responds, and the MSSTLite package is listed.
+#
+# Znuny redirects unauthenticated requests to the login page (HTTP 302),
+# so both 200 and 302 are accepted as healthy responses.
+#
+# Ansible references:
+#   command:  https://docs.ansible.com/ansible/latest/collections/ansible/builtin/command_module.html
+#   shell:    https://docs.ansible.com/ansible/latest/collections/ansible/builtin/shell_module.html
+#   assert:   https://docs.ansible.com/ansible/latest/collections/ansible/builtin/assert_module.html
+#   register: https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_variables.html#registering-variables
+#   loop:     https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_loops.html
+#   retries:  https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_loops.html#retrying-a-task-until-a-condition-is-met
+#
+- name: "[HEALTH] Verify znuny_users is set (requires znuny-deploy role)"
+  ansible.builtin.fail:
+    msg: >-
+      znuny_users is not defined. The health-check role must run after znuny-deploy,
+      which detects the Znuny user and home directory per container.
+  when: znuny_users is not defined or znuny_homes is not defined
+
+- name: "[HEALTH] Check apache2 service"
+  ansible.builtin.command: >
+    pct exec {{ item.ct_id }} -- systemctl is-active apache2
+  loop: "{{ znuny_containers }}"
+  loop_control:
+    label: "CT {{ item.ct_id }} ({{ item.ct_name }})"
+  register: service_check
+  changed_when: false
+
+- name: "[HEALTH] Verify apache2 is active"
+  ansible.builtin.assert:
+    that:
+      - item.stdout == "active"
+    fail_msg: >-
+      Apache2 on CT {{ item.item.ct_id }} is {{ item.stdout | default('unknown') }}.
+      FIX: SSH to Proxmox, run 'pct exec {{ item.item.ct_id }} -- systemctl status apache2'
+      and 'pct exec {{ item.item.ct_id }} -- journalctl -u apache2 --no-pager -n 50'.
+    success_msg: "CT {{ item.item.ct_id }}: apache2 is active"
+    quiet: true
+  loop: "{{ service_check.results }}"
+  loop_control:
+    label: "CT {{ item.item.ct_id }}"
+
+- name: "[HEALTH] Check Znuny web responds (up to 5 retries)"
+  ansible.builtin.shell: >
+    pct exec {{ item.ct_id }} -- curl -s -o /dev/null -w "%{http_code}"
+    --max-time 10 "{{ item.znuny_url }}"
+  loop: "{{ znuny_containers }}"
+  loop_control:
+    label: "CT {{ item.ct_id }} ({{ item.ct_name }})"
+  register: web_check
+  changed_when: false
+  retries: 5
+  delay: 10
+  until: web_check.stdout in ["200", "302"]
+
+- name: "[HEALTH] Verify web returned HTTP 200 or 302"
+  ansible.builtin.assert:
+    that:
+      - item.stdout in ["200", "302"]
+    fail_msg: >-
+      Znuny web on CT {{ item.item.ct_id }} returned HTTP {{ item.stdout | default('000') }} after 5 retries.
+      FIX: SSH to Proxmox, run 'pct exec {{ item.item.ct_id }} -- systemctl status apache2'
+      and 'pct exec {{ item.item.ct_id }} -- curl -v {{ item.item.znuny_url }}'.
+    success_msg: "CT {{ item.item.ct_id }}: Znuny web is healthy (HTTP {{ item.stdout }})"
+    quiet: true
+  loop: "{{ web_check.results }}"
+  loop_control:
+    label: "CT {{ item.item.ct_id }}"
+
+- name: "[HEALTH] Verify MSSTLite package is listed"
+  ansible.builtin.shell: >
+    pct exec {{ item.ct_id }} -- bash -c
+    "su {{ znuny_users[item.ct_id | string] }} -c
+    '{{ znuny_homes[item.ct_id | string] }}/bin/otrs.Console.pl Admin::Package::List'
+    | grep MSSTLite"
+  loop: "{{ znuny_containers }}"
+  loop_control:
+    label: "CT {{ item.ct_id }} ({{ item.ct_name }})"
+  register: pkg_list
+  changed_when: false
+
+- name: "[HEALTH] Confirm MSSTLite is installed"
+  ansible.builtin.assert:
+    that:
+      - "'MSSTLite' in item.stdout"
+    fail_msg: >-
+      MSSTLite package not found on CT {{ item.item.ct_id }}.
+      FIX: SSH to Proxmox, run 'pct exec {{ item.item.ct_id }} -- su {{ znuny_users[item.item.ct_id | string] }} -c
+      "{{ znuny_homes[item.item.ct_id | string] }}/bin/otrs.Console.pl Admin::Package::List"'.
+    success_msg: "CT {{ item.item.ct_id }}: MSSTLite is installed — {{ item.stdout | trim }}"
+    quiet: true
+  loop: "{{ pkg_list.results }}"
+  loop_control:
+    label: "CT {{ item.item.ct_id }}"

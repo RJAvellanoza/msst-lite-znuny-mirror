@@ -1,0 +1,121 @@
+---
+# Deploy Znuny MSSTLite OPM Package
+#
+# Orchestrates the full deployment: snapshot → deploy → health check.
+# Connects to Proxmox hosts and uses pct push/exec to reach containers.
+#
+# Usage:
+#   ARTIFACT_PATH=/path/to/MSSTLite-2.0.1.opm \
+#   DEPLOY_VERSION=2.0.1 \
+#   ansible-playbook -i inventory/dev.yaml playbooks/deploy-znuny.yaml
+#
+# Ansible references:
+#   Playbooks:    https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_intro.html
+#   Roles:        https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_reuse_roles.html
+#   fail:         https://docs.ansible.com/ansible/latest/collections/ansible/builtin/fail_module.html
+#   stat:         https://docs.ansible.com/ansible/latest/collections/ansible/builtin/stat_module.html
+#   debug:        https://docs.ansible.com/ansible/latest/collections/ansible/builtin/debug_module.html
+#   lookup:       https://docs.ansible.com/ansible/latest/plugins/lookup.html
+#   delegate_to:  https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_delegation.html
+#   pre_tasks:    https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_pre_post_tasks.html
+#   block/rescue: https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_blocks.html
+#   include_role: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/include_role_module.html
+#
+- name: Deploy Znuny MSSTLite OPM Package
+  hosts: proxmox_hosts
+  gather_facts: true
+  any_errors_fatal: true
+
+  vars:
+    artifact_path: "{{ lookup('env', 'ARTIFACT_PATH') }}"
+    deploy_version: "{{ lookup('env', 'DEPLOY_VERSION') | default('unknown', true) }}"
+    snapshot_name: "pre-deploy-{{ deploy_version | replace('.', '-') }}-{{ ansible_date_time.date | replace('-', '') }}"
+
+  pre_tasks:
+    - name: "[VALIDATE] Check ARTIFACT_PATH is set"
+      ansible.builtin.fail:
+        msg: >-
+          ARTIFACT_PATH environment variable is not set.
+          FIX: Set ARTIFACT_PATH in GoCD environment or pass it when running manually.
+      when: artifact_path == ""
+
+    - name: "[VALIDATE] Check artifact exists"
+      ansible.builtin.stat:
+        path: "{{ artifact_path }}"
+      register: artifact_stat
+      delegate_to: localhost
+      no_log: true
+
+    - name: "[VALIDATE] Fail if artifact not found"
+      ansible.builtin.fail:
+        msg: >-
+          Artifact not found at {{ artifact_path }}.
+          FIX: Check the build stage completed successfully and the artifact path is correct.
+      when: not artifact_stat.stat.exists
+
+    - name: "[DEPLOY] Starting deployment"
+      ansible.builtin.debug:
+        msg: >-
+          Version: {{ deploy_version }} |
+          Target: {{ ansible_host }} |
+          Containers: {{ znuny_containers | map(attribute='ct_id') | list | join(', ') }} |
+          Snapshot: {{ snapshot_name }}
+
+  tasks:
+    - block:
+        - name: "========== PHASE 1: SNAPSHOT =========="
+          ansible.builtin.debug:
+            msg: "Creating rollback snapshot for {{ znuny_containers | length }} container(s)"
+
+        - name: Apply snapshot role
+          ansible.builtin.include_role:
+            name: snapshot
+
+        - name: "========== PHASE 2: DEPLOY =========="
+          ansible.builtin.debug:
+            msg: "Deploying OPM package to {{ znuny_containers | length }} container(s)"
+
+        - name: Apply znuny-deploy role
+          ansible.builtin.include_role:
+            name: znuny-deploy
+
+        - name: "========== PHASE 3: HEALTH CHECK =========="
+          ansible.builtin.debug:
+            msg: "Verifying Znuny services on {{ znuny_containers | length }} container(s)"
+
+        - name: Apply health-check role
+          ansible.builtin.include_role:
+            name: health-check
+
+        - name: "========== DEPLOYMENT SUCCESSFUL =========="
+          ansible.builtin.debug:
+            msg: "MSSTLite {{ deploy_version }} deployed and verified on all containers"
+
+      rescue:
+        - name: "[ROLLBACK] Reverting containers to snapshot {{ snapshot_name }}"
+          ansible.builtin.command: >
+            pct rollback {{ item.ct_id }} {{ snapshot_name }}
+          loop: "{{ znuny_containers }}"
+          loop_control:
+            label: "CT {{ item.ct_id }} ({{ item.ct_name }})"
+          ignore_errors: true
+
+        - name: "[ROLLBACK] Restarting containers after rollback"
+          ansible.builtin.command: pct start {{ item.ct_id }}
+          loop: "{{ znuny_containers }}"
+          loop_control:
+            label: "CT {{ item.ct_id }}"
+          ignore_errors: true
+
+        - name: "[FAILED] Deployment failed — containers rolled back"
+          ansible.builtin.fail:
+            msg: >-
+              Deployment of MSSTLite {{ deploy_version }} FAILED.
+              Containers have been rolled back to snapshot {{ snapshot_name }}.
+              NEXT STEPS:
+              1. Check which phase failed above (SNAPSHOT / DEPLOY / HEALTH CHECK).
+              2. For SNAPSHOT failures: check Proxmox storage (pvesm status) and container state (pct list).
+              3. For DEPLOY failures: SSH to Proxmox ({{ ansible_host }}), run
+                 'pct exec <ct_id> -- su znuny -c "/opt/otrs/bin/otrs.Console.pl Admin::Package::List"' to check package state.
+              4. For HEALTH CHECK failures: SSH to Proxmox, run 'pct exec <ct_id> -- systemctl status apache2'.
+              5. Fix the issue and re-trigger the pipeline.

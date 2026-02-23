@@ -1,0 +1,40 @@
+---
+# Preflight — Validate deployment targets are reachable.
+#
+# Verifies that the Proxmox host is accessible via SSH and all
+# Znuny containers are in a running state before deployment.
+#
+# Usage:
+#   ansible-playbook -i inventory/dev.yaml playbooks/preflight.yaml
+#
+# Ansible references:
+#   Playbooks:  https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_intro.html
+#   ping:       https://docs.ansible.com/ansible/latest/collections/ansible/builtin/ping_module.html
+#   command:    https://docs.ansible.com/ansible/latest/collections/ansible/builtin/command_module.html
+#   debug:      https://docs.ansible.com/ansible/latest/collections/ansible/builtin/debug_module.html
+#   loop:       https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_loops.html
+#
+- name: Preflight - Validate deployment targets
+  hosts: proxmox_hosts
+  gather_facts: false
+  any_errors_fatal: true
+
+  tasks:
+    - name: Verify Proxmox host is reachable
+      ansible.builtin.ping:
+
+    - name: Verify Znuny containers are running
+      ansible.builtin.command: "pct status {{ item.ct_id }}"
+      loop: "{{ znuny_containers }}"
+      loop_control:
+        label: "CT {{ item.ct_id }} ({{ item.ct_name }})"
+      register: ct_status
+      changed_when: false
+      failed_when: "'running' not in ct_status.stdout"
+
+    - name: Display container status
+      ansible.builtin.debug:
+        msg: "CT {{ item.item.ct_id }} ({{ item.item.ct_name }}): {{ item.stdout }}"
+      loop: "{{ ct_status.results }}"
+      loop_control:
+        label: "CT {{ item.item.ct_id }}"
