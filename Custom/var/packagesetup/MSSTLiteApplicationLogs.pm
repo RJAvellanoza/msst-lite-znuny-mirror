@@ -168,17 +168,23 @@ sub _AddApplicationLogsConfigToConfigPm {
         return;
     }
 
-    # Check if ApplicationLogs configuration already exists
-    if ($ConfigContent =~ /ApplicationLogs::SyslogSSHHost/) {
+    my $HasSyslog  = ($ConfigContent =~ /ApplicationLogs::SyslogSSHHost/) ? 1 : 0;
+    my $HasZabbixDB = ($ConfigContent =~ /EventManagement::ZabbixDBHost/) ? 1 : 0;
+
+    # Nothing to do if both blocks already exist
+    if ($HasSyslog && $HasZabbixDB) {
         $LogObject->Log(
             Priority => 'notice',
-            Message  => "MSSTLiteApplicationLogs: ApplicationLogs configuration already exists in Config.pm",
+            Message  => "MSSTLiteApplicationLogs: All configuration already exists in Config.pm",
         );
         return 1;
     }
 
-    # Prepare the ApplicationLogs configuration block
-    my $ApplicationLogsConfig = q{
+    # Build the block(s) to insert
+    my $ConfigToInsert = '';
+
+    if (!$HasSyslog) {
+        $ConfigToInsert .= q{
     # ---------------------------------------------------- #
     # Application Logs Configuration                       #
     # ---------------------------------------------------- #
@@ -199,18 +205,43 @@ sub _AddApplicationLogsConfigToConfigPm {
 
     # Syslog Server Log Paths (comma-separated)
     $Self->{'ApplicationLogs::SyslogLogPaths'}     = '/var/log/syslog';
+};
+    }
+
+    if (!$HasZabbixDB) {
+        $ConfigToInsert .= q{
+    # ---------------------------------------------------- #
+    # Zabbix Database Configuration                        #
+    # ---------------------------------------------------- #
+    # Configure these settings for direct Zabbix database access
+
+    # Zabbix Database Host (PostgreSQL hostname or IP)
+    $Self->{'EventManagement::ZabbixDBHost'}       = '10.23.1.111';
+
+    # Zabbix Database Port
+    $Self->{'EventManagement::ZabbixDBPort'}       = '5432';
+
+    # Zabbix Database Name
+    $Self->{'EventManagement::ZabbixDBName'}       = 'zabbix';
+
+    # Zabbix Database Username
+    $Self->{'EventManagement::ZabbixDBUser'}       = 'postgres';
+
+    # Zabbix Database Password
+    $Self->{'EventManagement::ZabbixDBPassword'}   = 'NmIQrHMbXOvNNsZRIwdcmPMWx';
 
     # ---------------------------------------------------- #
-    # End of Application Logs Configuration                #
+    # End of Zabbix Database Configuration                 #
     # ---------------------------------------------------- #
 };
+    }
 
     # Find the position to insert (before "return 1;" in the Load subroutine)
     if ($ConfigContent =~ /(    # -{10,}.*?end of your own config.*?# -{10,}.*?)(    return 1;)/s) {
         my $BeforeReturn = $1;
         my $ReturnStatement = $2;
         my $InsertPoint = $BeforeReturn . $ReturnStatement;
-        my $NewContent = $ApplicationLogsConfig . "\n" . $InsertPoint;
+        my $NewContent = $ConfigToInsert . "\n" . $InsertPoint;
         $ConfigContent =~ s/\Q$InsertPoint\E/$NewContent/;
 
         # Write the updated content back to Config.pm
@@ -220,7 +251,7 @@ sub _AddApplicationLogsConfigToConfigPm {
 
             $LogObject->Log(
                 Priority => 'notice',
-                Message  => "MSSTLiteApplicationLogs: Successfully added ApplicationLogs configuration to Config.pm",
+                Message  => "MSSTLiteApplicationLogs: Successfully added configuration to Config.pm",
             );
 
             # Clear config cache to pick up new settings

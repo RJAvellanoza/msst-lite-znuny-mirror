@@ -454,7 +454,7 @@ should_process_system() {
 }
 
 # Excluded users (passwords will never be changed)
-EXCLUDED_USERS="lsmpappuser,ticketingusr"
+EXCLUDED_USERS="Admin,lsmpappuser,ticketingusr"
 
 # Get users from database
 get_database_users() {

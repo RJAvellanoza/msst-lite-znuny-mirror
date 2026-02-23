@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <otrs_package version="1.0">
     <Name>MSSTLite</Name>
-    <Version>2.0.389</Version>
+    <Version>2.0.411</Version>
     <Framework>6.5.x</Framework>
     <Framework>6.5.1</Framework>
     <Framework>6.5.2</Framework>
@@ -244,6 +244,12 @@
         <File Permission="644" Location="Kernel/Modules/AgentEventManagement.pm"/>
         <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentEventManagement.tt"/>
 
+        <!-- Event Management (Direct DB) Files -->
+        <File Permission="644" Location="Kernel/Config/Files/XML/EventManagementDB.xml"/>
+        <File Permission="644" Location="Kernel/System/ZabbixDB.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentEventManagementDB.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentEventManagementDB.tt"/>
+
         <!-- Application Logs UI Files -->
         <File Permission="644" Location="Kernel/System/ApplicationLogsConfig.pm"/>
         <File Permission="644" Location="Kernel/Modules/AdminApplicationLogs.pm"/>
@@ -341,6 +347,13 @@
         <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentEventReports.tt"/>
         <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentEventReportsList.tt"/>
         <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentEventReportsSidebar.tt"/>
+
+        <!-- Zabbix Event Reports (Direct DB Query) -->
+        <File Permission="644" Location="Kernel/Config/Files/XML/EventReportsZabbix.xml"/>
+        <File Permission="644" Location="Kernel/Modules/AgentEventReportsZabbix.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentEventReportsZabbix.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentEventReportsZabbixSidebar.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentEventReportsZabbixTopEntity.tt"/>
         <File Permission="644" Location="Kernel/System/IncidentKPIs.pm"/>
         <File Permission="644" Location="Kernel/Modules/AgentIncidentReports.pm"/>
         <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentIncidentReports.tt"/>

@@ -1,0 +1,663 @@
+# --
+# Copyright (C) 2025 MSST, https://msst.com/
+# --
+# This software comes with ABSOLUTELY NO WARRANTY.
+# --
+
+<div class="MainBox ARIARoleMain LayoutFixedSidebar SidebarFirst">
+
+    <!-- Side Navigation (Shared) -->
+    [% INCLUDE "AgentEventReportsZabbixSidebar.tt" ActiveSection = "TopEntity" %]
+
+    <div class="ContentColumn">
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Top 10 Impacted CI for Specific Period") | html %]</h2>
+            </div>
+            <div class="Content">
+
+                <!-- Tab Navigation -->
+                <style>
+                    #TopEntityTabs {
+                        list-style: none;
+                        margin: 0;
+                        padding: 0;
+                        border-bottom: 2px solid #ddd;
+                        display: flex;
+                        gap: 0;
+                    }
+                    #TopEntityTabs li {
+                        margin: 0;
+                        padding: 0;
+                    }
+                    #TopEntityTabs li a {
+                        display: block;
+                        padding: 12px 24px;
+                        background: #f5f5f5;
+                        border: 1px solid #ddd;
+                        border-bottom: none;
+                        margin-right: -1px;
+                        color: #333;
+                        text-decoration: none;
+                        font-weight: 500;
+                        transition: all 0.2s;
+                    }
+                    #TopEntityTabs li a:hover {
+                        background: #e9e9e9;
+                        color: #000;
+                    }
+                    #TopEntityTabs li.Active a {
+                        background: #fff;
+                        border-bottom: 2px solid #fff;
+                        color: #004085;
+                        font-weight: bold;
+                        position: relative;
+                        z-index: 2;
+                        margin-bottom: -2px;
+                    }
+                </style>
+                <ul id="TopEntityTabs">
+                    <li class="Active" data-tab="hourly">
+                        <a href="#hourly" onclick="switchTopEntityTab('hourly'); return false;">
+                            [% Translate("Hourly") | html %]
+                        </a>
+                    </li>
+                    <li data-tab="daily">
+                        <a href="#daily" onclick="switchTopEntityTab('daily'); return false;">
+                            [% Translate("Daily") | html %]
+                        </a>
+                    </li>
+                    <li data-tab="weekly">
+                        <a href="#weekly" onclick="switchTopEntityTab('weekly'); return false;">
+                            [% Translate("Weekly") | html %]
+                        </a>
+                    </li>
+                    <li data-tab="monthly">
+                        <a href="#monthly" onclick="switchTopEntityTab('monthly'); return false;">
+                            [% Translate("Monthly") | html %]
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Filter Container (per-tab filters) -->
+                <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 4px; border: 1px solid #dee2e6;">
+                    <!-- Hourly Filter (Date picker) -->
+                    <div id="teHourlyFilter" class="te-tab-filter" style="display: block;">
+                        <label style="font-weight: bold; margin-right: 10px;">[% Translate("Select Date") | html %]:</label>
+                        <input type="date" id="teHourlyDate" class="filter-input" style="padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px;">
+                        <button type="button" onclick="applyTopEntityFilter()" style="margin-left: 10px; padding: 6px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            [% Translate("Apply") | html %]
+                        </button>
+                    </div>
+
+                    <!-- Daily Filter (Week picker) -->
+                    <div id="teDailyFilter" class="te-tab-filter" style="display: none;">
+                        <label style="font-weight: bold; margin-right: 10px;">[% Translate("Select Week") | html %]:</label>
+                        <select id="teDailyWeek" class="filter-input" style="padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px;">
+                        </select>
+                        <button type="button" onclick="applyTopEntityFilter()" style="margin-left: 10px; padding: 6px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            [% Translate("Apply") | html %]
+                        </button>
+                    </div>
+
+                    <!-- Weekly Filter (Month picker) -->
+                    <div id="teWeeklyFilter" class="te-tab-filter" style="display: none;">
+                        <label style="font-weight: bold; margin-right: 10px;">[% Translate("Month") | html %]:</label>
+                        <select id="teWeeklyMonth" class="filter-input" style="padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; margin-right: 15px;">
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                        <label style="font-weight: bold; margin-right: 10px;">[% Translate("Year") | html %]:</label>
+                        <select id="teWeeklyYear" class="filter-input" style="padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px;">
+                        </select>
+                        <button type="button" onclick="applyTopEntityFilter()" style="margin-left: 10px; padding: 6px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            [% Translate("Apply") | html %]
+                        </button>
+                    </div>
+
+                    <!-- Monthly Filter (Start/End Month + Year) -->
+                    <div id="teMonthlyFilter" class="te-tab-filter" style="display: none;">
+                        <label style="font-weight: bold; margin-right: 10px;">[% Translate("Start Month") | html %]:</label>
+                        <select id="teMonthlyStartMonth" class="filter-input" style="padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; margin-right: 15px;">
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                        <label style="font-weight: bold; margin-right: 10px;">[% Translate("End Month") | html %]:</label>
+                        <select id="teMonthlyEndMonth" class="filter-input" style="padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; margin-right: 15px;">
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12" selected>December</option>
+                        </select>
+                        <label style="font-weight: bold; margin-right: 10px;">[% Translate("Year") | html %]:</label>
+                        <select id="teMonthlyYear" class="filter-input" style="padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px;">
+                        </select>
+                        <button type="button" onclick="applyTopEntityFilter()" style="margin-left: 10px; padding: 6px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            [% Translate("Apply") | html %]
+                        </button>
+                    </div>
+
+                    <span id="teFilterLoadingIndicator" style="margin-left: 10px; display: none;">
+                        <i class="fa fa-spinner fa-spin"></i> [% Translate("Loading...") | html %]
+                    </span>
+                </div>
+
+                <!-- Filter Description -->
+                <div id="teFilterDescription" style="margin-bottom: 15px; font-size: 14px; color: #555;"></div>
+
+                <!-- Chart Display Area -->
+                <div id="teChartDisplayArea" style="display: flex; gap: 20px;">
+                    <!-- Left: Data Table -->
+                    <div style="flex: 0 0 auto; min-width: 400px;">
+                        <h3 id="teChartTitle" style="background: #004085; color: white; padding: 10px; margin: 0; border-radius: 4px 4px 0 0;">
+                            Top 10 Impacted CI
+                        </h3>
+                        <div id="teDataTableContainer" style="overflow-x: auto;">
+                            <!-- Table will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Center: Grouped Bar Chart -->
+                    <div style="flex: 1; border: 1px solid #dee2e6; padding: 20px; border-radius: 4px; background: white;">
+                        <canvas id="topEntityChart" style="max-height: 450px;"></canvas>
+                    </div>
+
+                    <!-- Right: Color Code Legend -->
+                    <div style="flex: 0 0 180px;">
+                        <h4 style="margin-top: 0;">[% Translate("Legend") | html %]</h4>
+                        <div style="padding: 10px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px;">
+                            <div style="margin-bottom: 10px;">
+                                <div style="display: inline-block; width: 20px; height: 20px; background: #4caf50; margin-right: 8px; vertical-align: middle;"></div>
+                                <span>Incident Created</span>
+                            </div>
+                            <div>
+                                <div style="display: inline-block; width: 20px; height: 20px; background: #2196F3; margin-right: 8px; vertical-align: middle;"></div>
+                                <span>No</span>
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px;">
+                            <p style="font-size: 12px; color: #666; margin: 0;">
+                                <strong>Incident Created:</strong> Zabbix events with a linked Znuny ticket.<br><br>
+                                <strong>No:</strong> Zabbix events with no linked Znuny ticket.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js Library (Local) -->
+<script src="[% Config("Frontend::WebPath") %]js/Chart.min.js"></script>
+
+<script type="text/javascript">
+(function() {
+    'use strict';
+
+    let currentTab = 'hourly';
+    let chartInstance = null;
+
+    function waitForChart() {
+        if (typeof Chart !== 'undefined') {
+            init();
+        } else {
+            setTimeout(waitForChart, 100);
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', waitForChart);
+    } else {
+        waitForChart();
+    }
+
+    function init() {
+        populateYearDropdowns();
+        populateWeekDropdown();
+        setDefaultDate();
+        loadTopEntityData('hourly');
+    }
+
+    // Export functions to global scope
+    window.switchTopEntityTab = function(tabName) {
+        const tabs = document.querySelectorAll('#TopEntityTabs li');
+        tabs.forEach(tab => {
+            if (tab.getAttribute('data-tab') === tabName) {
+                tab.classList.add('Active');
+            } else {
+                tab.classList.remove('Active');
+            }
+        });
+
+        document.querySelectorAll('.te-tab-filter').forEach(filter => {
+            filter.style.display = 'none';
+        });
+
+        const filterMap = {
+            'hourly': 'teHourlyFilter',
+            'daily': 'teDailyFilter',
+            'weekly': 'teWeeklyFilter',
+            'monthly': 'teMonthlyFilter'
+        };
+        const activeFilter = document.getElementById(filterMap[tabName]);
+        if (activeFilter) {
+            activeFilter.style.display = 'block';
+        }
+
+        currentTab = tabName;
+        loadTopEntityData(tabName);
+        return false;
+    };
+
+    window.applyTopEntityFilter = function() {
+        loadTopEntityData(currentTab);
+    };
+
+    function populateYearDropdowns() {
+        const currentYear = new Date().getFullYear();
+        const years = [];
+        for (let i = 0; i < 3; i++) {
+            years.push(currentYear - i);
+        }
+
+        const yearDropdowns = ['teWeeklyYear', 'teMonthlyYear'];
+        yearDropdowns.forEach(dropdownId => {
+            const select = document.getElementById(dropdownId);
+            if (select) {
+                select.innerHTML = '';
+                years.forEach(year => {
+                    const option = document.createElement('option');
+                    option.value = year;
+                    option.textContent = year;
+                    if (year === currentYear) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            }
+        });
+    }
+
+    function populateWeekDropdown() {
+        const select = document.getElementById('teDailyWeek');
+        if (!select) return;
+
+        const currentDate = new Date();
+        select.innerHTML = '';
+
+        for (let i = 0; i < 12; i++) {
+            const weekStart = new Date(currentDate);
+            weekStart.setDate(currentDate.getDate() - (i * 7));
+
+            const dayOfWeek = weekStart.getDay();
+            const daysToMonday = (dayOfWeek === 0 ? 6 : dayOfWeek - 1);
+            const monday = new Date(weekStart);
+            monday.setDate(weekStart.getDate() - daysToMonday);
+
+            const weekNum = getISOWeek(monday);
+            const year = monday.getFullYear();
+
+            const option = document.createElement('option');
+            option.value = `${year}-W${String(weekNum).padStart(2, '0')}`;
+            option.textContent = `Week ${String(weekNum).padStart(2, '0')} (${formatDate(monday)})`;
+
+            if (i === 0) {
+                option.selected = true;
+            }
+
+            select.appendChild(option);
+        }
+    }
+
+    function getISOWeek(date) {
+        const d = new Date(date);
+        d.setHours(0, 0, 0, 0);
+        d.setDate(d.getDate() + 4 - (d.getDay() || 7));
+        const yearStart = new Date(d.getFullYear(), 0, 1);
+        const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+        return weekNo;
+    }
+
+    function formatDate(date) {
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+    }
+
+    function setDefaultDate() {
+        const dateInput = document.getElementById('teHourlyDate');
+        if (dateInput) {
+            const today = new Date();
+            const dateString = today.toISOString().split('T')[0];
+            dateInput.value = dateString;
+        }
+
+        const monthSelect = document.getElementById('teWeeklyMonth');
+        if (monthSelect) {
+            monthSelect.value = new Date().getMonth() + 1;
+        }
+
+        const startMonthSelect = document.getElementById('teMonthlyStartMonth');
+        if (startMonthSelect) {
+            startMonthSelect.value = 1;
+        }
+        const endMonthSelect = document.getElementById('teMonthlyEndMonth');
+        if (endMonthSelect) {
+            endMonthSelect.value = new Date().getMonth() + 1;
+        }
+    }
+
+    function loadTopEntityData(tabName) {
+        const loadingIndicator = document.getElementById('teFilterLoadingIndicator');
+        if (loadingIndicator) {
+            loadingIndicator.style.display = 'inline';
+        }
+
+        const params = {
+            Action: 'AgentEventReportsZabbix',
+            Subaction: 'GetTopEntityTabData',
+            Tab: tabName
+        };
+
+        switch(tabName) {
+            case 'hourly':
+                params.Date = document.getElementById('teHourlyDate').value;
+                break;
+            case 'daily':
+                params.Week = document.getElementById('teDailyWeek').value;
+                break;
+            case 'weekly':
+                const month = document.getElementById('teWeeklyMonth').value;
+                const weeklyYear = document.getElementById('teWeeklyYear').value;
+                params.Month = weeklyYear + '-' + String(month).padStart(2, '0');
+                break;
+            case 'monthly':
+                params.StartMonth = document.getElementById('teMonthlyStartMonth').value;
+                params.EndMonth = document.getElementById('teMonthlyEndMonth').value;
+                params.StartYear = document.getElementById('teMonthlyYear').value;
+                params.EndYear = document.getElementById('teMonthlyYear').value;
+                break;
+        }
+
+        $.ajax({
+            url: '[% Env("Baselink") %]',
+            type: 'POST',
+            data: params,
+            dataType: 'json',
+            success: function(data) {
+                if (data.Success) {
+                    renderTopEntityAll(data.Data, tabName);
+                } else {
+                    alert('Error loading data: ' + (data.ErrorMessage || 'Unknown error'));
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('Error loading data. Status: ' + status + ' Error: ' + error);
+            },
+            complete: function() {
+                if (loadingIndicator) {
+                    loadingIndicator.style.display = 'none';
+                }
+            }
+        });
+    }
+
+    function renderTopEntityAll(data, tabName) {
+        const titleMap = {
+            'hourly': 'Top 10 Impacted CI [Hourly]',
+            'daily': 'Top 10 Impacted CI [Daily]',
+            'weekly': 'Top 10 Impacted CI [Weekly]',
+            'monthly': 'Top 10 Impacted CI [Monthly]'
+        };
+        document.getElementById('teChartTitle').textContent = titleMap[tabName];
+
+        // Show filter description
+        const descEl = document.getElementById('teFilterDescription');
+        if (descEl && data.FilterDescription) {
+            descEl.textContent = data.FilterDescription;
+        }
+
+        renderTopEntityTable(data);
+        renderTopEntityChart(data);
+    }
+
+    const tabularBaseUrl = '[% Env("Baselink") %]Action=AgentEventManagementDB';
+
+    function buildEntityLink(count, entity, hasTicket, startEpoch, endEpoch) {
+        if (!count || count === 0) return '0';
+        let params = ';StartEpoch=' + startEpoch + ';EndEpoch=' + endEpoch;
+        if (hasTicket !== '') {
+            params += ';HasTicket=' + hasTicket;
+        }
+        if (entity) {
+            params += ';EntityFilter=' + encodeURIComponent(entity);
+        }
+        return '<a href="' + tabularBaseUrl + params + '" style="color: #007bff; text-decoration: none;" onmouseover="this.style.textDecoration=\'underline\'" onmouseout="this.style.textDecoration=\'none\'">' + count + '</a>';
+    }
+
+    function renderTopEntityTable(data) {
+        const container = document.getElementById('teDataTableContainer');
+        if (!container) return;
+
+        const startEpoch = data.StartEpoch || 0;
+        const endEpoch = data.EndEpoch || 0;
+
+        let html = '<table class="DataTable" style="width: 100%; border-collapse: collapse;">';
+        html += '<thead>';
+        html += '<tr style="background: #e3e8f4;">';
+        html += '<th style="padding: 8px; text-align: left; border: 1px solid #dee2e6;">Node (Entity)</th>';
+        html += '<th style="padding: 8px; text-align: center; border: 1px solid #dee2e6; background: #4caf50; color: white;">Incident Created</th>';
+        html += '<th style="padding: 8px; text-align: center; border: 1px solid #dee2e6; background: #2196F3; color: white;">No</th>';
+        html += '<th style="padding: 8px; text-align: center; border: 1px solid #dee2e6; background: #555; color: white;">Grand Total</th>';
+        html += '</tr>';
+        html += '</thead>';
+        html += '<tbody>';
+
+        if (data.Categories && data.Categories.length > 0) {
+            data.Categories.forEach((entity, idx) => {
+                const breakdown = data.BreakdownData[entity] || {};
+                const withTicket = breakdown.WithTicket || 0;
+                const withoutTicket = breakdown.WithoutTicket || 0;
+                const total = data.CategoryTotals[entity] || 0;
+
+                html += '<tr>';
+                html += `<td style="padding: 8px; border: 1px solid #dee2e6; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${entity}">${entity}</td>`;
+                html += `<td style="padding: 8px; text-align: center; border: 1px solid #dee2e6;">${buildEntityLink(withTicket, entity, '1', startEpoch, endEpoch)}</td>`;
+                html += `<td style="padding: 8px; text-align: center; border: 1px solid #dee2e6;">${buildEntityLink(withoutTicket, entity, '0', startEpoch, endEpoch)}</td>`;
+                html += `<td style="padding: 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold;">${buildEntityLink(total, entity, '', startEpoch, endEpoch)}</td>`;
+                html += '</tr>';
+            });
+        } else {
+            html += '<tr><td colspan="4" style="padding: 20px; text-align: center; border: 1px solid #dee2e6; color: #999;">No data available for the selected period.</td></tr>';
+        }
+
+        // Grand Total row
+        html += '<tr style="font-weight: bold; background: #d3d3d3;">';
+        html += '<td style="padding: 8px; border: 1px solid #dee2e6;">Grand Total</td>';
+        html += `<td style="padding: 8px; text-align: center; border: 1px solid #dee2e6;">${data.GrandTotal ? data.GrandTotal.WithTicket : 0}</td>`;
+        html += `<td style="padding: 8px; text-align: center; border: 1px solid #dee2e6;">${data.GrandTotal ? data.GrandTotal.WithoutTicket : 0}</td>`;
+        html += `<td style="padding: 8px; text-align: center; border: 1px solid #dee2e6;">${data.GrandTotal ? data.GrandTotal.Total : 0}</td>`;
+        html += '</tr>';
+
+        html += '</tbody>';
+        html += '</table>';
+
+        container.innerHTML = html;
+    }
+
+    function renderTopEntityChart(data) {
+        const canvas = document.getElementById('topEntityChart');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+
+        const categories = data.Categories || [];
+        const withTicketData = categories.map(entity => {
+            const bd = data.BreakdownData[entity] || {};
+            return bd.WithTicket || 0;
+        });
+        const withoutTicketData = categories.map(entity => {
+            const bd = data.BreakdownData[entity] || {};
+            return bd.WithoutTicket || 0;
+        });
+
+        // Truncate long labels for x-axis
+        const labels = categories.map(name => {
+            return name.length > 18 ? name.substring(0, 15) + '...' : name;
+        });
+
+        // Totals for each entity (for label on top of stacked bar)
+        const totals = categories.map((entity, idx) => withTicketData[idx] + withoutTicketData[idx]);
+
+        // Plugin to display segment values inside bars and total on top
+        const stackedLabelPlugin = {
+            id: 'stackedLabel',
+            afterDatasetsDraw: function(chart) {
+                const ctx = chart.ctx;
+                chart.data.datasets.forEach((dataset, datasetIndex) => {
+                    const meta = chart.getDatasetMeta(datasetIndex);
+                    if (!meta.hidden) {
+                        meta.data.forEach((bar, index) => {
+                            const value = dataset.data[index];
+                            if (value > 0) {
+                                // Value inside the segment
+                                const barHeight = bar.height || 0;
+                                const centerY = bar.y + (barHeight / 2);
+                                ctx.fillStyle = '#fff';
+                                ctx.font = 'bold 11px Arial';
+                                ctx.textAlign = 'center';
+                                ctx.textBaseline = 'middle';
+                                ctx.fillText(value, bar.x, centerY);
+                            }
+
+                            // Total on top of the stacked bar (only for the top dataset - "No")
+                            if (dataset.label === 'No') {
+                                const total = totals[index];
+                                if (total > 0) {
+                                    ctx.fillStyle = '#000';
+                                    ctx.font = 'bold 12px Arial';
+                                    ctx.textAlign = 'center';
+                                    ctx.textBaseline = 'bottom';
+                                    ctx.fillText(total, bar.x, bar.y - 5);
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        };
+
+        chartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Incident Created',
+                        data: withTicketData,
+                        backgroundColor: '#4caf50',
+                        borderColor: '#388e3c',
+                        borderWidth: 1,
+                        stack: 'entity'
+                    },
+                    {
+                        label: 'No',
+                        data: withoutTicketData,
+                        backgroundColor: '#2196F3',
+                        borderColor: '#1976D2',
+                        borderWidth: 1,
+                        stack: 'entity'
+                    }
+                ]
+            },
+            plugins: [stackedLabelPlugin],
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                layout: {
+                    padding: {
+                        top: 30
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                const idx = tooltipItems[0].dataIndex;
+                                return categories[idx] || '';
+                            },
+                            footer: function(tooltipItems) {
+                                let sum = 0;
+                                tooltipItems.forEach(function(tooltipItem) {
+                                    sum += tooltipItem.parsed.y;
+                                });
+                                return 'Total: ' + sum;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                        title: {
+                            display: true,
+                            text: 'Entity'
+                        },
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 0
+                        }
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Event Count'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+})();
+</script>
