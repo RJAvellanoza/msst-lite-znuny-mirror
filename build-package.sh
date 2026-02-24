@@ -325,18 +325,16 @@ if [ -z "$ZNUNY_USER" ]; then
     exit 1
 fi
 
-# Clean dangling symlinks from previous builds
-find "${ZNUNY_HOME}/Kernel" -type l ! -exec test -e {} \; -delete 2>/dev/null || true
-
 # Copy all files to Znuny installation directory
+# --remove-destination handles dangling symlinks from previous interrupted builds
 echo ""
 echo "Copying files to Znuny installation..."
-su "$ZNUNY_USER" -c "cp -rp Kernel/* ${ZNUNY_HOME}/Kernel/"
+su "$ZNUNY_USER" -c "cp -rp --remove-destination Kernel/* ${ZNUNY_HOME}/Kernel/"
 if [ -d "var" ]; then
-    su "$ZNUNY_USER" -c "cp -rp var/* ${ZNUNY_HOME}/var/"
+    su "$ZNUNY_USER" -c "cp -rp --remove-destination var/* ${ZNUNY_HOME}/var/"
 fi
 if [ -d "scripts" ]; then
-    su "$ZNUNY_USER" -c "mkdir -p ${ZNUNY_HOME}/scripts && cp -rp scripts/* ${ZNUNY_HOME}/scripts/"
+    su "$ZNUNY_USER" -c "mkdir -p ${ZNUNY_HOME}/scripts && cp -rp --remove-destination scripts/* ${ZNUNY_HOME}/scripts/"
 fi
 
 # Get version from SOPM file
