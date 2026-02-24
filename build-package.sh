@@ -418,10 +418,12 @@ if [ -f "MSSTLite-${VERSION}.opm" ]; then
     echo ""
     echo "✓ Package built successfully: MSSTLite-${VERSION}.opm"
     
-    # Fix permissions after build
-    echo "Fixing Znuny permissions..."
-    "${ZNUNY_HOME}/bin/otrs.SetPermissions.pl" --otrs-user="${ZNUNY_USER}" --web-group=www-data
-    echo "✓ Permissions fixed"
+    # Fix permissions after build (skip in CI — deploy stage handles target permissions)
+    if [ "$CI_MODE" != true ]; then
+        echo "Fixing Znuny permissions..."
+        "${ZNUNY_HOME}/bin/otrs.SetPermissions.pl" --otrs-user="${ZNUNY_USER}" --web-group=www-data
+        echo "✓ Permissions fixed"
+    fi
     
     # Clean up temporary build directories
     echo "Cleaning up temporary files..."
