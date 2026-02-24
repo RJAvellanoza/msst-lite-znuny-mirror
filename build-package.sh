@@ -398,7 +398,18 @@ for file in Kernel/Config/Files/XML/*.xml; do
     fi
 done
 
+# In CI mode, the workspace is owned by the go user but Dev::Package::Build
+# runs as the otrs user — grant write access for the build output
+if [ "$CI_MODE" = true ]; then
+    chmod o+w "${PWD}"
+fi
+
 su "$ZNUNY_USER" -c "${ZNUNY_HOME}/bin/otrs.Console.pl Dev::Package::Build --module-directory ${PWD} ${PWD}/MSSTLite.sopm ${PWD}"
+
+# Restore workspace permissions
+if [ "$CI_MODE" = true ]; then
+    chmod o-w "${PWD}"
+fi
 
 # Clean up symlinks
 find "$ZNUNY_HOME/Kernel" -type l -delete 2>/dev/null || true
