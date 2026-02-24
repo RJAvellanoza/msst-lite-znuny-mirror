@@ -111,7 +111,7 @@
     <div class="ContentColumn">
         <div class="WidgetSimple">
             <div class="Header">
-                <h2>[% Translate("Zabbix Problems (Direct DB)") | html %] <span id="ProblemCount" style="font-weight: normal !important; color: #aaa !important;"></span></h2>
+                <h2>[% Translate("Event Management Breakdown") | html %] <span id="ProblemCount" style="font-weight: normal !important; color: #aaa !important;"></span></h2>
             </div>
             <div class="Content">
                 <!-- Entity Filter Banner -->
@@ -142,24 +142,21 @@
                     <table class="DataTable" id="ProblemsTable" style="width: 100%; font-size: 10px;">
                         <thead>
                             <tr>
-                                <!-- LSMP Report Format - 17 columns -->
+                                <!-- LSMP Report Format - 14 columns -->
                                 <th style="min-width: 70px;">[% Translate("Alarm ID") | html %]</th>
                                 <th style="min-width: 150px;">[% Translate("Event Occur Time") | html %]</th>
-                                <th style="min-width: 50px; text-align: center;">[% Translate("Severity") | html %]</th>
-                                <th style="min-width: 80px;">[% Translate("Severity Name") | html %]</th>
-                                <th style="min-width: 70px;">[% Translate("Trigger ID") | html %]</th>
-                                <th style="min-width: 70px;">[% Translate("Event Priority") | html %]</th>
-                                <th style="min-width: 70px;">[% Translate("Item ID") | html %]</th>
+                                <th style="min-width: 100px;">[% Translate("Host") | html %]</th>
+                                <th style="min-width: 150px;">[% Translate("Entity (Impacted CI)") | html %]</th>
                                 <th style="min-width: 120px;">[% Translate("Event ID") | html %]</th>
-                                <th style="min-width: 70px;">[% Translate("Host ID") | html %]</th>
+                                <th style="min-width: 200px;">[% Translate("Message") | html %]</th>
+                                <th style="min-width: 70px;">[% Translate("Event Priority") | html %]</th>
                                 <th style="min-width: 120px;">[% Translate("Host Name") | html %]</th>
                                 <th style="min-width: 100px;">[% Translate("IP Address") | html %]</th>
                                 <th style="min-width: 100px;">[% Translate("Host Groups") | html %]</th>
                                 <th style="min-width: 120px;">[% Translate("Incident Number") | html %]</th>
-                                <th style="min-width: 100px;">[% Translate("Event ID 2") | html %]</th>
-                                <th style="min-width: 150px;">[% Translate("Entity (Impacted CI)") | html %]</th>
-                                <th style="min-width: 100px;">[% Translate("Host") | html %]</th>
-                                <th style="min-width: 200px;">[% Translate("Message") | html %]</th>
+                                <th style="min-width: 70px;">[% Translate("Trigger ID") | html %]</th>
+                                <th style="min-width: 70px;">[% Translate("Item ID") | html %]</th>
+                                <th style="min-width: 70px;">[% Translate("Host ID") | html %]</th>
                             </tr>
                         </thead>
                         <tbody id="ProblemsTableBody">
@@ -323,25 +320,22 @@
             var rowClass = isOpen ? 'open-problem' : '';
 
             html += '<tr class="' + rowClass + '">';
-            // LSMP Report Format - 17 columns
+            // LSMP Report Format - 14 columns
+            var entity = p.snmp_component || p.host_name || '';
             html += '<td>' + escapeHtml(p.problem_eventid) + '</td>';                              // Alarm ID
             html += '<td>' + formatTimestamp(p.problem_start_time) + '</td>';                      // Event Occur Time
-            html += '<td style="text-align: center;">' + getSeverityBadge(p.problem_severity) + '</td>'; // Severity
-            html += '<td>' + escapeHtml(p.problem_severity_name) + '</td>';                        // Severity Name
-            html += '<td>' + escapeHtml(p.trigger_triggerid) + '</td>';                            // Trigger ID
-            html += '<td>' + escapeHtml(p.trigger_priority) + '</td>';                             // Event Priority
-            html += '<td>' + escapeHtml(p.item_itemid) + '</td>';                                  // Item ID
+            html += '<td>' + escapeHtml(p.snmp_device) + '</td>';                                  // Host
+            html += '<td class="truncate" title="' + escapeHtml(entity) + '">' + escapeHtml(entity) + '</td>'; // Entity (Impacted CI)
             html += '<td class="truncate" title="' + escapeHtml(p.item_name) + '">' + escapeHtml(p.item_name) + '</td>'; // Event ID (Item Name)
-            html += '<td>' + escapeHtml(p.host_hostid) + '</td>';                                  // Host ID
+            html += '<td class="truncate" title="' + escapeHtml(p.snmp_summary_message) + '">' + escapeHtml(p.snmp_summary_message) + '</td>'; // Message
+            html += '<td>' + escapeHtml(p.trigger_priority) + '</td>';                             // Event Priority
             html += '<td class="truncate" title="' + escapeHtml(p.host_name) + '">' + escapeHtml(p.host_name) + '</td>'; // Host Name
             html += '<td>' + escapeHtml(p.interface_ip) + '</td>';                                 // IP Address
             html += '<td class="truncate" title="' + escapeHtml(p.host_groups) + '">' + escapeHtml(p.host_groups) + '</td>'; // Host Groups
             html += '<td>' + escapeHtml(p.znuny_ticket_nr) + '</td>';                              // Incident Number
-            html += '<td>' + escapeHtml(p.snmp_item_event_id) + '</td>';                           // Event ID 2
-            var entity = p.snmp_component || p.host_name || '';
-            html += '<td class="truncate" title="' + escapeHtml(entity) + '">' + escapeHtml(entity) + '</td>'; // Entity (Impacted CI)
-            html += '<td>' + escapeHtml(p.snmp_device) + '</td>';                                  // Host
-            html += '<td class="truncate" title="' + escapeHtml(p.snmp_summary_message) + '">' + escapeHtml(p.snmp_summary_message) + '</td>'; // Message
+            html += '<td>' + escapeHtml(p.trigger_triggerid) + '</td>';                            // Trigger ID
+            html += '<td>' + escapeHtml(p.item_itemid) + '</td>';                                  // Item ID
+            html += '<td>' + escapeHtml(p.host_hostid) + '</td>';                                  // Host ID
             html += '</tr>';
         });
 
@@ -429,14 +423,13 @@
             return;
         }
 
-        // Build CSV - LSMP Report Format (17 columns)
+        // Build CSV - LSMP Report Format (14 columns)
         var headers = [
-            'Alarm ID', 'Event Occur Time', 'Severity', 'Severity Name',
-            'Trigger ID', 'Event Priority',
-            'Item ID', 'Event ID',
-            'Host ID', 'Host Name', 'IP Address', 'Host Groups',
+            'Alarm ID', 'Event Occur Time', 'Host', 'Entity (Impacted CI)', 'Event ID', 'Message',
+            'Event Priority',
+            'Host Name', 'IP Address', 'Host Groups',
             'Incident Number',
-            'Event ID 2', 'Entity (Impacted CI)', 'Host', 'Message'
+            'Trigger ID', 'Item ID', 'Host ID'
         ];
 
         var csv = headers.join(',') + '\n';
@@ -444,12 +437,11 @@
         problems.forEach(function(p) {
             var entity = p.snmp_component || p.host_name || '';
             var row = [
-                p.problem_eventid, p.problem_start_time, p.problem_severity, p.problem_severity_name,
-                p.trigger_triggerid, p.trigger_priority,
-                p.item_itemid, p.item_name,
-                p.host_hostid, p.host_name, p.interface_ip, p.host_groups,
+                p.problem_eventid, p.problem_start_time, p.snmp_device, entity, p.item_name, p.snmp_summary_message,
+                p.trigger_priority,
+                p.host_name, p.interface_ip, p.host_groups,
                 p.znuny_ticket_nr,
-                p.snmp_item_event_id, entity, p.snmp_device, p.snmp_summary_message
+                p.trigger_triggerid, p.item_itemid, p.host_hostid
             ].map(function(val) {
                 if (val === null || val === undefined) return '';
                 val = String(val).replace(/"/g, '""');

@@ -474,7 +474,7 @@
         let html = '<table class="DataTable" style="width: 100%; border-collapse: collapse;">';
         html += '<thead>';
         html += '<tr style="background: #e3e8f4;">';
-        html += '<th style="padding: 8px; text-align: left; border: 1px solid #dee2e6;">Node (Entity)</th>';
+        html += '<th style="padding: 8px; text-align: left; border: 1px solid #dee2e6;">Entity (Impacted CI)</th>';
         html += '<th style="padding: 8px; text-align: center; border: 1px solid #dee2e6; background: #4caf50; color: white;">Incident Created</th>';
         html += '<th style="padding: 8px; text-align: center; border: 1px solid #dee2e6; background: #2196F3; color: white;">No</th>';
         html += '<th style="padding: 8px; text-align: center; border: 1px solid #dee2e6; background: #555; color: white;">Grand Total</th>';
