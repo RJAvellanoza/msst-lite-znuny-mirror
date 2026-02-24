@@ -17,7 +17,7 @@ pipelines:
         git: ssh://git@bitbucket.mot-solutions.com:7999/msstlite/msst-lite-znuny.git
         shallow_clone: false
         auto_update: true
-        branch: develop-test
+        branch: develop
         destination: znuny-source
     stages:
       - build:
