@@ -1,11 +1,14 @@
 format_version: 10
-# Agent assignment is managed via the 'znuny-dev' GoCD environment
-# (Admin → Environments). Assign the GoCD agent to this environment
-# so the pipeline can be scheduled.
+# Agent assignment is managed via GoCD environments
+# (Admin → Environments). Assign the GoCD agent to the appropriate
+# environment so the pipeline can be scheduled.
 environments:
   znuny-dev:
     pipelines:
       - znuny-dev-deploy
+  znuny-ref:
+    pipelines:
+      - znuny-ref-deploy
 pipelines:
   znuny-dev-deploy:
     group: znuny-deploy
@@ -82,4 +85,82 @@ pipelines:
                       - znuny-source/gocd/pipeline.sh
                       - deploy
                       - dev
+                    run_if: passed
+  znuny-ref-deploy:
+    group: znuny-deploy
+    label_template: "REF ##${COUNT}"
+    lock_behavior: unlockWhenFinished
+    display_order: -1
+    materials:
+      znuny:
+        git: ssh://git@bitbucket.mot-solutions.com:7999/msstlite/msst-lite-znuny.git
+        shallow_clone: false
+        auto_update: true
+        branch: master-test
+        destination: znuny-source
+    # Environment variables are managed in the GoCD 'znuny-ref'
+    # environment via Admin → Environments.
+    stages:
+      - build:
+          fetch_materials: true
+          keep_artifacts: false
+          clean_workspace: true
+          approval:
+            type: success
+            allow_only_on_success: false
+          jobs:
+            build-package:
+              timeout: 0
+              artifacts:
+                - build:
+                    source: znuny-source/.build/MSSTLite-*.opm
+                    destination: package
+              tasks:
+                - exec:
+                    command: bash
+                    arguments:
+                      - znuny-source/gocd/pipeline.sh
+                      - build
+                    run_if: passed
+      - preflight:
+          fetch_materials: true
+          keep_artifacts: false
+          clean_workspace: false
+          approval:
+            type: success
+            allow_only_on_success: true
+          jobs:
+            validate-targets:
+              timeout: 0
+              tasks:
+                - exec:
+                    command: bash
+                    arguments:
+                      - znuny-source/gocd/pipeline.sh
+                      - preflight
+                      - ref
+                    run_if: passed
+      - deploy:
+          fetch_materials: true
+          keep_artifacts: false
+          clean_workspace: false
+          approval:
+            type: success
+            allow_only_on_success: true
+          jobs:
+            deploy-to-ref:
+              timeout: 0
+              tasks:
+                - fetch:
+                    pipeline: znuny-ref-deploy
+                    stage: build
+                    job: build-package
+                    source: package
+                    is_file: false
+                - exec:
+                    command: bash
+                    arguments:
+                      - znuny-source/gocd/pipeline.sh
+                      - deploy
+                      - ref
                     run_if: passed
