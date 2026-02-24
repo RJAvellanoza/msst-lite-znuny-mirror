@@ -39,6 +39,7 @@ Custom/
 ansible/                       # Deployment automation
 ├── ansible.cfg                # Ansible configuration
 ├── inventory/dev.yaml         # DEV environment targets (CT 104)
+├── inventory/ref.yaml         # REF environment targets (CT 104)
 ├── playbooks/
 │   ├── preflight.yaml         # Target reachability validation
 │   └── deploy-znuny.yaml     # Deployment orchestration with rollback
@@ -82,7 +83,7 @@ perl -c Custom/Kernel/System/MyModule.pm
 
 ## CI/CD Pipeline
 
-GoCD pipeline (`znuny-dev-deploy`) with three stages:
+GoCD pipelines (`znuny-dev-deploy`, `znuny-ref-deploy`) with three stages each:
 
 ```
 build → preflight → deploy
