@@ -1,4 +1,7 @@
 format_version: 10
+# Agent assignment is managed via the 'znuny-dev' GoCD environment
+# (Admin → Environments). Assign the GoCD agent to this environment
+# so the pipeline can be scheduled.
 environments:
   znuny-dev:
     pipelines:
