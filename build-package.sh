@@ -325,6 +325,9 @@ if [ -z "$ZNUNY_USER" ]; then
     exit 1
 fi
 
+# Clean dangling symlinks from previous builds
+find "${ZNUNY_HOME}/Kernel" -type l ! -exec test -e {} \; -delete 2>/dev/null || true
+
 # Copy all files to Znuny installation directory
 echo ""
 echo "Copying files to Znuny installation..."
