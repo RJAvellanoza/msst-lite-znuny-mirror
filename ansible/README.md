@@ -18,7 +18,8 @@ Proxmox `pct push` (file transfer) and `pct exec` (command execution).
 ansible/
 ├── ansible.cfg                          # Ansible configuration
 ├── inventory/
-│   └── dev.yaml                         # DEV environment targets
+│   ├── dev.yaml                         # DEV environment targets
+│   └── ref.yaml                         # REF environment targets
 ├── playbooks/
 │   ├── preflight.yaml                   # Target reachability validation
 │   └── deploy-znuny.yaml               # Main deployment orchestration
@@ -53,9 +54,11 @@ ansible/
 
    # Copy public key to Proxmox host(s)
    ssh-copy-id root@10.228.33.221   # DEV
+   ssh-copy-id root@10.228.33.223   # REF
 
    # Verify access
-   ssh root@10.228.33.221 "pct list"
+   ssh root@10.228.33.221 "pct list"   # DEV
+   ssh root@10.228.33.223 "pct list"   # REF
    ```
 
 3. **No additional environment variables** required for Znuny deployment.
@@ -115,7 +118,14 @@ all:
 
 ### Pipeline Stages
 
-The GoCD pipeline (`znuny-dev-deploy`) has three stages:
+Two GoCD pipelines share the same stages and roles:
+
+| Pipeline | Trigger | Target |
+|----------|---------|--------|
+| `znuny-dev-deploy` | Push to `develop` | DEV (10.228.33.221, CT 104) |
+| `znuny-ref-deploy` | Push to `master` | REF (10.228.33.223, CT 104) |
+
+Each pipeline has three stages:
 
 ```
 build → preflight → deploy

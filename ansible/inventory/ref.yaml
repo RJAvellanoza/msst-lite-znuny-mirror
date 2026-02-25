@@ -1,0 +1,22 @@
+---
+# REF Environment Inventory
+#
+# Proxmox host with Znuny LXC containers.
+# Ansible connects to the Proxmox host via SSH, then uses
+# pct push/exec to interact with containers on the isolated network.
+#
+all:
+  children:
+    proxmox_hosts:
+      hosts:
+        ref-proxmox:
+          ansible_host: 10.228.33.223
+          ansible_user: root
+          ansible_python_interpreter: /usr/bin/python3
+          ansible_ssh_common_args: >-
+            -o StrictHostKeyChecking=no
+            -o UserKnownHostsFile=/dev/null
+          znuny_containers:
+            - ct_id: 104
+              ct_name: lsmp-itsm
+              znuny_url: "http://172.16.18.22/otrs/index.pl"
