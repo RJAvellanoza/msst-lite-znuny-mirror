@@ -1,0 +1,171 @@
+---
+# Deploy MSSTLite OPM package to Znuny LXC containers via Proxmox host.
+#
+# Flow: copy OPM to Proxmox → pct push into container →
+#       detect user → uninstall old → install new → rebuild config → clear cache.
+#
+# The uninstall-then-install pattern handles DB schema changes cleanly.
+# If Console.pl uninstall fails (orphaned DB entry), a direct DELETE
+# from package_repository is used as fallback.
+#
+# Ansible references:
+#   file:     https://docs.ansible.com/ansible/latest/collections/ansible/builtin/file_module.html
+#   copy:     https://docs.ansible.com/ansible/latest/collections/ansible/builtin/copy_module.html
+#   command:  https://docs.ansible.com/ansible/latest/collections/ansible/builtin/command_module.html
+#   shell:    https://docs.ansible.com/ansible/latest/collections/ansible/builtin/shell_module.html
+#   debug:    https://docs.ansible.com/ansible/latest/collections/ansible/builtin/debug_module.html
+#   register: https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_variables.html#registering-variables
+#   loop:     https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_loops.html
+#   set_fact: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/set_fact_module.html
+#
+- name: "[DEPLOY] Create temp directory on Proxmox host"
+  ansible.builtin.file:
+    path: /tmp/znuny-deploy
+    state: directory
+    mode: "0755"
+
+- name: "[DEPLOY] Copy OPM artifact to Proxmox host"
+  ansible.builtin.copy:
+    src: "{{ artifact_path }}"
+    dest: /tmp/znuny-deploy/MSSTLite.opm
+    mode: "0644"
+
+- name: "[DEPLOY] Push OPM into container"
+  ansible.builtin.command: >
+    pct push {{ item.ct_id }}
+    /tmp/znuny-deploy/MSSTLite.opm
+    /tmp/MSSTLite.opm
+  loop: "{{ znuny_containers }}"
+  loop_control:
+    label: "CT {{ item.ct_id }} ({{ item.ct_name }})"
+  changed_when: true
+
+- name: "[DEPLOY] Detect Znuny user (otrs or znuny)"
+  ansible.builtin.shell: >
+    pct exec {{ item.ct_id }} -- bash -c
+    "if id otrs &>/dev/null; then echo otrs; elif id znuny &>/dev/null; then echo znuny; else echo unknown; fi"
+  loop: "{{ znuny_containers }}"
+  loop_control:
+    label: "CT {{ item.ct_id }} ({{ item.ct_name }})"
+  register: user_detect
+  changed_when: false
+  failed_when: "'unknown' in user_detect.stdout"
+
+- name: "[DEPLOY] Set detected user fact per container"
+  ansible.builtin.set_fact:
+    znuny_users: >-
+      {{ znuny_users | default({}) | combine({item.item.ct_id | string: item.stdout | trim}) }}
+  loop: "{{ user_detect.results }}"
+  loop_control:
+    label: "CT {{ item.item.ct_id }}"
+
+- name: "[DEPLOY] Detect Znuny home directory"
+  ansible.builtin.shell: >
+    pct exec {{ item.ct_id }} -- bash -c
+    "if [ -d /opt/znuny ]; then echo /opt/znuny;
+    elif [ -d /opt/otrs ]; then echo /opt/otrs;
+    else ls -d /opt/znuny-* 2>/dev/null | head -1; fi"
+  loop: "{{ znuny_containers }}"
+  loop_control:
+    label: "CT {{ item.ct_id }} ({{ item.ct_name }})"
+  register: home_detect
+  changed_when: false
+  failed_when: home_detect.stdout | trim == ""
+
+- name: "[DEPLOY] Set detected home fact per container"
+  ansible.builtin.set_fact:
+    znuny_homes: >-
+      {{ znuny_homes | default({}) | combine({item.item.ct_id | string: item.stdout | trim}) }}
+  loop: "{{ home_detect.results }}"
+  loop_control:
+    label: "CT {{ item.item.ct_id }}"
+
+- name: "[DEPLOY] Check if MSSTLite is already installed"
+  ansible.builtin.shell: >
+    pct exec {{ item.ct_id }} -- bash -c
+    "su {{ znuny_users[item.ct_id | string] }} -c
+    '{{ znuny_homes[item.ct_id | string] }}/bin/otrs.Console.pl Admin::Package::List'
+    | grep -c MSSTLite || echo 0"
+  loop: "{{ znuny_containers }}"
+  loop_control:
+    label: "CT {{ item.ct_id }} ({{ item.ct_name }})"
+  register: pkg_check
+  changed_when: false
+
+- name: "[DEPLOY] Uninstall existing MSSTLite package"
+  ansible.builtin.shell: >
+    pct exec {{ item.item.ct_id }} -- bash -c
+    "su {{ znuny_users[item.item.ct_id | string] }} -c
+    '{{ znuny_homes[item.item.ct_id | string] }}/bin/otrs.Console.pl Admin::Package::Uninstall MSSTLite'"
+  loop: "{{ pkg_check.results }}"
+  loop_control:
+    label: "CT {{ item.item.ct_id }} ({{ item.item.ct_name }})"
+  when: (item.stdout | trim | int) > 0
+  register: uninstall_result
+  changed_when: true
+  ignore_errors: true
+
+- name: "[DEPLOY] DB fallback — remove orphaned package entry if uninstall failed"
+  ansible.builtin.shell: >
+    pct exec {{ item.item.item.ct_id }} -- bash -c
+    "su postgres -c \"psql -d otrs -c \\\"DELETE FROM package_repository WHERE name = 'MSSTLite';\\\"\""
+  loop: "{{ uninstall_result.results | default([]) }}"
+  loop_control:
+    label: "CT {{ item.item.item.ct_id | default('N/A') }}"
+  when:
+    - item is defined
+    - item.failed is defined
+    - item.failed
+  changed_when: true
+
+- name: "[DEPLOY] Install MSSTLite OPM package"
+  ansible.builtin.shell: >
+    pct exec {{ item.ct_id }} -- bash -c
+    "su {{ znuny_users[item.ct_id | string] }} -c
+    '{{ znuny_homes[item.ct_id | string] }}/bin/otrs.Console.pl Admin::Package::Install /tmp/MSSTLite.opm'"
+  loop: "{{ znuny_containers }}"
+  loop_control:
+    label: "CT {{ item.ct_id }} ({{ item.ct_name }})"
+  register: install_result
+  changed_when: true
+
+- name: "[DEPLOY] Install exit codes"
+  ansible.builtin.debug:
+    msg: "CT {{ item.item.ct_id }}: exit code {{ item.rc }}"
+  loop: "{{ install_result.results }}"
+  loop_control:
+    label: "CT {{ item.item.ct_id }}"
+  when: item.rc is defined
+
+- name: "[DEPLOY] Rebuild Znuny configuration"
+  ansible.builtin.shell: >
+    pct exec {{ item.ct_id }} -- bash -c
+    "su {{ znuny_users[item.ct_id | string] }} -c
+    '{{ znuny_homes[item.ct_id | string] }}/bin/otrs.Console.pl Maint::Config::Rebuild'"
+  loop: "{{ znuny_containers }}"
+  loop_control:
+    label: "CT {{ item.ct_id }} ({{ item.ct_name }})"
+  changed_when: true
+
+- name: "[DEPLOY] Clear Znuny cache"
+  ansible.builtin.shell: >
+    pct exec {{ item.ct_id }} -- bash -c
+    "su {{ znuny_users[item.ct_id | string] }} -c
+    '{{ znuny_homes[item.ct_id | string] }}/bin/otrs.Console.pl Maint::Cache::Delete'"
+  loop: "{{ znuny_containers }}"
+  loop_control:
+    label: "CT {{ item.ct_id }} ({{ item.ct_name }})"
+  changed_when: true
+
+- name: "[DEPLOY] Clean up temp files on Proxmox host"
+  ansible.builtin.file:
+    path: /tmp/znuny-deploy
+    state: absent
+
+- name: "[DEPLOY] Clean up temp files in container"
+  ansible.builtin.command: >
+    pct exec {{ item.ct_id }} -- rm -f /tmp/MSSTLite.opm
+  loop: "{{ znuny_containers }}"
+  loop_control:
+    label: "CT {{ item.ct_id }}"
+  changed_when: false

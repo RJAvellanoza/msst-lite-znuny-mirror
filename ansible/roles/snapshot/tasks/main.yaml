@@ -1,0 +1,38 @@
+---
+# Pre-deploy Proxmox snapshot of each Znuny container.
+# Provides rollback capability if deployment fails.
+#
+# Snapshot naming: pre-deploy-{version}-{date} (e.g., pre-deploy-2-0-42-20260218)
+# Proxmox snapshot names allow only alphanumeric and hyphens (no dots).
+# Dots in version strings are replaced with hyphens.
+# Proxmox enforces a 40-character limit on snapshot names.
+# Current format produces ~27 chars, well within bounds.
+#
+# Ansible references:
+#   command:  https://docs.ansible.com/ansible/latest/collections/ansible/builtin/command_module.html
+#   shell:    https://docs.ansible.com/ansible/latest/collections/ansible/builtin/shell_module.html
+#   loop:     https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_loops.html
+#
+- name: "[SNAPSHOT] Cleaning up old snapshots"
+  ansible.builtin.shell: >
+    pct listsnapshot {{ item.ct_id }} 2>/dev/null |
+    grep "pre-deploy" |
+    awk '{print $1}' |
+    xargs -r -I{} pct delsnapshot {{ item.ct_id }} {}
+  loop: "{{ znuny_containers }}"
+  loop_control:
+    label: "CT {{ item.ct_id }} ({{ item.ct_name }})"
+  changed_when: true
+  ignore_errors: true
+
+- name: "[SNAPSHOT] Creating snapshot {{ deploy_version | replace('.', '-') }}"
+  ansible.builtin.command: >
+    pct snapshot {{ item.ct_id }}
+    pre-deploy-{{ deploy_version | replace('.', '-') }}-{{ ansible_date_time.date | replace('-', '') }}
+    --description "Pre-deploy {{ deploy_version }} via CI/CD"
+  loop: "{{ znuny_containers }}"
+  loop_control:
+    label: "CT {{ item.ct_id }} ({{ item.ct_name }})"
+  changed_when: true
+  retries: 3
+  delay: 10
